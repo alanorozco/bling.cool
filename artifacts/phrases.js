@@ -1,15 +1,15 @@
 /* eslint-plugin-disable notice */
 
 module.exports = [
-  ['pineapple', { hue: 0.52 }],
-  ['Fabulous', { hue: 0.2 }],
+  ['absolutely quixotic'],
+  ['ayy lmao'],
+  ['Defenestrate the Patriarchy.'],
   ['Divine'],
+  ['Fabulous', { hue: 0.2 }],
   ['Fantastic'],
   ['Gorgeous.'],
-  ['wünderbar'],
-  ['thug life'],
+  ['pineapple', { hue: 0.52 }],
   ['smoke errday', { hue: 0.6 }],
-  ['absolutely quixotic'],
-  ['Defenestrate the Patriarchy.'],
-  ['ayy lmao'],
+  ['thug life'],
+  ['wünderbar'],
 ];
