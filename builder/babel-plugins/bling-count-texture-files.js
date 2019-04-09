@@ -27,23 +27,17 @@ const declaratorName = 'textureAssetsCountReplaceMe';
 const globDir = pathJoin(__dirname, '../../assets/t*.gif');
 const validNameRe = /^.+\/t([0-9]+)\.gif$/;
 
-function max(arr) {
-  let max = -Infinity;
-  for (let i of arr) {
-    max = Math.max(max, i);
-  }
-  return max;
-}
-
 module.exports = function({ types: t }) {
   const count =
     1 +
-    max(
-      glob
-        .sync(globDir)
-        .filter(path => validNameRe.test(path))
-        .map(path => parseInt(path.replace(validNameRe, '$1'), 10))
-    );
+    glob
+      .sync(globDir)
+      .filter(path => validNameRe.test(path))
+      .reduce(
+        (max, path) =>
+          Math.max(max, parseInt(path.replace(validNameRe, '$1'), 10)),
+        -Infinity
+      );
 
   return {
     visitor: {
