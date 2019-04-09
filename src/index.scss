@@ -94,8 +94,15 @@ div[contenteditable],
   text-align: center;
   background-clip: text;
   -webkit-background-clip: text;
-  color: transparent;
   position: relative;
+
+  // It would be nice to use `color: transparent`, but chrome "optimizes" it so
+  // it's clipped.
+  color: white;
+  -webkit-text-fill-color: transparent;
+
+  // Some padding is needed so text is not clipped
+  padding: 40px;
 
   // TODO: Maybe this can be analyzed on build time based on font, as some leave
   // very large line gaps. Nice to have.
