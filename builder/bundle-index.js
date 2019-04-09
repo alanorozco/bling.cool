@@ -50,7 +50,10 @@ module.exports = function bundleIndex({ css, js }) {
 
     const authorLink = doc.querySelector('a#meta-author');
     authorLink.setAttribute('href', author.url);
-    authorLink.textContent = author.name;
+    authorLink.textContent = authorLink.textContent.replace(
+      '[package.author.name]',
+      author.name
+    );
 
     const repoLink = doc.querySelector('a#meta-repository');
     repoLink.setAttribute('href', repository);
