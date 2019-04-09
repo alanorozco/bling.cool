@@ -29,7 +29,7 @@ const declaratorName = 'textureAssetsCountReplaceMe';
 const globDir = pathJoin(__dirname, '../../assets/t*.gif');
 const validNameRe = /^.+\/t([0-9]+)\.gif$/;
 
-module.exports = function({ types: t }) {
+function getCount() {
   const count =
     1 +
     glob
@@ -43,6 +43,10 @@ module.exports = function({ types: t }) {
 
   log(magenta('Textures:'), 'found', blue(count), 'texture files.');
 
+  return count;
+}
+
+module.exports = function({ types: t }) {
   return {
     visitor: {
       VariableDeclarator({ node }) {
@@ -52,7 +56,7 @@ module.exports = function({ types: t }) {
         if (!t.isNumericLiteral(node.init)) {
           return;
         }
-        node.init = t.numericLiteral(count);
+        node.init = t.numericLiteral(getCount());
       },
     },
   };
