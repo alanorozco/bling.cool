@@ -6,6 +6,9 @@
 
 [Write some bling text.](https://bling.cool)
 
+_This is a buggy work in progress, things will break._ GIF and markup output are
+TODO.
+
 ## Building
 
 This project uses [`yarn`](https://yarnpkg.com) for package management.

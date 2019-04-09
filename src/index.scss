@@ -24,6 +24,7 @@
 $lineHeight: 1.5;
 $toolbarHeight: 48px;
 $bodyBorder: 20px;
+$marginUnit: 20px;
 
 // colors
 $blue: rgb(0, 68, 214);
@@ -37,7 +38,7 @@ $thumb-color: $grayish;
 
 body {
   margin: 0;
-  padding: 20px;
+  padding: $marginUnit;
   font-family: 'Chalkboard', 'Comic Sans MS', sans-serif;
   font-size: 18px;
   line-height: $lineHeight;
@@ -61,10 +62,22 @@ body {
 
 h1,
 footer {
-  margin: 20px 0;
+  margin: $marginUnit 0;
   text-align: center;
   font: inherit;
   text-transform: lowercase;
+}
+
+footer {
+  font-size: 82%;
+}
+
+footer > .buggy {
+  color: darken($grayish, 20%);
+}
+
+p {
+  margin: ($marginUnit / 2) 0;
 }
 
 main {
@@ -72,7 +85,7 @@ main {
   box-sizing: border-box;
   width: calc(100vw - #{2 * $bodyBorder});
   height: calc(100vh - #{2 * $bodyBorder});
-  padding: 20px 0;
+  padding: $marginUnit 0;
 }
 
 main,
@@ -146,7 +159,7 @@ footer a:active {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  margin: 0 0 20px;
+  margin: 0 0 $marginUnit;
   font-size: 14px;
   color: darken($grayish, 20%);
   line-height: $toolbarHeight;
@@ -158,7 +171,7 @@ footer a:active {
 
 .toolbar > label > input,
 .toolbar > label > select {
-  margin: 0 0 0 10px;
+  margin: 0 0 0 ($marginUnit / 2);
 }
 
 select {
@@ -169,7 +182,7 @@ select {
   background: transparent;
   border: 2px solid $grayish;
   border-radius: 32px;
-  padding: 6px 12px;
+  padding: ($marginUnit / 4) ($marginUnit / 2);
   text-align: center;
   text-align-last: center;
   line-height: $lineHeight;
