@@ -22,9 +22,10 @@
 
 module.exports = element =>
   new Promise(resolve => {
-    const listener = () => {
+    let listener = () => {
       resolve();
       element.removeEventListener('load', listener);
+      listener = null; // gc
     };
     element.addEventListener('load', listener);
   });
