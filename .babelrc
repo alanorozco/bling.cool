@@ -1,3 +1,4 @@
 {
+  "plugins": ["./builder/babel-plugins/bling-count-texture-files"],
   "presets": ["@babel/preset-env"]
 }

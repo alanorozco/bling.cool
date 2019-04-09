@@ -26,8 +26,14 @@ const once = require('lodash.once');
 const fonts = require('../artifacts/fonts');
 const phrases = require('../artifacts/phrases');
 
-const textureAssetsCount = 1;
 const textureUrl = index => `/assets/t${index}.gif`;
+
+// The following count is dynamically generated at build-time.
+// If this name changes, so must the `bling-count-texture-files` babel plugin.
+const textureAssetsCountReplaceMe = 1;
+
+// Indirection for naïve scope safety.
+const textureAssetsCount = textureAssetsCountReplaceMe;
 
 const defaultFontSize = 72;
 
