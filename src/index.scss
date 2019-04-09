@@ -151,7 +151,9 @@ footer a:active {
 
 .editable-shadow {
   position: absolute;
-  text-shadow: 6px 6px 12px rgba($blue, 0.6);
+
+  // TODO: expose via ui
+  text-shadow: 6px 6px 12px rgba($blue, 0.48);
 }
 
 .toolbar {
