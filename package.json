@@ -1,0 +1,39 @@
+{
+  "name": "bling.cool",
+  "version": "0.0.0",
+  "description": "✨ bling text for the 21st century ✨",
+  "main": "gulpfile.js",
+  "repository": "https://github.com/alanorozco/bling.cool",
+  "author": {
+    "name": "Alan Orozco",
+    "email": "alan@orozco.xyz",
+    "url": "https://alanoroz.co"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "express": "^4.16.4",
+    "gulp": "^4.0.0",
+    "gulp-html-minifier": "^0.1.8",
+    "gulp-sass": "^4.0.2",
+    "jsdom": "^14.0.0",
+    "prettier": "^1.16.4",
+    "rollup": "^1.9.0",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-commonjs": "^8.3.0",
+    "rollup-plugin-node-resolve": "^4.0.1",
+    "rollup-stream": "^1.24.1",
+    "through2": "^3.0.1",
+    "vinyl": "^2.2.0",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "dependencies": {
+    "fontfaceobserver": "^2.1.0",
+    "lodash.once": "^4.1.1"
+  }
+}
