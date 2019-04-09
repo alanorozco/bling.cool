@@ -72,15 +72,16 @@ async function elementWithFileContents(doc, tagName, path) {
 
 function bundleIndex({ css, js }) {
   return pipedJsdom(async doc => {
-    const { name, description, repository, author } = JSON.parse(
+    const { description, repository, author } = JSON.parse(
       (await readFileAsync('./package.json')).toString()
     );
-    doc.head.appendChild(
-      elementWithContents(doc, 'title', `${name}: ${description}`)
-    );
+
+    doc.head.appendChild(elementWithContents(doc, 'title', description));
     doc.head.appendChild(await elementWithFileContents(doc, 'style', css));
     doc.body.appendChild(await elementWithFileContents(doc, 'script', js));
-    doc.querySelector('h1').textContent = description;
+
+    const h1 = doc.querySelector('h1');
+    h1.textContent = description;
 
     const authorLink = doc.querySelector('a#meta-author');
     authorLink.setAttribute('href', author.url);
