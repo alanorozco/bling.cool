@@ -27,6 +27,7 @@ const fonts = require('../artifacts/fonts');
 const phrases = require('../artifacts/phrases');
 
 const textureAssetsCount = 1;
+const textureUrl = index => `/assets/t${index}.gif`;
 
 const defaultFontSize = 72;
 
@@ -98,7 +99,7 @@ function setTextSentinels(editable, shadowSentinel, text) {
 }
 
 function setTexture(border, editable, index) {
-  const url = `url(/assets/glitter${index}.gif)`;
+  const url = `url(${textureUrl(index)})`;
   editable.style.backgroundImage = url;
   border.style.backgroundImage = url;
 }
