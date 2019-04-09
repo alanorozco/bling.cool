@@ -21,86 +21,16 @@
  */
 
 const { dest, parallel, series, src, watch: gulpWatch } = require('gulp');
-const { JSDOM } = require('jsdom');
-const { promisify } = require('util');
-const { Readable } = require('stream');
-const { readFile } = require('fs');
 const express = require('express');
 const babel = require('rollup-plugin-babel');
 const buffer = require('vinyl-buffer');
+const bundleIndex = require('./builder/bundle-index');
 const commonjs = require('rollup-plugin-commonjs');
 const htmlmin = require('gulp-html-minifier');
 const rollup = require('rollup-stream');
 const rollupResolve = require('rollup-plugin-node-resolve');
 const sass = require('gulp-sass');
 const source = require('vinyl-source-stream');
-const through = require('through2');
-
-const readFileAsync = promisify(readFile);
-
-function toStream(str) {
-  const s = new Readable();
-  s.push(str);
-  s.push(null);
-  return s;
-}
-
-function pipedJsdom(mutate) {
-  return through.obj(async function(file, encoding, callback) {
-    const html = file.contents.toString(encoding);
-    const { document: doc } = new JSDOM(html).window;
-    await mutate(doc);
-    file.contents = toStream(doc.documentElement.outerHTML);
-    this.push(file);
-    callback();
-  });
-}
-
-function elementWithContents(doc, tagName, contents) {
-  const element = doc.createElement(tagName);
-  element.innerHTML = contents;
-  return element;
-}
-
-async function elementWithFileContents(doc, tagName, path) {
-  return elementWithContents(
-    doc,
-    tagName,
-    (await readFileAsync(path)).toString()
-  );
-}
-
-function bundleIndex({ css, js }) {
-  return pipedJsdom(async doc => {
-    const { name, description, repository, author } = JSON.parse(
-      (await readFileAsync('./package.json')).toString()
-    );
-
-    const title = doc.querySelector('title');
-    title.textContent = title.textContent.replace('[package.name]', name);
-
-    const metaDesc = doc.querySelector('meta[name=description]');
-    metaDesc.setAttribute(
-      'content',
-      metaDesc
-        .getAttribute('content')
-        .replace('[package.description]', description)
-    );
-
-    doc.head.appendChild(await elementWithFileContents(doc, 'style', css));
-    doc.body.appendChild(await elementWithFileContents(doc, 'script', js));
-
-    const h1 = doc.querySelector('h1');
-    h1.textContent = description;
-
-    const authorLink = doc.querySelector('a#meta-author');
-    authorLink.setAttribute('href', author.url);
-    authorLink.textContent = author.name;
-
-    const repoLink = doc.querySelector('a#meta-repository');
-    repoLink.setAttribute('href', repository);
-  });
-}
 
 function js() {
   return rollup({
