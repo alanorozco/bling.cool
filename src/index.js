@@ -21,6 +21,7 @@
  */
 
 const { FontLoader } = require('./font-loader');
+const focusAtEnd = require('./focus-at-end');
 const once = require('lodash.once');
 
 const fonts = require('../artifacts/fonts');
@@ -183,6 +184,7 @@ fontSelect.addEventListener('change', ({ target }) => {
 
 setFont(loader, editable, shadowSentinel, fontName, fontWeight).then(() => {
   doc.body.classList.remove('not-ready');
+  focusAtEnd(editable);
 });
 
 editable.addEventListener('input', () => {
