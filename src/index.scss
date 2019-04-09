@@ -96,7 +96,10 @@ div[contenteditable],
   -webkit-background-clip: text;
   color: transparent;
   position: relative;
-  line-height: 1.1;
+
+  // TODO: Maybe this can be analyzed on build time based on font, as some leave
+  // very large line gaps. Nice to have.
+  line-height: 1.3;
 }
 
 div[contenteditable] {
