@@ -1,43 +1,65 @@
+/**
+ * Copyright 2019 Alan Orozco <alan@orozco.xyz>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 module.exports = [
-  ['Abril Fatface', 400],
-  ['Alfa Slab One', 400],
-  ['Baloo', 400],
-  ['Berkshire Swash', 400],
-  ['Black Ops One', 400],
-  ['Bungee', 400],
-  ['Chicle', 400],
-  ['Coiny', 400],
-  ['Creepster', 400],
-  ['Fascinate Inline', 400],
-  ['Faster One', 400],
-  ['Fontdiner Swanky', 400],
-  ['Freckle Face', 400],
-  ['Fredoka One', 400],
-  ['Frijole', 400],
-  ['Gravitas One', 400],
-  ['Lilita One', 400],
-  ['Limelight', 400],
-  ['Luckiest Guy', 400],
-  ['Mogra', 400],
-  ['Nosifer', 400],
-  ['Pacifico', 400],
-  ['Poller One', 400],
-  ['Press Start 2P', 400],
-  ['Racing Sans One', 400],
-  ['Rakkas', 400],
-  ['Rammetto One', 400],
-  ['Ranchers', 400],
-  ['Righteous', 400],
-  ['Ruslan Display', 400],
-  ['Sarina', 400],
-  ['Shojumaru', 400],
-  ['Shrikhand', 400],
-  ['Sigmar One', 400],
-  ['Skranji', 400],
-  ['Spicy Rice', 400],
-  ['Squada One', 400],
-  ['Titan One', 400],
-  ['Vampiro One', 400],
-  ['Vast Shadow', 400],
-  ['ZCOOL KuaiLe', 400],
+  ['Abril Fatface'],
+  ['Alfa Slab One'],
+  ['Baloo'],
+  ['Berkshire Swash'],
+  ['Black Ops One'],
+  ['Bungee'],
+  ['Chicle'],
+  ['Coiny'],
+  ['Creepster'],
+  ['Fascinate Inline'],
+  ['Faster One'],
+  ['Fontdiner Swanky'],
+  ['Freckle Face'],
+  ['Fredoka One'],
+  ['Frijole'],
+  ['Gravitas One'],
+  ['Lilita One'],
+  ['Limelight'],
+  ['Luckiest Guy'],
+  ['Mogra'],
+  ['Nosifer'],
+  ['Pacifico'],
+  ['Poller One'],
+  ['Press Start 2P'],
+  ['Racing Sans One'],
+  ['Rakkas'],
+  ['Rammetto One'],
+  ['Ranchers'],
+  ['Righteous'],
+  ['Ruslan Display'],
+  ['Sarina'],
+  ['Shojumaru'],
+  ['Shrikhand'],
+  ['Sigmar One'],
+  ['Skranji'],
+  ['Spicy Rice'],
+  ['Squada One'],
+  ['Titan One'],
+  ['Vampiro One'],
+  ['Vast Shadow'],
+  ['ZCOOL KuaiLe'],
 ];

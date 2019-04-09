@@ -54,6 +54,13 @@ function fillPhrase(phrase) {
   return phrase;
 }
 
+function fillFont(font) {
+  if (font.length == 1) {
+    font.push(400);
+  }
+  return font;
+}
+
 function setText(editable, shadowSentinel, text) {
   editable.innerText = text;
   setTextSentinels(editable, shadowSentinel, text);
@@ -121,7 +128,7 @@ const setHueOnSlide = ({ target }) => {
   setHueRotate(border, editable, shadowSentinel, parseFloat(target.value));
 };
 
-const [fontName, fontWeight] = pickRandom(fonts);
+const [fontName, fontWeight] = fillFont(pickRandom(fonts));
 
 fonts.forEach(([name], i) => {
   const option = doc.createElement('option');
@@ -134,7 +141,7 @@ fonts.forEach(([name], i) => {
 });
 
 fontSelect.addEventListener('change', ({ target }) => {
-  const [fontName, fontWeight] = fonts[parseInt(target.value, 10)];
+  const [fontName, fontWeight] = fillFont(fonts[parseInt(target.value, 10)]);
   setFont(loader, editable, shadowSentinel, fontName, fontWeight);
 });
 
