@@ -9,6 +9,7 @@ module.exports = [
   ['Fantastic'],
   ['Gorgeous.'],
   ['pineapple', { hue: 0.52 }],
+  ['Platinum Crew'],
   ['smoke errday', { hue: 0.6 }],
   ['thirsty'],
   ['thug life'],
