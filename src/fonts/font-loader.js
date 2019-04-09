@@ -22,7 +22,7 @@
 
 const FontFaceObserver = require('fontfaceobserver');
 const googFontsUrl = require('./goog-fonts-url');
-const loadPromise = require('./load-promise');
+const loadPromise = require('../events/load-promise');
 
 const fontId = (name, weight) => `${name}:${weight}`;
 

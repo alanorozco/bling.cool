@@ -41,6 +41,8 @@ body {
   font-family: 'Chalkboard', 'Comic Sans MS', sans-serif;
   font-size: 18px;
   line-height: $lineHeight;
+  overflow: hidden;
+  min-height: 100vh;
 }
 
 .not-ready {
@@ -86,7 +88,8 @@ main,
   cursor: text;
   box-sizing: border-box;
   padding: 0 40px;
-  min-width: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 div[contenteditable],

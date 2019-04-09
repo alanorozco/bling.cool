@@ -20,8 +20,8 @@
  * SOFTWARE.
  */
 
-const { FontLoader } = require('./font-loader');
-const focusAtEnd = require('./focus-at-end');
+const { FontLoader } = require('./fonts/font-loader');
+const focusAtEnd = require('./input/focus-at-end');
 const once = require('lodash.once');
 
 const fonts = require('../artifacts/fonts');
