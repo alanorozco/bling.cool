@@ -2,8 +2,9 @@
   "name": "bling.cool",
   "version": "0.0.0",
   "description": "✨ bling text for the 21st century ✨",
-  "main": "gulpfile.js",
+  "homepage": "https://bling.cool",
   "repository": "https://github.com/alanorozco/bling.cool",
+  "main": "gulpfile.js",
   "author": {
     "name": "Alan Orozco",
     "email": "alan@orozco.xyz",
