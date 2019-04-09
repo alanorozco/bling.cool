@@ -77,9 +77,7 @@ function binaryFontLookup(fonts, name) {
   const index = () => start + Math.floor((end - start) / 2);
   const pick = () => fonts[index()][0].toLowerCase();
 
-  let pivot = pick();
-
-  while (pivot != nameLower) {
+  for (let pivot = pick(); pivot != nameLower; pivot = pick()) {
     if (start == end) {
       return;
     }
@@ -88,7 +86,6 @@ function binaryFontLookup(fonts, name) {
     } else {
       start = index();
     }
-    pivot = pick();
   }
 
   return fonts[index()];
