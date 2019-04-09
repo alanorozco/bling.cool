@@ -102,8 +102,11 @@ div[contenteditable],
   color: white;
   -webkit-text-fill-color: transparent;
 
-  // Some padding is needed so text is not clipped
+  // Some padding is needed so text is not clipped.
   padding: 40px;
+
+  // And for dynamic resizing:
+  box-sizing: border-box;
 
   // TODO: Maybe this can be analyzed on build time based on font, as some leave
   // very large line gaps. Nice to have.
