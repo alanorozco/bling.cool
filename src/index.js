@@ -61,6 +61,33 @@ function fillFont(font) {
   return font;
 }
 
+function binaryFontLookup(fonts, name) {
+  let start = 0;
+  let end = fonts.length;
+
+  const nameLower = name.toLowerCase();
+
+  const index = () => start + Math.floor((end - start) / 2);
+  const pick = () => fonts[index()][0].toLowerCase();
+
+  let pivot = pick();
+
+  while (pivot != nameLower) {
+    console.log(pivot, pivot > nameLower);
+    if (start == end) {
+      return;
+    }
+    if (pivot > nameLower) {
+      end = index();
+    } else {
+      start = index();
+    }
+    pivot = pick();
+  }
+
+  return fonts[index()];
+}
+
 function setText(editable, shadowSentinel, text) {
   editable.innerText = text;
   setTextSentinels(editable, shadowSentinel, text);
@@ -106,15 +133,23 @@ function setFont(loader, editable, shadowSentinel, fontName, fontWeight) {
 }
 
 const { document: doc } = self;
+const loader = new FontLoader(doc);
+
 const hueSlider = doc.querySelector('#hue');
 const editable = getEditable(doc);
 const shadowSentinel = doc.querySelector('.editable-shadow');
 const border = doc.querySelector('.border');
 const fontSelect = doc.querySelector('select');
-const loader = new FontLoader(doc);
 
 const [phraseText, phraseConfig] = pickPhrase();
 const hueRotate = phraseConfig.hue || pickHueRotate();
+
+const randomFont = pickRandom(fonts);
+const [fontName, fontWeight] = fillFont(
+  phraseConfig.font
+    ? binaryFontLookup(fonts, phraseConfig.font) || randomFont
+    : randomFont
+);
 
 hueSlider.value = hueRotate;
 
@@ -127,8 +162,6 @@ setFontSize(editable, shadowSentinel, defaultFontSize);
 const setHueOnSlide = ({ target }) => {
   setHueRotate(border, editable, shadowSentinel, parseFloat(target.value));
 };
-
-const [fontName, fontWeight] = fillFont(pickRandom(fonts));
 
 fonts.forEach(([name], i) => {
   const option = doc.createElement('option');
