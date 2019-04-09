@@ -20,8 +20,10 @@
  * SOFTWARE.
  */
 
+const { blue, magenta } = require('colors');
 const { join: pathJoin } = require('path');
 const glob = require('fast-glob');
+const log = require('fancy-log');
 
 const declaratorName = 'textureAssetsCountReplaceMe';
 const globDir = pathJoin(__dirname, '../../assets/t*.gif');
@@ -38,6 +40,8 @@ module.exports = function({ types: t }) {
           Math.max(max, parseInt(path.replace(validNameRe, '$1'), 10)),
         -Infinity
       );
+
+  log(magenta('Textures:'), 'found', blue(count), 'texture files.');
 
   return {
     visitor: {
