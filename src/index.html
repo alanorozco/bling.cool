@@ -22,12 +22,17 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>[package.name] ✨</title>
     <meta charset="utf-8" />
+    <meta
+      name="description"
+      content="[package.description] &ndash; generate glitter, blingy GIFs or HTML Ɛ̸ CSS markup!"
+    />
   </head>
   <body class="not-ready">
     <div class="border"></div>
     <main>
-      <h1></h1>
+      <h1>[package.description]</h1>
       <div class="toolbar">
         <label for="font">
           font
@@ -50,8 +55,15 @@
         <div contenteditable spellcheck="false" autofocus></div>
       </label>
       <footer class="meta">
-        ✨ built by <a id="meta-author" target="_blank"></a>.
-        <a id="meta-repository" target="_blank">fork on github.</a> ✨
+        ✨ built by
+        <a href="[package.author.url]" id="meta-author" target="_blank">
+          [package.author.name]
+        </a>
+        &ndash;
+        <a href="[package.repository]" id="meta-repository" target="_blank">
+          fork on github
+        </a>
+        ✨
       </footer>
     </main>
   </body>

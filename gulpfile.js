@@ -72,11 +72,21 @@ async function elementWithFileContents(doc, tagName, path) {
 
 function bundleIndex({ css, js }) {
   return pipedJsdom(async doc => {
-    const { description, repository, author } = JSON.parse(
+    const { name, description, repository, author } = JSON.parse(
       (await readFileAsync('./package.json')).toString()
     );
 
-    doc.head.appendChild(elementWithContents(doc, 'title', description));
+    const title = doc.querySelector('title');
+    title.textContent = title.textContent.replace('[package.name]', name);
+
+    const metaDesc = doc.querySelector('meta[name=description]');
+    metaDesc.setAttribute(
+      'content',
+      metaDesc
+        .getAttribute('content')
+        .replace('[package.description]', description)
+    );
+
     doc.head.appendChild(await elementWithFileContents(doc, 'style', css));
     doc.body.appendChild(await elementWithFileContents(doc, 'script', js));
 
