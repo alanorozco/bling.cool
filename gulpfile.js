@@ -143,7 +143,7 @@ const barebones = series(parallel(js, css), bundle);
 function watch() {
   serve();
   gulpWatch(
-    ['src/*', 'artifacts/*', 'assets/*'],
+    ['3p/*', 'artifacts/*', 'assets/*', 'src/*'],
     parallel(copyassets, barebones)
   );
 }
