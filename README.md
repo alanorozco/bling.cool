@@ -22,7 +22,8 @@ After that, you can build with:
 gulp dist
 ```
 
-This will output a single `dist/index.html` file. Other files in the `dist/`
-directory can be safely ignored.
+This will output a single `dist/index.html` entry file and an `/assets/`
+directory containing the texture files. `*.js` and `*.css` files in the `dist/`
+directory are build artifacts and not necessary for deployment.
 
 For active development, run `gulp` to build, watch and serve on port `:8000`.
