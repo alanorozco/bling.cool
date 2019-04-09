@@ -5,7 +5,8 @@ module.exports = {
   env: {
     es6: true,
   },
-  plugins: ['notice'],
+  extends: ['plugin:prettier/recommended'],
+  plugins: ['disable', 'notice'],
   rules: {
     'no-unused-vars': [
       'error',
@@ -24,5 +25,4 @@ module.exports = {
       },
     ],
   },
-  extends: ['plugin:prettier/recommended'],
 };
