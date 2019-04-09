@@ -20,6 +20,19 @@
  * SOFTWARE.
  */
 
+// defaults
+$lineHeight: 1.5;
+$toolbarHeight: 48px;
+$bodyBorder: 20px;
+
+// colors
+$blue: rgb(0, 68, 214);
+$grayish: rgb(147, 153, 160);
+
+// overrides: 3p/style-range-inputs/style-range-inputs
+$track-color: $grayish;
+$thumb-color: $grayish;
+
 @import '../3p/style-range-inputs/style-range-inputs';
 
 body {
@@ -27,6 +40,7 @@ body {
   padding: 20px;
   font-family: 'Chalkboard', 'Comic Sans MS', sans-serif;
   font-size: 18px;
+  line-height: $lineHeight;
 }
 
 .not-ready {
@@ -54,8 +68,8 @@ footer {
 main {
   background: white;
   box-sizing: border-box;
-  width: calc(100vw - 40px);
-  height: calc(100vh - 40px);
+  width: calc(100vw - #{2 * $bodyBorder});
+  height: calc(100vh - #{2 * $bodyBorder});
   padding: 20px 0;
 }
 
@@ -82,20 +96,32 @@ div[contenteditable],
   -webkit-background-clip: text;
   color: transparent;
   position: relative;
-  -webkit-text-fill-color: transparent;
-  color: #fff;
-  caret-color: rgba(0, 0, 50, 0.8);
+  line-height: 1.1;
+}
+
+div[contenteditable] {
+  caret-color: rgba($blue, 0.8);
+
+  // ayy lmao 👽
+  // hack to make chrome show the editor caret when the area is empty.
+  min-width: 10px;
+  text-align: center;
 }
 
 footer a {
-  color: rgb(10, 70, 200);
+  color: $blue;
   font-weight: bold;
   text-decoration: none;
 }
 
+footer a:hover,
+footer a:active {
+  color: lighten($blue, 20%);
+}
+
 .editable-shadow {
   position: absolute;
-  text-shadow: 6px 6px 12px rgba(0, 60, 200, 0.4);
+  text-shadow: 6px 6px 12px rgba($blue, 0.6);
 }
 
 .toolbar {
@@ -105,7 +131,8 @@ footer a {
   justify-content: center;
   margin: 0 0 20px;
   font-size: 14px;
-  color: rgba(0, 0, 0, 0.5);
+  color: darken($grayish, 20%);
+  line-height: $toolbarHeight;
 }
 
 .toolbar > label {
@@ -115,4 +142,22 @@ footer a {
 .toolbar > label > input,
 .toolbar > label > select {
   margin: 0 0 0 10px;
+}
+
+select {
+  font: inherit;
+  color: inherit;
+  outline: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 2px solid $grayish;
+  border-radius: 32px;
+  padding: 6px 12px;
+  text-align: center;
+  text-align-last: center;
+  line-height: $lineHeight;
+}
+
+option {
+  text-align: left;
 }
