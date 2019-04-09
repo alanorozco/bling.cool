@@ -73,7 +73,6 @@ function binaryFontLookup(fonts, name) {
   let pivot = pick();
 
   while (pivot != nameLower) {
-    console.log(pivot, pivot > nameLower);
     if (start == end) {
       return;
     }
