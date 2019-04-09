@@ -55,8 +55,12 @@ class FontLoader {
       return this.loadPromises_[id];
     }
     const stylesheetLoaded = loadFontStylesheet(this.doc_, name, weight);
-    const observer = new FontFaceObserver(name, { weight });
-    const promise = stylesheetLoaded.then(() => observer.load());
+    let observer = new FontFaceObserver(name, { weight });
+    const promise = stylesheetLoaded
+      .then(() => observer.load())
+      .then(() => {
+        observer = null; // gc
+      });
     return (this.loadPromises_[id] = promise);
   }
 }
