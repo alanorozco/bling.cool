@@ -10,6 +10,10 @@ module.exports = [
   ['Gorgeous.'],
   ['pineapple', { hue: 0.52 }],
   ['smoke errday', { hue: 0.6 }],
+  ['thirsty'],
   ['thug life'],
+  ['WELCOME TO FLAVORTOWN', { font: 'Faster One' }],
   ['wünderbar'],
+  ["don't @ me"],
+  ["you're welcome"],
 ];
