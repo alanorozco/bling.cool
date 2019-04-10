@@ -20,11 +20,20 @@
  * SOFTWARE.
  */
 
-const { src } = require('gulp');
-const mocha = require('gulp-mocha');
+const glob = require('fast-glob');
+const Mocha = require('mocha');
 
-module.exports = function test() {
-  return src('test/test-*.js', { read: false }).pipe(
-    mocha({ reporter: 'nyan' })
-  );
+module.exports = async function test() {
+  const mocha = new Mocha({ reporter: 'nyan' });
+
+  for (const file of await glob('./test/test-*.js')) {
+    mocha.addFile(file);
+  }
+
+  return new Promise(resolve => {
+    mocha.run(failures => {
+      process.exitCode = failures ? 1 : 0;
+      resolve();
+    });
+  });
 };

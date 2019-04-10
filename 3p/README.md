@@ -146,10 +146,6 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Minify HTML with html-minifier.
 
-- [**`gulp-mocha`**](https://www.npmjs.com/package/sindresorhus/gulp-mocha) by **Sindre Sorhus** (⚖ MIT)
-
-  Run Mocha tests
-
 - [**`gulp-sass`**](https://github.com/dlmanning/gulp-sass) by **David Manning** (⚖ MIT)
 
   Gulp plugin for sass
@@ -161,6 +157,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 - [**`lodash.once`**](https://lodash.com/) by **[John-David Dalton](http://allyoucanleet.com/)** (⚖ MIT)
 
   The lodash method `_.once` exported as a module.
+
+- [**`mocha`**](https://mochajs.org/) by **[TJ Holowaychuk](mailto:tj@vision-media.ca)** (⚖ MIT)
+
+  simple, flexible, fun test framework
 
 - [**`node-fetch`**](https://github.com/bitinn/node-fetch) by **David Frank** (⚖ MIT)
 
