@@ -158,6 +158,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   The lodash method `_.once` exported as a module.
 
+- [**`node-fetch`**](https://github.com/bitinn/node-fetch) by **David Frank** (⚖ MIT)
+
+  A light-weight module that brings window.fetch to node.js
+
 - [**`prettier`**](https://prettier.io) by **James Long** (⚖ MIT)
 
   Prettier is an opinionated code formatter

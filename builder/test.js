@@ -25,7 +25,7 @@ const glob = require('fast-glob');
 const log = require('fancy-log');
 const path = require('path');
 
-function createRunner(runners, print, pushError) {
+function createRunner(runners, print, error) {
   return (sentence, test) => {
     runners.push(async () => {
       try {
@@ -33,7 +33,7 @@ function createRunner(runners, print, pushError) {
         print('🆗');
       } catch (e) {
         print('❗');
-        pushError(e, sentence);
+        error(e, sentence);
       }
     });
   };
