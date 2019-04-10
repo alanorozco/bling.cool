@@ -6,7 +6,9 @@
 </p>
 
 <p align="center">
-  [![Build Status](https://travis-ci.com/alanorozco/bling.cool.svg?branch=master)](https://travis-ci.com/alanorozco/bling.cool)
+  <a href="https://travis-ci.com/alanorozco/bling.cool">
+    <img alt="Build Status" src="https://travis-ci.com/alanorozco/bling.cool.svg?branch=master">
+  </a>
 </p>
 
 ## Using
