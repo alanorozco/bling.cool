@@ -83,6 +83,7 @@ function minify() {
 }
 
 const barebones = series(parallel(js, css), bundle);
+const dist = parallel(series(barebones, minify), copyassets);
 
 function watch() {
   serve();
@@ -100,7 +101,8 @@ function copyassets() {
 
 exports.barebones = barebones;
 exports.default = series(parallel(barebones, copyassets), watch);
-exports.dist = parallel(series(barebones, minify), copyassets);
+exports.dist = dist;
 exports.docs = docs;
+exports.integrate = series(dist, test);
 exports.test = test;
 exports.textures = textures;
