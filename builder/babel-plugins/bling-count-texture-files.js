@@ -21,30 +21,10 @@
  */
 
 const { blue, magenta } = require('colors');
-const { join: pathJoin } = require('path');
-const glob = require('fast-glob');
 const log = require('fancy-log');
+const textures = require('../textures');
 
 const declaratorName = 'textureAssetsCountReplaceMe';
-const globDir = pathJoin(__dirname, '../../assets/t*.gif');
-const validNameRe = /^.+\/t([0-9]+)\.gif$/;
-
-function getCount() {
-  const count =
-    1 +
-    glob
-      .sync(globDir)
-      .filter(path => validNameRe.test(path))
-      .reduce(
-        (max, path) =>
-          Math.max(max, parseInt(path.replace(validNameRe, '$1'), 10)),
-        -Infinity
-      );
-
-  log(magenta('Textures:'), 'found', blue(count), 'texture files.');
-
-  return count;
-}
 
 module.exports = function({ types: t }) {
   return {
@@ -56,7 +36,9 @@ module.exports = function({ types: t }) {
         if (!t.isNumericLiteral(node.init)) {
           return;
         }
-        node.init = t.numericLiteral(getCount());
+        const { length } = textures.all();
+        log(magenta('Textures:'), 'found', blue(length), 'texture files.');
+        node.init = t.numericLiteral(length);
       },
     },
   };

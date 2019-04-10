@@ -21,17 +21,18 @@
  */
 
 const { dest, parallel, series, src, watch: gulpWatch } = require('gulp');
+const { textures } = require('./builder/textures');
 const express = require('express');
 const babel = require('rollup-plugin-babel');
 const buffer = require('vinyl-buffer');
 const bundleIndex = require('./builder/bundle-index');
 const commonjs = require('rollup-plugin-commonjs');
+const docs = require('./builder/docs');
 const htmlmin = require('gulp-html-minifier');
 const rollup = require('rollup-stream');
 const rollupResolve = require('rollup-plugin-node-resolve');
 const sass = require('gulp-sass');
 const source = require('vinyl-source-stream');
-const docs = require('./builder/docs');
 
 function js() {
   return rollup({
@@ -98,3 +99,4 @@ exports.barebones = barebones;
 exports.default = series(parallel(barebones, copyassets), watch);
 exports.dist = parallel(series(barebones, minify), copyassets);
 exports.docs = docs;
+exports.textures = textures;

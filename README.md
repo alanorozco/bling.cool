@@ -37,6 +37,13 @@ For active development, run `gulp` to build, watch and serve on port `:8000`.
 
 ## Tools
 
+### Texture toolkit
+
+In order to manipulate GIF playback at a frame level on the client, this project extracts frames from the [texture files](/assets) into a set of
+base64-encoded sequences of frames in a JSON format.
+
+This can be run via `gulp textures`.
+
 ### Documentation generator
 
 A documentation generator is bundled as part of the build system, runnable via
