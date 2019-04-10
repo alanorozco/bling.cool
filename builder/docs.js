@@ -23,7 +23,7 @@
 const { blue, magenta } = require('colors');
 const { exec } = require('child_process');
 const { existsSync, lstatSync, readdir, readFile, writeFile } = require('fs');
-const { parallel } = require('gulp');
+const { parallel, series } = require('gulp');
 const { promisify } = require('util');
 const glob = require('fast-glob');
 const fonts = require('../artifacts/fonts');
@@ -188,8 +188,6 @@ async function threepAttribution() {
     })
   );
 
-  await prettier(readme);
-
   log(
     blue('Wrote'),
     '3p attribution:',
@@ -224,6 +222,13 @@ async function writeFirstLevelReadmes() {
   );
 }
 
-const docs = parallel(threepAttribution, writeFirstLevelReadmes);
+async function format() {
+  await prettier('*.md */*.md **/*.md');
+}
+
+const docs = series(
+  parallel(threepAttribution, writeFirstLevelReadmes),
+  format
+);
 
 module.exports = docs;
