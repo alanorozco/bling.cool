@@ -5,6 +5,10 @@
   ✨ bling text for the 21st century ✨
 </p>
 
+<p align="center">
+  [![Build Status](https://travis-ci.com/alanorozco/bling.cool.svg?branch=master)](https://travis-ci.com/alanorozco/bling.cool)
+</p>
+
 ## Using
 
 [Write some bling text.](https://bling.cool)
