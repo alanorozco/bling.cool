@@ -76,6 +76,7 @@ const mdPkgAttribution = ({
   description,
   author,
   maintainers,
+  contributors,
   license,
   licenses,
   homepage,
@@ -85,7 +86,7 @@ const mdPkgAttribution = ({
     name,
     description,
     url: pkgUrl(maybeUrl(homepage) || maybeUrl(repository) || name),
-    author: author || maintainers,
+    author: author || maintainers || contributors,
     license: license || (licenses ? licenses[0].type : licenses),
   });
 
@@ -96,18 +97,18 @@ const getActualAuthorName = author =>
     .replace(/[\(\{\[<\)\]\}>]/gi, '')
     .trim();
 
-function mdAuthorAttribution(author) {
+function mdAuthorAttribution(author, optUrl) {
   if (!author) {
     return '';
   }
-  if (author.name) {
-    return mdAuthorAttribution(author.name);
-  }
   if (Array.isArray(author)) {
-    return author.map(mdAuthorAttribution).join(', ');
+    return author.map(author => mdAuthorAttribution(author)).join(', ');
+  }
+  if (author.name) {
+    return mdAuthorAttribution(author.name, author.url);
   }
   const actualName = getActualAuthorName(author);
-  const maybeUrl = urlFromAuthorName(author);
+  const maybeUrl = optUrl || urlFromAuthorName(author);
   return `**${maybeUrl ? `[${actualName}](${maybeUrl})` : actualName}**`;
 }
 

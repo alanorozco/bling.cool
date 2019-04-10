@@ -130,7 +130,7 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Log things, prefixed with a timestamp.
 
-- [**`fast-glob`**](https://www.npmjs.com/package/mrmlnc/fast-glob) by **Denis Malinochkin** (⚖ MIT)
+- [**`fast-glob`**](https://www.npmjs.com/package/mrmlnc/fast-glob) by **[Denis Malinochkin](canonium.com)** (⚖ MIT)
 
   Is a faster `node-glob` alternative
 
@@ -142,7 +142,7 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   The streaming build system.
 
-- [**`gulp-html-minifier`**](https://github.com/origin1tech/gulp-html-minifier) by **Origin1 Technologies** (⚖ MIT)
+- [**`gulp-html-minifier`**](https://github.com/origin1tech/gulp-html-minifier) by **[Origin1 Technologies](https://github.com/origin1tech)** (⚖ MIT)
 
   Minify HTML with html-minifier.
 
@@ -198,7 +198,7 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Use conventional text streams at the start of your gulp or vinyl pipelines
 
-- [**`yargs`**](https://yargs.js.org/) by (⚖ MIT)
+- [**`yargs`**](https://yargs.js.org/) by **[Yargs Contributors](https://github.com/yargs/yargs/graphs/contributors)** (⚖ MIT)
 
   yargs the modern, pirate-themed, successor to optimist.
 
