@@ -162,10 +162,6 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Prettier is an opinionated code formatter
 
-- [**`rollup`**](https://github.com/rollup/rollup) by **Rich Harris** (⚖ MIT)
-
-  Next-generation ES module bundler
-
 - [**`rollup-plugin-babel`**](https://github.com/rollup/rollup-plugin-babel) by **Rich Harris** (⚖ MIT)
 
   Seamless integration between Rollup and Babel.
@@ -185,10 +181,6 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 - [**`through2`**](https://github.com/rvagg/through2.git) by **[Rod Vagg](https://github.com/rvagg)** (⚖ MIT)
 
   A tiny wrapper around Node.js streams.Transform (Streams2/3) to avoid explicit subclassing noise
-
-- [**`vinyl`**](https://www.npmjs.com/package/gulpjs/vinyl) by **[Gulp Team](http://gulpjs.com/)** (⚖ MIT)
-
-  Virtual file format.
 
 - [**`vinyl-buffer`**](https://github.com/hughsk/vinyl-buffer) by **[Hugh Kennedy](http://hughsk.io/)** (⚖ MIT)
 
