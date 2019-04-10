@@ -1,6 +1,7 @@
-# bling.cool
-
-✨ bling text for the 21st century ✨
+<p align="center">
+  <img src="https://i.imgur.com/2upuTBM.gif" alt="bling.cool"><br>
+  ✨ bling text for the 21st century ✨
+</p>
 
 ## Using
 
