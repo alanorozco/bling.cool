@@ -32,7 +32,7 @@ this project's dependencies through:
 yarn
 ```
 
-After that, you can build with:
+Make sure you've [installed `gulp-cli` globally.](https://gulpjs.com/docs/en/getting-started/quick-start) After that, you can build with:
 
 ```sh
 gulp dist
@@ -51,9 +51,22 @@ For active development, run `gulp` to build, watch and serve on port `:8000`.
 In order to manipulate GIF playback at a frame level on the client, this project extracts frames from the [texture files](/assets) into a set of
 base64-encoded sequences of frames in a JSON format.
 
-This can be run via `gulp textures`.
+The texture frame generator requires [`exiftool`](https://www.sno.phy.queensu.ca/~phil/exiftool/) and [`gifsicle`](https://www.lcdf.org/gifsicle/) installed on the local `PATH`. On macOS, these can be easily installed with [Homebrew](https://brew.sh/):
+
+```sh
+brew install gifsicle exiftool
+```
+
+Once installed, textures can be rebuilt via:
+
+```sh
+gulp textures
+```
 
 ### Documentation generator
 
-A documentation generator is bundled as part of the build system, runnable via
-`gulp docs`.
+A documentation generator is bundled as part of the build system, runnable via:
+
+```sh
+gulp docs
+```
