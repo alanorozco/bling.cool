@@ -153,6 +153,9 @@ function replaceGenerated(whole, partials) {
   return whole;
 }
 
+const nonFileDependencies = dependencies =>
+  Object.keys(dependencies).filter(k => !dependencies[k].startsWith('file:'));
+
 async function threepAttribution() {
   const readme = readmePath('./3p');
   const content = (await readFileAsync(readme)).toString();
@@ -163,8 +166,8 @@ async function threepAttribution() {
   )).map(mdAttribution);
 
   const { dependencies, devDependencies } = await parsePkg('./');
-  const allPkgs = Object.keys(dependencies).concat(
-    Object.keys(devDependencies)
+  const allPkgs = nonFileDependencies(dependencies).concat(
+    nonFileDependencies(devDependencies)
   );
 
   allPkgs.sort();
