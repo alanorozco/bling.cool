@@ -10,6 +10,9 @@
   <a href="https://travis-ci.com/alanorozco/bling.cool">
     <img alt="Build Status" src="https://travis-ci.com/alanorozco/bling.cool.svg?branch=master">
   </a>
+  <a href="https://codeclimate.com/github/alanorozco/bling.cool/maintainability">
+    <img src="https://api.codeclimate.com/v1/badges/a3f8b92b4e4d22b900ca/maintainability" />
+  </a>
 </p>
 
 ## Using
