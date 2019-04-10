@@ -22,6 +22,7 @@
 
 const { argv } = require('yargs');
 const { exec } = require('child_process');
+const { magenta } = require('colors');
 const { promisify } = require('util');
 const glob = require('fast-glob');
 const log = require('fancy-log');
