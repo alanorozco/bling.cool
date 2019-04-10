@@ -92,7 +92,9 @@ function watch() {
 }
 
 function copyassets() {
-  return src('./assets/*').pipe(dest('./dist/assets'));
+  return src(['./assets/*', './assets/**/*', '!*.md']).pipe(
+    dest('./dist/assets')
+  );
 }
 
 exports.barebones = barebones;
