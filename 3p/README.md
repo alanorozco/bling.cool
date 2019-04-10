@@ -146,6 +146,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Minify HTML with html-minifier.
 
+- [**`gulp-mocha`**](https://www.npmjs.com/package/sindresorhus/gulp-mocha) by **Sindre Sorhus** (⚖ MIT)
+
+  Run Mocha tests
+
 - [**`gulp-sass`**](https://github.com/dlmanning/gulp-sass) by **David Manning** (⚖ MIT)
 
   Gulp plugin for sass

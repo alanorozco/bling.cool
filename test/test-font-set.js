@@ -26,17 +26,14 @@ const googFontsUrl = require('../src/fonts/goog-fonts-url');
 
 const fonts = require('../artifacts/fonts');
 
-module.exports = [
-  'Hardcoded font set',
-  it => {
-    it('contains only fonts that point to valid stylesheets', async () => {
-      await Promise.all(
-        fonts.map(async ([name]) => {
-          const url = googFontsUrl(name);
-          const { ok } = await fetch(url);
-          expect(ok, url).to.be.true;
-        })
-      );
-    });
-  },
-];
+describe('Hardcoded font set', () => {
+  it('contains only fonts that point to valid stylesheets', async () => {
+    await Promise.all(
+      fonts.map(async ([name]) => {
+        const url = googFontsUrl(name);
+        const { ok } = await fetch(url);
+        expect(ok, url).to.be.true;
+      })
+    );
+  });
+});

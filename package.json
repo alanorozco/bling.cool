@@ -26,6 +26,7 @@
     "fast-glob": "^2.2.6",
     "gulp": "^4.0.0",
     "gulp-html-minifier": "^0.1.8",
+    "gulp-mocha": "^6.0.0",
     "gulp-sass": "^4.0.2",
     "jsdom": "^14.0.0",
     "node-fetch": "^2.3.0",

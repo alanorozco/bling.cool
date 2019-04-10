@@ -31,38 +31,34 @@ const readFileAsync = promisify(readFile);
 
 const b64gifmime = 'data:image/gif;base64,';
 
-module.exports = [
-  'Texture asset set',
-  it => {
-    const allTextureFiles = glob(path.join(dirs.textures.gif, 't*.gif'));
+describe('Texture asset set', () => {
+  const allTextureFiles = glob(path.join(dirs.textures.gif, 't*.gif'));
 
-    it('has respective JSON frames files', async () => {
-      const files = await allTextureFiles;
+  it('has respective JSON frames files', async () => {
+    const files = await allTextureFiles;
 
-      for (const file of files) {
-        const id = path.basename(file).replace(/[^0-9]+/g, '');
-        const expectedFile = path.join(dirs.textures.frames, `f${id}.json`);
-        expect(existsSync(expectedFile), path.basename(expectedFile)).to.be
-          .true;
-      }
-    });
+    for (const file of files) {
+      const id = path.basename(file).replace(/[^0-9]+/g, '');
+      const expectedFile = path.join(dirs.textures.frames, `f${id}.json`);
+      expect(existsSync(expectedFile), path.basename(expectedFile)).to.be.true;
+    }
+  });
 
-    it('has initial.json with first frames', async () => {
-      const initial = path.join(dirs.textures.frames, 'initial.json');
+  it('has initial.json with first frames', async () => {
+    const initial = path.join(dirs.textures.frames, 'initial.json');
 
-      expect(existsSync(initial), path.basename(initial)).to.be.true;
+    expect(existsSync(initial), path.basename(initial)).to.be.true;
 
-      const set = JSON.parse((await readFileAsync(initial)).toString());
+    const set = JSON.parse((await readFileAsync(initial)).toString());
 
-      expect(set).to.have.lengthOf((await allTextureFiles).length);
+    expect(set).to.have.lengthOf((await allTextureFiles).length);
 
-      for (const data of Object.values(set)) {
-        expect(data.startsWith(b64gifmime), 'Starts with base64 gif mimetype')
-          .to.be.true;
-        expect(data, 'Non-empty data').to.have.length.greaterThan(
-          b64gifmime.length
-        );
-      }
-    });
-  },
-];
+    for (const data of Object.values(set)) {
+      expect(data.startsWith(b64gifmime), 'Starts with base64 gif mimetype').to
+        .be.true;
+      expect(data, 'Non-empty data').to.have.length.greaterThan(
+        b64gifmime.length
+      );
+    }
+  });
+});

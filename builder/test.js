@@ -20,69 +20,11 @@
  * SOFTWARE.
  */
 
-const { blue, red } = require('colors');
-const glob = require('fast-glob');
-const log = require('fancy-log');
-const path = require('path');
+const { src } = require('gulp');
+const mocha = require('gulp-mocha');
 
-function createRunner(runners, print, error) {
-  return (sentence, test) => {
-    runners.push(async () => {
-      try {
-        await test();
-        print('🆗');
-      } catch (e) {
-        print('❗');
-        error(e, sentence);
-      }
-    });
-  };
-}
-
-module.exports = async function test() {
-  const files = await glob('./test/test-*.js');
-  const errors = [];
-  const line = [];
-  const runners = [];
-
-  const leftPadding = Array('[00:00:00]'.length)
-    .fill(' ')
-    .join('');
-
-  const printToLine = c => {
-    line.push(c);
-    if (line.length > 1) {
-      process.stdout.clearLine();
-      process.stdout.cursorTo(0);
-    }
-    process.stdout.write(`${leftPadding} ${line.join(' ')}`);
-  };
-
-  log(blue('Running tests...'));
-
-  for (const file of files) {
-    const pushError = (e, sentence) => {
-      errors.push([e, path.basename(file), title, sentence]);
-    };
-
-    const runner = createRunner(runners, printToLine, pushError);
-    const [title, tasks] = require(require.resolve(
-      path.relative(__dirname, file)
-    ));
-
-    tasks(runner);
-  }
-
-  await Promise.all(runners.map(fn => fn()));
-
-  process.stdout.write('\n');
-
-  for (const [e, file, title, sentence] of errors) {
-    console.log(`${red(file)}:`, title, sentence);
-    console.log(e.stack);
-  }
-
-  if (errors.length > 0) {
-    process.exit(1);
-  }
+module.exports = function test() {
+  return src('test/test-*.js', { read: false }).pipe(
+    mocha({ reporter: 'nyan' })
+  );
 };
