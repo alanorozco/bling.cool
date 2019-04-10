@@ -20,11 +20,32 @@
  * SOFTWARE.
  */
 
+const { argv } = require('yargs');
+const { exec } = require('child_process');
+const { promisify } = require('util');
 const glob = require('fast-glob');
+const log = require('fancy-log');
 const Mocha = require('mocha');
 
+const execAsync = promisify(exec);
+
+const modifiedFilesGitCmd = 'git diff-tree --no-commit-id --name-only -r HEAD';
+
+const modifiedFiles = async () =>
+  (await execAsync(modifiedFilesGitCmd)).stdout.trim().split('\n');
+
 module.exports = async function test() {
-  const mocha = new Mocha({ reporter: 'nyan' });
+  const reporter = argv.travis ? 'dot' : 'nyan';
+
+  const mocha = new Mocha({ reporter });
+
+  if (argv.travis) {
+    if (!(await modifiedFiles()).find(f => /\.(js|json|gif)$/.test(f))) {
+      log(magenta('No affecting files modified.'));
+      log('Skipping tests.');
+      return;
+    }
+  }
 
   for (const file of await glob('./test/test-*.js')) {
     mocha.addFile(file);

@@ -198,4 +198,8 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Use conventional text streams at the start of your gulp or vinyl pipelines
 
+- [**`yargs`**](https://yargs.js.org/) by (⚖ MIT)
+
+  yargs the modern, pirate-themed, successor to optimist.
+
 <!-- /gen:packages -->
