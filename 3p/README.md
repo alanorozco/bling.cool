@@ -1,5 +1,11 @@
 # 3rd party code Ɛ̸ assets
 
+This project uses a variety of 3rd party resources:
+
+- [Resources in this directory](#in-this-directory)
+- [Fonts](#fonts)
+- [Javascript magic ✨](#javascript-magic-)
+
 ## In this directory
 
 This directory holds 3rd party code that is not available via package management
