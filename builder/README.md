@@ -1,3 +1,3 @@
 # `builder`
 
-Modules required to build the [`src`](../src/README.md).
+Modules required to build the [`src`](../src/).
