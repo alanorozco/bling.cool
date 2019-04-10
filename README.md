@@ -3,6 +3,9 @@
     <img src="https://i.imgur.com/2upuTBM.gif" alt="bling.cool">
   </a><br>
   ✨ bling text for the 21st century ✨<br>
+</p>
+
+<p align="center">
   <em>webfonts (ligatures!), CSS transforms, live editing, modern Javascript, oh my!</em>
 </p>
 
