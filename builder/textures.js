@@ -66,11 +66,10 @@ function fallbackToPreviousFrame(allFrames, frame, i) {
 }
 
 async function expandFrames(fromGif, toJson) {
-  const promises = Array(await frameCount(fromGif))
+  const frameOptionals = Array(await frameCount(fromGif))
     .fill(null)
     .map((_, f) => extractFrame(fromGif, f));
-  const allResults = await Promise.all(promises);
-  const sequence = allResults.map((frame, i) =>
+  const sequence = (await Promise.all(frameOptionals)).map((frame, i) =>
     fallbackToPreviousFrame(allResults, frame, i)
   );
   await writeJson(toJson, sequence);
@@ -87,7 +86,11 @@ async function textures() {
     })
   );
 
-  await writeJson(pathJoin(framesDir, './initial.json'), firstFrameMap);
+  const firstFrameSet = Object.keys(firstFrameMap)
+    .sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
+    .map(k => firstFrameMap[k]);
+
+  await writeJson(pathJoin(framesDir, './initial.json'), firstFrameSet);
 }
 
 exports.all = all;

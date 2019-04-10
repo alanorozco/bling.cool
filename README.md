@@ -53,10 +53,10 @@ gulp
 
 ## Tools
 
-### Texture toolkit
+### Texture extractor
 
-In order to manipulate GIF playback at a frame level on the client, this project extracts frames from the [texture files](/assets) into a set of
-base64-encoded sequences of frames in a JSON format.
+In order to manipulate GIF playback at a frame level on the client, this project extracts frames from the [animated textures](/assets) into
+base64-encoded sequences of plain GIFs wrapped in a JSON format.
 
 The texture frame generator requires [`exiftool`](https://www.sno.phy.queensu.ca/~phil/exiftool/) and [`gifsicle`](https://www.lcdf.org/gifsicle/) installed on the local `PATH`. On macOS, these can be easily installed with [Homebrew](https://brew.sh/):
 
