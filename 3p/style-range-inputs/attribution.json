@@ -1,0 +1,8 @@
+{
+  "name": "darlanrod/input-range-sass",
+  "description": "Styling Cross-Browser Compatible Range Inputs with Sass",
+  "url": "https://github.com/darlanrod/input-range-sass",
+  "author": "Darlan Rod https://github.com/darlanrod",
+  "license": "MIT",
+  "modificationPurpose": "Simplified for the use-case of this project."
+}

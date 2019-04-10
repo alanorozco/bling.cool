@@ -31,6 +31,7 @@ const rollup = require('rollup-stream');
 const rollupResolve = require('rollup-plugin-node-resolve');
 const sass = require('gulp-sass');
 const source = require('vinyl-source-stream');
+const docs = require('./builder/docs');
 
 function js() {
   return rollup({
@@ -96,3 +97,4 @@ function copyassets() {
 exports.barebones = barebones;
 exports.default = series(parallel(barebones, copyassets), watch);
 exports.dist = parallel(series(barebones, minify), copyassets);
+exports.docs = docs;

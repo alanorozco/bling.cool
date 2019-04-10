@@ -9,9 +9,13 @@
 _This is a buggy work in progress, things will break._ GIF and markup output are
 TODO.
 
+## 3rd party code Ɛ̸ assets
+
+This project uses a variety of [3rd party resources](./3p/README.md) to bling it up.
+
 ## Building
 
-This project uses [`yarn`](https://yarnpkg.com) for package management.
+[`yarn`](https://yarnpkg.com) is used for package management.
 [Install `yarn`,](https://yarnpkg.com/en/docs/install#mac-stable) then install
 this project's dependencies through:
 
@@ -30,3 +34,10 @@ directory containing the texture files. `*.js` and `*.css` files in the `dist/`
 directory are build artifacts and not necessary for deployment.
 
 For active development, run `gulp` to build, watch and serve on port `:8000`.
+
+## Tools
+
+### Documentation generator
+
+A documentation generator is bundled as part of the build system, runnable via
+`gulp docs`.
