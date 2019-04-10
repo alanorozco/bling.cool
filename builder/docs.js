@@ -144,8 +144,8 @@ function pkgUrl(nameOrUrl) {
 
 function replaceGenerated(whole, partials) {
   for (let id of Object.keys(partials)) {
-    const delStart = `<!-- gen:start:${id} -->`;
-    const delEnd = `<!-- gen:end:${id} -->`;
+    const delStart = `<!-- gen:${id} -->`;
+    const delEnd = `<!-- /gen:${id} -->`;
     const [head, staleTail] = whole.split(delStart);
     const [_, tail] = staleTail.split(delEnd);
     whole = `${head || ''}${delStart}\n${partials[id]}\n${delEnd}${tail || ''}`;

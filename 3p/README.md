@@ -11,14 +11,14 @@ This project uses a variety of 3rd party resources:
 This directory holds 3rd party code that is not available via package management
 or were patched somehow, **including:**
 
-<!-- gen:start:3p -->
+<!-- gen:3p -->
 
 - [**`darlanrod/input-range-sass`**](https://github.com/darlanrod/input-range-sass) originally by **[Darlan Rod](https://github.com/darlanrod)** (⚖ MIT)<br>
   _Simplified for the use-case of this project._
 
   Styling Cross-Browser Compatible Range Inputs with Sass
 
-<!-- gen:end:3p -->
+<!-- /gen:3p -->
 
 ## Other 3rd party code Ɛ̸ assets
 
@@ -29,7 +29,7 @@ in this directory since they're available via a CDN or package management.
 
 Fonts are provided by [Google Fonts](http://fonts.google.com), **including:**
 
-<!-- gen:start:fonts -->
+<!-- gen:fonts -->
 
 - [**Abril Fatface**](https://fonts.google.com/specimen/Abril+Fatface)
 - [**Alfa Slab One**](https://fonts.google.com/specimen/Alfa+Slab+One)
@@ -77,14 +77,14 @@ Fonts are provided by [Google Fonts](http://fonts.google.com), **including:**
 - [**Vampiro One**](https://fonts.google.com/specimen/Vampiro+One)
 - [**Vast Shadow**](https://fonts.google.com/specimen/Vast+Shadow)
 - [**ZCOOL KuaiLe**](https://fonts.google.com/specimen/ZCOOL+KuaiLe)
-  <!-- gen:end:fonts -->
+  <!-- /gen:fonts -->
 
 ### Javascript magic ✨
 
 Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 [`yarn`](https://yarnpkg.com), **including:**
 
-<!-- gen:start:packages -->
+<!-- gen:packages -->
 
 - [**`@babel/core`**](https://babeljs.io/) by **[Sebastian McKenzie](mailto:sebmck@gmail.com)** (⚖ MIT)
 
@@ -190,4 +190,4 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Use conventional text streams at the start of your gulp or vinyl pipelines
 
-<!-- gen:end:packages -->
+<!-- /gen:packages -->
