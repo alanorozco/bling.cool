@@ -88,6 +88,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   A Babel preset for each environment.
 
+- [**`chai`**](http://chaijs.com) by **[Jake Luer](mailto:jake@alogicalparadox.com)** (⚖ MIT)
+
+  BDD/TDD assertion library for node.js and the browser. Test framework agnostic.
+
 - [**`colors`**](https://github.com/Marak/colors.js) by **Marak Squires** (⚖ MIT)
 
   get colors in your node.js console
