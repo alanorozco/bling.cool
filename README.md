@@ -38,11 +38,18 @@ Make sure you've [installed `gulp-cli` globally.](https://gulpjs.com/docs/en/get
 gulp dist
 ```
 
-This will output a single `dist/index.html` entry file and an `/assets/`
-directory containing the texture files. `*.js` and `*.css` files in the `dist/`
-directory are build artifacts and not necessary for deployment.
+This will output a `dist/index.html` entry file and a `dist/assets/`
+directory containing the texture files. Both of these can be served from a static server's root.
 
-For active development, run `gulp` to build, watch and serve on port `:8000`.
+Additionally, a `dist/.workspace/` directory contains intermediate build artifacts that are _not_ necessary for deployment.
+
+### Active development
+
+To build, watch and serve on port `:8000`, run:
+
+```sh
+gulp
+```
 
 ## Tools
 

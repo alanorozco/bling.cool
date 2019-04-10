@@ -43,13 +43,13 @@ function js() {
     plugins: [rollupResolve(), commonjs(), babel()],
   })
     .pipe(source('index.js'))
-    .pipe(dest('./dist'));
+    .pipe(dest('./dist/.workspace'));
 }
 
 function css() {
   return src('./src/index.scss')
     .pipe(sass().on('error', sass.logError))
-    .pipe(dest('./dist'));
+    .pipe(dest('./dist/.workspace'));
 }
 
 function serve() {
@@ -63,8 +63,8 @@ function bundle() {
     .pipe(buffer())
     .pipe(
       bundleIndex({
-        js: './dist/index.js',
-        css: './dist/index.css',
+        js: './dist/.workspace/index.js',
+        css: './dist/.workspace/index.css',
       })
     )
     .pipe(dest('./dist'));
