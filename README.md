@@ -2,7 +2,8 @@
   <a href="https://bling.cool/" target="_blank">
     <img src="https://i.imgur.com/2upuTBM.gif" alt="bling.cool">
   </a><br>
-  ✨ bling text for the 21st century ✨
+  ✨ bling text for the 21st century ✨<br>
+  <em>webfonts (ligatures!), CSS transforms, live editing, modern Javascript, oh my!</em>
 </p>
 
 <p align="center">
@@ -77,3 +78,6 @@ A documentation generator is bundled as part of the build system, runnable via:
 ```sh
 gulp docs
 ```
+
+This generates the attributions on [`3p/README.md`](./3p/README.md) and an
+empty `README.md` file for every top-level directory that doesn't contain one.
