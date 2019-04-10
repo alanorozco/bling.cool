@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+const { dirs } = require('../config');
 const { FontLoader } = require('./fonts/font-loader');
 const focusAtEnd = require('./input/focus-at-end');
 const once = require('lodash.once');
@@ -27,7 +28,7 @@ const once = require('lodash.once');
 const fonts = require('../artifacts/fonts');
 const phrases = require('../artifacts/phrases');
 
-const textureUrl = index => `/assets/t${index}.gif`;
+const textureUrl = index => `/${dirs.textures.gif}/t${index}.gif`;
 
 // The following count is dynamically generated at build-time.
 // If this name changes, so must the `bling-count-texture-files` babel plugin.

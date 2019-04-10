@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+const { dirs } = require('../config');
 const { existsSync, readFile } = require('fs');
 const { expect } = require('chai');
 const { promisify } = require('util');
@@ -33,33 +34,27 @@ const b64gifmime = 'data:image/gif;base64,';
 module.exports = [
   'Texture asset set',
   it => {
-    const allTextureFiles = glob('./dist/assets/t*.gif');
+    const allTextureFiles = glob(path.join(dirs.textures.gif, 't*.gif'));
 
     it('has respective JSON frames files', async () => {
       const files = await allTextureFiles;
 
       for (const file of files) {
         const id = path.basename(file).replace(/[^0-9]+/g, '');
-        const expectedFile = path.join(
-          path.dirname(file),
-          `/frames/f${id}.json`
-        );
+        const expectedFile = path.join(dirs.textures.frames, `f${id}.json`);
         expect(existsSync(expectedFile), path.basename(expectedFile)).to.be
           .true;
       }
     });
 
     it('has initial.json with first frames', async () => {
-      const initial = path.join(
-        path.dirname((await allTextureFiles)[0]),
-        '/frames/initial.json'
-      );
+      const initial = path.join(dirs.textures.frames, 'initial.json');
 
       expect(existsSync(initial), path.basename(initial)).to.be.true;
 
       const set = JSON.parse((await readFileAsync(initial)).toString());
 
-      expect(Object.keys(set)).to.have.lengthOf((await allTextureFiles).length);
+      expect(set).to.have.lengthOf((await allTextureFiles).length);
 
       for (const data of Object.values(set)) {
         expect(data.startsWith(b64gifmime), 'Starts with base64 gif mimetype')

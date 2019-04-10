@@ -38,8 +38,8 @@ Make sure you've [installed `gulp-cli` globally.](https://gulpjs.com/docs/en/get
 gulp dist
 ```
 
-This will output a `dist/index.html` entry file and a `dist/assets/`
-directory containing the texture files. Both of these can be served from a static server's root.
+This will output a `dist/index.html` entry file and a `dist/textures/`
+directory. Both of these can be served from a static server's root.
 
 Additionally, a `dist/.workspace/` directory contains intermediate build artifacts that are _not_ necessary for deployment.
 
@@ -55,7 +55,7 @@ gulp
 
 ### Texture extractor
 
-In order to manipulate GIF playback at a frame level on the client, this project extracts frames from the [animated textures](/assets) into
+In order to manipulate GIF playback at a frame level on the client, this project extracts frames from the [animated textures](/textures) into
 base64-encoded sequences of plain GIFs wrapped in a JSON format.
 
 The texture frame generator requires [`exiftool`](https://www.sno.phy.queensu.ca/~phil/exiftool/) and [`gifsicle`](https://www.lcdf.org/gifsicle/) installed on the local `PATH`. On macOS, these can be easily installed with [Homebrew](https://brew.sh/):

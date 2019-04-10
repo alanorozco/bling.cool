@@ -21,6 +21,7 @@
  */
 
 const { dest, parallel, series, src, watch: gulpWatch } = require('gulp');
+const { dirs } = require('./config');
 const { textures } = require('./builder/textures');
 const express = require('express');
 const babel = require('rollup-plugin-babel');
@@ -29,6 +30,7 @@ const bundleIndex = require('./builder/bundle-index');
 const commonjs = require('rollup-plugin-commonjs');
 const docs = require('./builder/docs');
 const htmlmin = require('gulp-html-minifier');
+const path = require('path');
 const rollup = require('rollup-stream');
 const rollupResolve = require('rollup-plugin-node-resolve');
 const sass = require('gulp-sass');
@@ -43,13 +45,13 @@ function js() {
     plugins: [rollupResolve(), commonjs(), babel()],
   })
     .pipe(source('index.js'))
-    .pipe(dest('./dist/.workspace'));
+    .pipe(dest(dirs.dist.workspace));
 }
 
 function css() {
   return src('./src/index.scss')
     .pipe(sass().on('error', sass.logError))
-    .pipe(dest('./dist/.workspace'));
+    .pipe(dest(dirs.dist.workspace));
 }
 
 function serve() {
@@ -63,15 +65,15 @@ function bundle() {
     .pipe(buffer())
     .pipe(
       bundleIndex({
-        js: './dist/.workspace/index.js',
-        css: './dist/.workspace/index.css',
+        js: path.join(dirs.dist.workspace, 'index.js'),
+        css: path.join(dirs.dist.workspace, 'index.css'),
       })
     )
-    .pipe(dest('./dist'));
+    .pipe(dest(dirs.dist.root));
 }
 
 function minify() {
-  return src('./dist/*.html')
+  return src(path.join(dirs.dist.root, '*.html'))
     .pipe(
       htmlmin({
         collapseWhitespace: true,
@@ -79,28 +81,40 @@ function minify() {
         minifyJS: { toplevel: true },
       })
     )
-    .pipe(dest('./dist'));
+    .pipe(dest(dirs.dist.root));
+}
+
+function copyTextureFiles(from) {
+  return src([path.join(from, '*'), '!*.md']).pipe(
+    dest(path.join(dirs.dist.root, from))
+  );
 }
 
 const barebones = series(parallel(js, css), bundle);
-const dist = parallel(series(barebones, minify), copyassets);
+
+const copyTextureFrames = () => copyTextureFiles(dirs.textures.frames);
+const copyTextureGifs = () => copyTextureFiles(dirs.textures.gif);
+
+const copyTextures = parallel(copyTextureGifs, copyTextureFrames);
+
+const dist = parallel(series(barebones, minify), copyTextures);
 
 function watch() {
   serve();
   gulpWatch(
-    ['3p/*', 'artifacts/*', 'assets/*', 'src/*'],
-    parallel(copyassets, barebones)
-  );
-}
-
-function copyassets() {
-  return src(['./assets/*', './assets/**/*', '!*.md']).pipe(
-    dest('./dist/assets')
+    [
+      '3p/*',
+      'artifacts/*',
+      'src/*',
+      path.join(dirs.textures.gif, '*'),
+      path.join(dirs.textures.frames, '*'),
+    ],
+    parallel(copyTextures, barebones)
   );
 }
 
 exports.barebones = barebones;
-exports.default = series(parallel(barebones, copyassets), watch);
+exports.default = series(parallel(barebones, copyTextures), watch);
 exports.dist = dist;
 exports.docs = docs;
 exports.integrate = series(dist, test);

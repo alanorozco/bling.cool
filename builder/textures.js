@@ -21,23 +21,22 @@
  */
 
 const { basename, join: pathJoin } = require('path');
-const { writeFile } = require('fs');
+const { Buffer } = require('buffer');
+const { dirs } = require('../config');
 const { exec } = require('child_process');
 const { promisify } = require('util');
-const { Buffer } = require('buffer');
+const { writeFile } = require('fs');
 const glob = require('fast-glob');
 
 const execAsync = promisify(exec);
 const writeFileAsync = promisify(writeFile);
 
-const rootDir = './assets/';
-const framesDir = pathJoin(rootDir, 'frames');
-const globDir = pathJoin(rootDir, 't*.gif');
+const gifGlobDir = pathJoin(dirs.textures.gif, 't*.gif');
 const validNameRe = /^.+\/t([0-9]+)\.gif$/;
 
 const b64mime = 'data:image/gif;base64,';
 
-const all = () => glob.sync(globDir).filter(path => validNameRe.test(path));
+const all = () => glob.sync(gifGlobDir).filter(path => validNameRe.test(path));
 
 const frameCount = async path =>
   parseInt((await execAsync(`exiftool -b -FrameCount ${path}`)).stdout, 10);
@@ -69,8 +68,9 @@ async function expandFrames(fromGif, toJson) {
   const frameOptionals = Array(await frameCount(fromGif))
     .fill(null)
     .map((_, f) => extractFrame(fromGif, f));
-  const sequence = (await Promise.all(frameOptionals)).map((frame, i) =>
-    fallbackToPreviousFrame(allResults, frame, i)
+  const allFrames = await Promise.all(frameOptionals);
+  const sequence = allFrames.map((frame, i) =>
+    fallbackToPreviousFrame(allFrames, frame, i)
   );
   await writeJson(toJson, sequence);
 }
@@ -82,7 +82,7 @@ async function textures() {
     all().map(async path => {
       const i = basename(path).replace(/[^0-9]+/g, '');
       firstFrameMap[i] = await extractFrame(path, 0);
-      await expandFrames(path, pathJoin(framesDir, `./f${i}.json`));
+      await expandFrames(path, pathJoin(dirs.textures.frames, `f${i}.json`));
     })
   );
 
@@ -90,7 +90,10 @@ async function textures() {
     .sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
     .map(k => firstFrameMap[k]);
 
-  await writeJson(pathJoin(framesDir, './initial.json'), firstFrameSet);
+  await writeJson(
+    pathJoin(dirs.textures.frames, 'initial.json'),
+    firstFrameSet
+  );
 }
 
 exports.all = all;
