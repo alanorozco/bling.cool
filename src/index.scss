@@ -46,6 +46,14 @@ body {
   min-height: 100vh;
 }
 
+[amp] > body {
+  padding: 0;
+}
+
+amp-script {
+  padding: $marginUnit;
+}
+
 .not-ready {
   opacity: 0;
   pointer-events: none;
@@ -105,8 +113,7 @@ main,
   overflow: hidden;
 }
 
-div[contenteditable],
-.editable-shadow {
+.editable-wrap > * {
   outline: none;
   text-align: center;
   background-clip: text;
@@ -129,13 +136,41 @@ div[contenteditable],
   line-height: 1.3;
 }
 
-div[contenteditable] {
+[amp] .editable-wrap > * {
+  font-size: 72px; // default for AMP (static)
+
+  // they have to be fixed size :(
+  position: absolute;
+  overflow: hidden;
+  width: calc(100% - #{2 * $marginUnit});
+  height: 40vh;
+  text-align: center;
+}
+
+[amp] .editable-wrap {
+  display: block;
+}
+
+.textured {
+  background-color: $blue;
+}
+
+#editable {
   caret-color: rgba($blue, 0.8);
 
   // ayy lmao 👽
   // hack to make chrome show the editor caret when the area is empty.
   min-width: 10px;
   text-align: center;
+}
+
+textarea#editable {
+  color: transparent;
+  -webkit-text-fill-color: auto;
+  background-clip: border-box;
+  background: transparent;
+  border: none;
+  resize: none;
 }
 
 footer a {

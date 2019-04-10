@@ -31,9 +31,10 @@ const readFileAsync = promisify(readFile);
 function pipedJsdom(mutate) {
   return through.obj(async function(file, encoding, callback) {
     const html = file.contents.toString(encoding);
-    const { document: doc } = new JSDOM(html).window;
+    const dom = new JSDOM(html);
+    const { document: doc } = dom.window;
     await mutate(doc);
-    file.contents = toStream(doc.documentElement.outerHTML);
+    file.contents = toStream(dom.serialize());
     this.push(file);
     callback();
   });

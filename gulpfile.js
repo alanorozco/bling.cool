@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+const { argv } = require('yargs');
 const { dest, parallel, series, src, watch: gulpWatch } = require('gulp');
 const { dirs } = require('./config');
 const { textures } = require('./builder/textures');
@@ -36,17 +37,33 @@ const rollupResolve = require('rollup-plugin-node-resolve');
 const sass = require('gulp-sass');
 const source = require('vinyl-source-stream');
 const test = require('./builder/test');
+const uglify = require('gulp-uglifyjs');
 
-function js() {
+const fonts = require('./artifacts/fonts');
+const fontsSubset = require('./builder/fonts-subset');
+const textureSet = require('./builder/textures');
+
+function jsRollup(input) {
   return rollup({
-    input: 'src/index.js',
+    input: path.join('src', input),
     format: 'iife',
     name: 'bling',
     plugins: [rollupResolve(), commonjs(), babel()],
-  })
-    .pipe(source('index.js'))
-    .pipe(dest(dirs.dist.workspace));
+  }).pipe(source(input));
 }
+
+function jsDefault() {
+  return jsRollup('index.js').pipe(dest(dirs.dist.workspace));
+}
+
+function jsAmp(done) {
+  if (!argv.amp) {
+    return done();
+  }
+  return jsRollup('index.amp.js').pipe(dest(dirs.dist.root));
+}
+
+const js = parallel(jsDefault, jsAmp);
 
 function css() {
   return src('./src/index.scss')
@@ -55,16 +72,30 @@ function css() {
 }
 
 function serve() {
+  const port = 8000;
   const app = express();
-  app.use(express.static('dist'));
-  app.listen(8000);
+  app.use(
+    express.static(dirs.dist.root, {
+      setHeaders(res, _) {
+        if (!argv.amp) {
+          return;
+        }
+        res.setHeader(
+          'AMP-Access-Control-Allow-Source-Origin',
+          `http://localhost:${port}`
+        );
+      },
+    })
+  );
+  app.listen(port);
 }
 
-function bundle() {
+function bundleDefault() {
   return src('./src/index.html')
     .pipe(buffer())
     .pipe(
       bundleIndex({
+        fonts,
         js: path.join(dirs.dist.workspace, 'index.js'),
         css: path.join(dirs.dist.workspace, 'index.css'),
       })
@@ -72,17 +103,52 @@ function bundle() {
     .pipe(dest(dirs.dist.root));
 }
 
-function minify() {
-  return src(path.join(dirs.dist.root, '*.html'))
+function bundleAmp(done) {
+  if (!argv.amp) {
+    return done();
+  }
+  const [selectedFont] = fontsSubset[
+    Math.floor(fontsSubset.length * Math.random())
+  ];
+  return src('./src/index.amp.html')
+    .pipe(buffer())
     .pipe(
-      htmlmin({
-        collapseWhitespace: true,
-        minifyCSS: true,
-        minifyJS: { toplevel: true },
+      bundleIndex({
+        css: path.join(dirs.dist.workspace, 'index.css'),
+        fonts: fontsSubset,
+        selectedFont,
+        selectedTexture: Math.floor(textureSet.all().length * Math.random()),
       })
     )
     .pipe(dest(dirs.dist.root));
 }
+
+const bundle = parallel(bundleDefault, bundleAmp);
+
+function minifyHtml() {
+  return src(path.join(dirs.dist.root, '*.html'))
+    .pipe(
+      htmlmin({
+        collapseBooleanAttributes: true,
+        collapseWhitespace: true,
+        minifyCSS: true,
+        minifyJS: { toplevel: true },
+        removeAttributeQuotes: true,
+        removeComments: true,
+        sortAttributes: true,
+        sortClassName: true,
+      })
+    )
+    .pipe(dest(dirs.dist.root));
+}
+
+function uglifyJs() {
+  return src(path.join(dirs.dist.root, '*.js'))
+    .pipe(uglify())
+    .pipe(dest(dirs.dist.root));
+}
+
+const minify = parallel(minifyHtml, uglifyJs);
 
 function copyTextureFiles(from) {
   return src([path.join(from, '*'), '!*.md']).pipe(

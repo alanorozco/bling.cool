@@ -169,13 +169,9 @@ const setHueOnSlide = ({ target }) => {
 };
 
 fonts.forEach(([name], i) => {
-  const option = doc.createElement('option');
-  option.value = i;
-  option.innerText = name;
   if (name == fontName) {
-    option.setAttribute('selected', '');
+    doc.querySelector(`option[value="${i}"]`).setAttribute('selected', '');
   }
-  fontSelect.appendChild(option);
 });
 
 fontSelect.addEventListener('change', ({ target }) => {

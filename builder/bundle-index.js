@@ -19,43 +19,145 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+const { dirs } = require('../config');
 const { pipedJsdom, elementWithFileContents } = require('./jsdom-util');
 const { promisify } = require('util');
 const { readFile } = require('fs');
 
 const readFileAsync = promisify(readFile);
 
-module.exports = function bundleIndex({ css, js }) {
+function setTitle(doc, name) {
+  const title = doc.querySelector('title');
+  title.textContent = title.textContent.replace('[package.name]', name);
+}
+
+function setDescription(doc, description) {
+  const metaDesc = doc.querySelector('meta[name=description]');
+  metaDesc.setAttribute(
+    'content',
+    metaDesc
+      .getAttribute('content')
+      .replace('[package.description]', description)
+  );
+}
+
+async function bundleStyle(doc, css) {
+  const existingStyle = doc.head.querySelector('style');
+  const style = await elementWithFileContents(doc, 'style', css);
+
+  if (existingStyle) {
+    for (const { name, value } of existingStyle.attributes) {
+      style.setAttribute(name, value);
+    }
+    existingStyle.replaceWith(style);
+  } else {
+    doc.head.appendChild(style);
+  }
+}
+
+function setDefaultText(containers) {
+  for (const container of containers) {
+    container.textContent = container.textContent.replace(
+      '[default.text]',
+      'Hello World!'
+    );
+  }
+}
+
+function setFonts(doc, fonts, selectedFont) {
+  const select = doc.querySelector('select#font');
+  if (!select) {
+    return;
+  }
+  fonts.forEach(([name], i) => {
+    const option = doc.createElement('option');
+    option.value = i;
+    option.textContent = name;
+    if (name == selectedFont) {
+      option.setAttribute('selected', '');
+    }
+    select.appendChild(option);
+  });
+  for (const { style } of doc.querySelectorAll('.default-font')) {
+    style.fontFamily = `'${selectedFont}', sans-serif`;
+  }
+}
+
+function setFontPreload(linkRel, fonts) {
+  if (!linkRel) {
+    return;
+  }
+  linkRel.setAttribute(
+    'href',
+    linkRel
+      .getAttribute('href')
+      .replace(
+        '[font.all]',
+        fonts.map(([name]) => name.replace(/\s+/, '+')).join('|')
+      )
+  );
+  linkRel.removeAttribute('class');
+}
+
+function setTexture(doc, selected) {
+  if (selected === undefined) {
+    return;
+  }
+  for (const { style } of doc.querySelectorAll('.textured')) {
+    style.backgroundImage = `url(${dirs.textures.gif}/t${selected}.gif)`;
+  }
+}
+
+module.exports = function bundleIndex({
+  css,
+  js,
+  fonts,
+  selectedFont,
+  selectedTexture,
+}) {
   return pipedJsdom(async doc => {
     const { name, description, repository, author } = JSON.parse(
       (await readFileAsync('./package.json')).toString()
     );
 
-    const title = doc.querySelector('title');
-    title.textContent = title.textContent.replace('[package.name]', name);
+    setTitle(doc, name);
+    setDescription(doc, description);
 
-    const metaDesc = doc.querySelector('meta[name=description]');
-    metaDesc.setAttribute(
-      'content',
-      metaDesc
-        .getAttribute('content')
-        .replace('[package.description]', description)
-    );
+    setFonts(doc, fonts, selectedFont);
+    setFontPreload(doc.querySelector('link.font-preload'), fonts);
 
-    doc.head.appendChild(await elementWithFileContents(doc, 'style', css));
-    doc.body.appendChild(await elementWithFileContents(doc, 'script', js));
+    setDefaultText(doc.querySelectorAll('.default-text-container'));
+
+    setTexture(doc, selectedTexture);
+
+    await bundleStyle(doc, css);
+
+    if (js) {
+      doc.body.appendChild(await elementWithFileContents(doc, 'script', js));
+    }
 
     const h1 = doc.querySelector('h1');
     h1.textContent = description;
 
     const authorLink = doc.querySelector('a#meta-author');
-    authorLink.setAttribute('href', author.url);
-    authorLink.textContent = authorLink.textContent.replace(
-      '[package.author.name]',
-      author.name
-    );
+    if (authorLink) {
+      authorLink.setAttribute('href', author.url);
+      authorLink.textContent = authorLink.textContent.replace(
+        '[package.author.name]',
+        author.name
+      );
+    }
 
     const repoLink = doc.querySelector('a#meta-repository');
-    repoLink.setAttribute('href', repository);
+    if (repoLink) {
+      repoLink.setAttribute('href', repository);
+    }
+
+    if (doc.documentElement.hasAttribute('amp')) {
+      doc.head.innerHTML = doc.head.innerHTML.replace(
+        '<!-- AMP_BOILERPLATE -->',
+        (await readFileAsync('./artifacts/amp-boilerplate.html')).toString()
+      );
+    }
   });
 };
