@@ -13,7 +13,7 @@ Additionally, an ⚡`amp-script`-powered demo can be built from this repo,
 
   The AMP web component library.
 
-- [**`ampproject/workerdom`**](https://github.com/darlanrod/input-range-sass) by **[Kristofer Baxter](https://github.com/kristoferbaxter)** (⚖ Apache 2.0)<br>
+- [**`ampproject/worker-dom`**](https://github.com/ampproject/worker-dom) by **[Kristofer Baxter](https://github.com/kristoferbaxter)** (⚖ Apache 2.0)<br>
 
   The same DOM API and Frameworks you know, but in a Web Worker.
 
