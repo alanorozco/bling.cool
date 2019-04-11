@@ -22,12 +22,15 @@
 
 const { closestByClassName } = require('../dom');
 const { selectElementOption } = require('../../lib/renderers');
-const { textureId } = require('../../lib/textures');
 
 class TextureOptions {
   constructor(doc, state) {
     this.doc_ = doc;
     this.element_ = doc.querySelector('.texture-options');
+
+    if (!this.element_) {
+      return this;
+    }
 
     this.element_.addEventListener('click', ({ target }) => {
       const option = closestByClassName(doc, target, 'texture-option');
