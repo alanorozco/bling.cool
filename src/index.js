@@ -21,14 +21,16 @@
  */
 
 const { dirs } = require('../config');
+const { fontId } = require('../lib/fonts');
 const { FontLoader } = require('./fonts/font-loader');
+const { textureUrl } = require('../lib/textures');
+const App = require('./app');
 const focusAtEnd = require('./input/focus-at-end');
-const once = require('lodash.once');
 
 const fonts = require('../artifacts/fonts');
 const phrases = require('../artifacts/phrases');
 
-const textureUrl = index => `/${dirs.textures.gif}/t${index}.gif`;
+const defaultFontSize = 72;
 
 // The following count is dynamically generated at build-time.
 // If this name changes, so must the `bling-count-texture-files` babel plugin.
@@ -37,24 +39,8 @@ const textureAssetsCountReplaceMe = 1;
 // Indirection for naïve scope safety.
 const textureAssetsCount = textureAssetsCountReplaceMe;
 
-const defaultFontSize = 72;
-
-const getEditable = once(doc => {
-  const editable = doc.querySelector('div[contenteditable]');
-  editable.parentElement.addEventListener('click', () => {
-    // TODO: Focus on proper cursor position.
-    editable.focus();
-  });
-  return editable;
-});
-
 const randomTill = n => Math.floor(n * Math.random());
 const pickRandom = arr => arr[randomTill(arr.length)];
-
-const pickPhrase = () => fillPhrase(pickRandom(phrases));
-const pickTexture = () => randomTill(textureAssetsCount);
-
-const pickHueRotate = () => Math.random();
 
 function fillPhrase(phrase) {
   if (phrase.length == 1) {
@@ -63,135 +49,44 @@ function fillPhrase(phrase) {
   return phrase;
 }
 
-function fillFont(font) {
-  if (font.length == 1) {
-    font.push(400);
+const [text, phraseConfig] = fillPhrase(pickRandom(phrases));
+
+new App(
+  self,
+  {
+    textureSelector: { hoverUrl: textureUrl },
+    editor: {
+      fontLoader: new FontLoader(self.document),
+      editableValueProp: 'innerText',
+      sentinelContentProp: 'innerText',
+
+      resizer(editable, sentinels) {
+        const { width } = editable.getBoundingClientRect();
+        sentinels.forEach(s => {
+          s.style.width = `${width}px`;
+        });
+      },
+
+      prepareValue(value) {
+        // passthru.
+        return value;
+      },
+    },
+  },
+  {
+    text,
+    font: fontId(phraseConfig.font || pickRandom(fonts)),
+    fontSize: defaultFontSize,
+    hue: phraseConfig.hue || Math.random(),
+    texture: randomTill(textureAssetsCount),
   }
-  return font;
-}
-
-function binaryFontLookup(fonts, name) {
-  let start = 0;
-  let end = fonts.length;
-
-  const nameLower = name.toLowerCase();
-
-  const index = () => start + Math.floor((end - start) / 2);
-  const pick = () => fonts[index()][0].toLowerCase();
-
-  for (let pivot = pick(); pivot != nameLower; pivot = pick()) {
-    if (start == end) {
-      return;
-    }
-    if (pivot > nameLower) {
-      end = index();
-    } else {
-      start = index();
-    }
-  }
-
-  return fonts[index()];
-}
-
-function setText(editable, shadowSentinel, text) {
-  editable.innerText = text;
-  setTextSentinels(editable, shadowSentinel, text);
-}
-
-function setTextSentinels(editable, shadowSentinel, text) {
-  shadowSentinel.innerText = text;
-  resize(editable, shadowSentinel);
-}
-
-function setTexture(border, editable, index) {
-  const url = `url(${textureUrl(index)})`;
-  editable.style.backgroundImage = url;
-  border.style.backgroundImage = url;
-}
-
-function setHueRotate(border, editable, shadowSentinel, turns) {
-  const filter = `hue-rotate(${360 * turns}deg)`;
-  border.style.filter = filter;
-  editable.style.filter = filter;
-  shadowSentinel.style.filter = filter;
-}
-
-function setFontSize(editable, shadowSentinel, sizePx) {
-  const fontSize = `${sizePx}px`;
-  editable.style.fontSize = fontSize;
-  shadowSentinel.style.fontSize = fontSize;
-  resize(editable, shadowSentinel);
-}
-
-function resize(editable, shadowSentinel) {
-  const { width } = editable.getBoundingClientRect();
-  shadowSentinel.style.width = `${width}px`;
-}
-
-function setFont(loader, editable, shadowSentinel, fontName, fontWeight) {
-  return Promise.all([
-    loader.applyOn(editable, fontName, fontWeight),
-    loader.applyOn(shadowSentinel, fontName, fontWeight),
-  ]).then(() => {
-    resize(editable, shadowSentinel);
-  });
-}
-
-const { document: doc } = self;
-const loader = new FontLoader(doc);
-
-const hueSlider = doc.querySelector('#hue');
-const editable = getEditable(doc);
-const shadowSentinel = doc.querySelector('.editable-shadow');
-const border = doc.querySelector('.border');
-const fontSelect = doc.querySelector('select');
-
-const [phraseText, phraseConfig] = pickPhrase();
-const hueRotate = phraseConfig.hue || pickHueRotate();
-
-const randomFont = pickRandom(fonts);
-const [fontName, fontWeight] = fillFont(
-  phraseConfig.font
-    ? binaryFontLookup(fonts, phraseConfig.font) || randomFont
-    : randomFont
-);
-
-hueSlider.value = hueRotate;
-
-setText(editable, shadowSentinel, phraseText);
-setTexture(border, editable, pickTexture());
-setHueRotate(border, editable, shadowSentinel, hueRotate);
-
-setFontSize(editable, shadowSentinel, defaultFontSize);
-
-const setHueOnSlide = ({ target }) => {
-  setHueRotate(border, editable, shadowSentinel, parseFloat(target.value));
-};
-
-fonts.forEach(([name], i) => {
-  if (name == fontName) {
-    doc.querySelector(`option[value="${i}"]`).setAttribute('selected', '');
-  }
-});
-
-fontSelect.addEventListener('change', ({ target }) => {
-  const [fontName, fontWeight] = fillFont(fonts[parseInt(target.value, 10)]);
-  setFont(loader, editable, shadowSentinel, fontName, fontWeight);
-});
-
-setFont(loader, editable, shadowSentinel, fontName, fontWeight).then(() => {
-  doc.body.classList.remove('not-ready');
+).ready.then(app => {
+  self.document.body.classList.remove('not-ready');
   focusAtEnd(editable);
-});
 
-editable.addEventListener('input', () => {
-  setTextSentinels(editable, shadowSentinel, editable.innerText);
-});
-
-window.addEventListener('resize', () => {
-  resize(editable, shadowSentinel);
-});
-
-['change', 'input'].forEach(e => {
-  hueSlider.addEventListener(e, setHueOnSlide);
+  fetch(`/${dirs.textures.frames}/initial.json`)
+    .then(response => response.json())
+    .then(textureOptions => {
+      app.state.set('textureOptions', { textureOptions });
+    });
 });

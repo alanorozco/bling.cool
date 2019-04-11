@@ -19,26 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-const { dirs } = require('../config');
+
+const { fontId, googFontStylesheetUrl } = require('../lib/fonts');
 const { pipedJsdom, elementWithFileContents } = require('./jsdom-util');
 const { promisify } = require('util');
 const { readFile } = require('fs');
+const { textureUrl } = require('../lib/textures');
+const renderers = require('../lib/renderers');
 
 const readFileAsync = promisify(readFile);
 
-function setTitle(doc, name) {
-  const title = doc.querySelector('title');
-  title.textContent = title.textContent.replace('[package.name]', name);
-}
-
-function setDescription(doc, description) {
-  const metaDesc = doc.querySelector('meta[name=description]');
-  metaDesc.setAttribute(
-    'content',
-    metaDesc
-      .getAttribute('content')
-      .replace('[package.description]', description)
-  );
+async function bundleJs(doc, js) {
+  if (!js) {
+    return;
+  }
+  doc.body.appendChild(await elementWithFileContents(doc, 'script', js));
 }
 
 async function bundleStyle(doc, css) {
@@ -55,11 +50,28 @@ async function bundleStyle(doc, css) {
   }
 }
 
-function setDefaultText(containers) {
-  for (const container of containers) {
+function setTitle(doc, name) {
+  const title = doc.querySelector('title');
+  title.textContent = title.textContent.replace('[package.name]', name);
+}
+
+function setDescription(doc, description) {
+  const metaDesc = doc.querySelector('meta[name=description]');
+  metaDesc.setAttribute(
+    'content',
+    metaDesc
+      .getAttribute('content')
+      .replace('[package.description]', description)
+  );
+}
+
+function setDefaultText(doc, text) {
+  for (const container of doc.querySelectorAll(
+    '#editable, .editable-sentinel'
+  )) {
     container.textContent = container.textContent.replace(
       '[default.text]',
-      'Hello World!'
+      text
     );
   }
 }
@@ -69,9 +81,9 @@ function setFonts(doc, fonts, selectedFont) {
   if (!select) {
     return;
   }
-  fonts.forEach(([name], i) => {
+  fonts.forEach(([name, weight]) => {
     const option = doc.createElement('option');
-    option.value = i;
+    option.value = fontId([name, weight]);
     option.textContent = name;
     if (name == selectedFont) {
       option.setAttribute('selected', '');
@@ -87,15 +99,7 @@ function setFontPreload(linkRel, fonts) {
   if (!linkRel) {
     return;
   }
-  linkRel.setAttribute(
-    'href',
-    linkRel
-      .getAttribute('href')
-      .replace(
-        '[font.all]',
-        fonts.map(([name]) => name.replace(/\s+/, '+')).join('|')
-      )
-  );
+  linkRel.setAttribute('href', googFontStylesheetUrl(fonts.map(fontId)));
   linkRel.removeAttribute('class');
 }
 
@@ -104,8 +108,29 @@ function setTexture(doc, selected) {
     return;
   }
   for (const { style } of doc.querySelectorAll('.textured')) {
-    style.backgroundImage = `url(${dirs.textures.gif}/t${selected}.gif)`;
+    style.backgroundImage = `url(${textureUrl(selected)})`;
   }
+}
+
+function setTextureOptions(doc, options, selected) {
+  if (!options) {
+    return;
+  }
+  const container = doc.querySelector('.texture-options');
+  if (!container) {
+    return;
+  }
+  options
+    .map(index =>
+      renderers.textureOption(
+        container.ownerDocument,
+        index,
+        selected === index
+      )
+    )
+    .forEach(el => {
+      container.appendChild(el);
+    });
 }
 
 module.exports = function bundleIndex({
@@ -114,11 +139,28 @@ module.exports = function bundleIndex({
   fonts,
   selectedFont,
   selectedTexture,
+  textureOptions,
 }) {
   return pipedJsdom(async doc => {
     const { name, description, repository, author } = JSON.parse(
       (await readFileAsync('./package.json')).toString()
     );
+
+    let match;
+    const partialsRe = /<!-- partial:([^\s]+) -->/;
+    do {
+      match = partialsRe.exec(doc.documentElement.innerHTML);
+      if (match) {
+        const [fullMatch, id] = match;
+        const content = (await readFileAsync(
+          `src/partials/${id}.html`
+        )).toString();
+        doc.documentElement.innerHTML = doc.documentElement.innerHTML.replace(
+          fullMatch,
+          content
+        );
+      }
+    } while (match);
 
     setTitle(doc, name);
     setDescription(doc, description);
@@ -126,15 +168,14 @@ module.exports = function bundleIndex({
     setFonts(doc, fonts, selectedFont);
     setFontPreload(doc.querySelector('link.font-preload'), fonts);
 
-    setDefaultText(doc.querySelectorAll('.default-text-container'));
+    setDefaultText(doc, 'Hello World!');
 
     setTexture(doc, selectedTexture);
 
     await bundleStyle(doc, css);
+    await bundleJs(doc, js);
 
-    if (js) {
-      doc.body.appendChild(await elementWithFileContents(doc, 'script', js));
-    }
+    setTextureOptions(doc, textureOptions, selectedTexture);
 
     const h1 = doc.querySelector('h1');
     h1.textContent = description;
@@ -151,13 +192,6 @@ module.exports = function bundleIndex({
     const repoLink = doc.querySelector('a#meta-repository');
     if (repoLink) {
       repoLink.setAttribute('href', repository);
-    }
-
-    if (doc.documentElement.hasAttribute('amp')) {
-      doc.head.innerHTML = doc.head.innerHTML.replace(
-        '<!-- AMP_BOILERPLATE -->',
-        (await readFileAsync('./artifacts/amp-boilerplate.html')).toString()
-      );
     }
   });
 };

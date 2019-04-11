@@ -25,31 +25,29 @@
     <title>[package.name] ✨</title>
     <meta charset="utf-8" />
     <meta
+      name="viewport"
+      content="width=device-width,minimum-scale=1,initial-scale=1"
+    />
+    <meta
       name="description"
       content="[package.description] &ndash; generate glitter, blingy GIFs or HTML Ɛ̸ CSS markup."
     />
   </head>
   <body class="not-ready">
-    <div class="border"></div>
+    <div class="border textured"></div>
     <main>
       <h1>[package.description]</h1>
-      <div class="toolbar">
-        <select name="font" id="font"></select>
-        <label for="hue">
-          hue
-          <input
-            id="hue"
-            type="range"
-            min="0"
-            max="1"
-            step="0.05"
-            value="0.5"
-          />
-        </label>
+      <!-- partial:chrome -->
       </div>
       <label for="editable" class="editable-wrap">
-        <div class="editable-shadow"></div>
-        <div id="editable" spellcheck="false" contenteditable autofocus></div>
+        <div class="editable-shadow editable-sentinel hued"></div>
+        <div
+          id="editable"
+          class="textured"
+          spellcheck="false"
+          contenteditable
+          autofocus
+        ></div>
       </label>
       <footer class="meta">
         <p class="buggy">

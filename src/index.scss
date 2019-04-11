@@ -34,6 +34,8 @@ $grayish: rgb(147, 153, 160);
 $track-color: $grayish;
 $thumb-color: $grayish;
 
+$smallView: '(max-width: 600px)';
+
 @import '../3p/style-range-inputs/style-range-inputs';
 
 body {
@@ -44,14 +46,26 @@ body {
   line-height: $lineHeight;
   overflow: hidden;
   min-height: 100vh;
-}
 
-[amp] > body {
-  padding: 0;
+  [amp] & {
+    padding: 0;
+  }
+
+  @media #{$smallView} {
+    font-size: 16px;
+  }
 }
 
 amp-script {
   padding: $marginUnit;
+}
+
+amp-script,
+body {
+  @media #{$smallView} {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .not-ready {
@@ -78,10 +92,15 @@ footer {
 
 footer {
   font-size: 82%;
-}
 
-footer > .buggy {
-  color: darken($grayish, 20%);
+  > .buggy {
+    color: darken($grayish, 20%);
+  }
+
+  @media #{$smallView} {
+    font-size: 100%;
+    padding: 0 $marginUnit;
+  }
 }
 
 p {
@@ -94,6 +113,10 @@ main {
   width: calc(100vw - #{2 * $bodyBorder});
   height: calc(100vh - #{2 * $bodyBorder});
   padding: $marginUnit 0;
+
+  @media #{$smallView} {
+    width: 100vw;
+  }
 }
 
 main,
@@ -111,52 +134,170 @@ main,
   padding: 0 40px;
   width: 100%;
   overflow: hidden;
+
+  > div,
+  > textarea {
+    outline: none;
+    text-align: center;
+    background-clip: text;
+    -webkit-background-clip: text;
+    position: relative;
+
+    // It would be nice to use `color: transparent`, but chrome "optimizes"
+    // it so it's clipped.
+    color: white;
+    -webkit-text-fill-color: transparent;
+
+    // Some padding is needed so text is not clipped.
+    padding: 40px;
+
+    // And for dynamic resizing:
+    box-sizing: border-box;
+
+    // TODO: Maybe this can be analyzed on build time based on font, as some
+    // leave very large line gaps. Nice to have.
+    line-height: 1.3;
+  }
+
+  [amp] & {
+    display: block;
+
+    > div,
+    > textarea {
+      // no display: flex since we're using a textarea and not a
+      // [contenteditable]
+      text-align: center;
+
+      // default for AMP (static)
+      font-size: 72px;
+
+      // they have to be fixed size :(
+      position: absolute;
+      overflow: hidden;
+      width: calc(100% - #{6 * $marginUnit});
+      height: 30vh;
+      padding: 0;
+      margin-top: 20vh;
+
+      // like textareas:
+      word-wrap: break-word;
+
+      @media #{$smallView} {
+        font-size: 32px;
+        width: calc(100% - #{4 * $marginUnit});
+      }
+    }
+  }
 }
 
-.editable-wrap > * {
-  outline: none;
-  text-align: center;
-  background-clip: text;
-  -webkit-background-clip: text;
+.textured,
+.texture-option {
+  background-color: $blue;
+}
+
+$panelContentHeight: 90px;
+
+.texture-option {
+  width: $panelContentHeight;
+  height: $panelContentHeight;
+  margin: 0 $marginUnit / 2;
+  display: block;
+  cursor: pointer;
+  transition: transform 0.3s, opacity 0.3s;
+  opacity: 0.9;
   position: relative;
 
-  // It would be nice to use `color: transparent`, but chrome "optimizes" it so
-  // it's clipped.
-  color: white;
-  -webkit-text-fill-color: transparent;
+  &:hover,
+  &.selected {
+    transform: scale(1.1);
+    opacity: 1;
+  }
 
-  // Some padding is needed so text is not clipped.
-  padding: 40px;
+  &.selected {
+    outline: 2px solid $blue;
 
-  // And for dynamic resizing:
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(lighten($blue, 50%), 0.5);
+    }
+  }
+}
+
+$panelMarginForScrollbarUgh: 18px;
+$panelGradientWidth: 60px;
+
+.panel {
+  width: 100%;
+  position: relative;
+  border-top: 2px solid $grayish;
+  padding: $marginUnit;
   box-sizing: border-box;
 
-  // TODO: Maybe this can be analyzed on build time based on font, as some leave
-  // very large line gaps. Nice to have.
-  line-height: 1.3;
+  &.sliding {
+    overflow: hidden;
+    height: $panelContentHeight + $marginUnit * 2;
+    padding: 0;
+
+    &:after,
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      width: $panelGradientWidth;
+      height: $panelContentHeight + $marginUnit * 2;
+      pointer-events: none;
+      z-index: 10000;
+    }
+
+    &:before {
+      background: linear-gradient(to left, transparent, white 80%);
+    }
+
+    &:after {
+      background: linear-gradient(to right, transparent, white 80%);
+      right: 0;
+    }
+
+    > .panel-slider {
+      overflow-y: hidden;
+      overflow-x: scroll;
+      white-space: nowrap;
+      height: $panelContentHeight + 2 * $marginUnit +
+        $panelMarginForScrollbarUgh;
+      box-sizing: border-box;
+      padding: $marginUnit ($marginUnit / 2 + $panelGradientWidth)
+        ($marginUnit + $panelMarginForScrollbarUgh);
+
+      > div {
+        display: inline-block;
+      }
+    }
+  }
 }
 
-[amp] .editable-wrap > * {
-  font-size: 72px; // default for AMP (static)
-
-  // they have to be fixed size :(
-  position: absolute;
-  overflow: hidden;
-  width: calc(100% - #{2 * $marginUnit});
-  height: 40vh;
-  text-align: center;
+@keyframes slideDownFadeIn {
+  to {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
 }
 
-[amp] .editable-wrap {
-  display: block;
-}
-
-.textured {
-  background-color: $blue;
+.panel-fx {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 #editable {
   caret-color: rgba($blue, 0.8);
+  position: absolute;
 
   // ayy lmao 👽
   // hack to make chrome show the editor caret when the area is empty.
@@ -177,11 +318,10 @@ footer a {
   color: $blue;
   font-weight: bold;
   text-decoration: none;
-}
-
-footer a:hover,
-footer a:active {
-  color: lighten($blue, 20%);
+  &:hover,
+  &:active {
+    color: lighten($blue, 20%);
+  }
 }
 
 .editable-shadow {
@@ -190,6 +330,8 @@ footer a:active {
   // TODO: expose via ui
   text-shadow: 6px 6px 12px rgba($blue, 0.48);
 }
+
+$buttonRadius: 32px;
 
 .toolbar {
   display: flex;
@@ -200,31 +342,110 @@ footer a:active {
   font-size: 14px;
   color: darken($grayish, 20%);
   line-height: $toolbarHeight;
+
+  > label {
+    margin: 0 ($marginUnit / 2);
+
+    @media #{$smallView} {
+      margin: 0;
+    }
+  }
+
+  input,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+  button,
+  select {
+    outline: none;
+    background: transparent;
+    border: 2px solid $grayish;
+    border-radius: $buttonRadius;
+    text-align: center;
+    text-align-last: center;
+    line-height: $lineHeight;
+  }
+
+  @media #{$smallView} {
+    button,
+    select {
+      border-radius: 0;
+      margin-left: -2px;
+    }
+  }
+
+  > label:first-child {
+    button,
+    select {
+      @media #{$smallView} {
+        margin-left: 0;
+        border-top-left-radius: $buttonRadius;
+        border-bottom-left-radius: $buttonRadius;
+      }
+    }
+  }
+
+  > label:last-child {
+    button,
+    select {
+      @media #{$smallView} {
+        border-top-right-radius: $buttonRadius;
+        border-bottom-right-radius: $buttonRadius;
+      }
+    }
+  }
+
+  button {
+    padding: ($marginUnit / 4) $marginUnit;
+  }
+  select {
+    padding: ($marginUnit / 4) ($marginUnit / 2);
+    -webkit-appearance: none;
+  }
 }
 
-.toolbar > label {
-  margin: 0 20px;
-}
+$toggleButtonArrowWidth: 10px;
 
-.toolbar > label > input,
-.toolbar > label > select {
-  margin: 0 0 0 ($marginUnit / 2);
-}
+.panel-toggle {
+  position: relative;
 
-select {
-  font: inherit;
-  color: inherit;
-  outline: none;
-  -webkit-appearance: none;
-  background: transparent;
-  border: 2px solid $grayish;
-  border-radius: 32px;
-  padding: ($marginUnit / 4) ($marginUnit / 2);
-  text-align: center;
-  text-align-last: center;
-  line-height: $lineHeight;
+  &.selected {
+    &:after,
+    &:before {
+      pointer-events: none;
+      top: calc(100% + #{$marginUnit / 2});
+      left: 50%;
+      border: solid transparent;
+      content: ' ';
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      z-index: 10000;
+    }
+
+    &:after {
+      border-color: transparent;
+      border-bottom-color: #fff;
+      border-width: $toggleButtonArrowWidth;
+      margin-left: -$toggleButtonArrowWidth;
+    }
+    &:before {
+      border-color: transparent;
+      border-bottom-color: $grayish;
+      border-width: $toggleButtonArrowWidth + 3px;
+      margin-left: -($toggleButtonArrowWidth + 3px);
+      margin-top: -6px;
+    }
+  }
 }
 
 option {
   text-align: left;
+}
+
+[hidden] {
+  display: none;
 }

@@ -20,7 +20,27 @@
  * SOFTWARE.
  */
 
-module.exports = (name, weight) =>
-  `https://fonts.googleapis.com/css?family=${name.replace(/\s+/g, '+')}${
-    weight && weight !== 400 ? `:${weight}` : ''
-  }`;
+module.exports = class FontSelector {
+  constructor(doc, state) {
+    this.doc_ = doc;
+    this.element_ = doc.querySelector('select');
+
+    this.element_.addEventListener('change', () => {
+      state.set(this, { font: this.element_.value });
+    });
+
+    state.on(this, 'font', this.updateOption_.bind(this));
+  }
+
+  updateOption_(fontId) {
+    const option = this.element_.querySelector(`option[value="${fontId}"]`);
+    if (!option) {
+      return;
+    }
+    const selected = this.element_.querySelector(`[selected]`);
+    if (selected) {
+      selected.removeAttribute('selected');
+    }
+    option.setAttribute('selected', '');
+  }
+};

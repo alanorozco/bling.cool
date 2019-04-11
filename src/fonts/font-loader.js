@@ -20,14 +20,12 @@
  * SOFTWARE.
  */
 
+const { expandFontId, googFontStylesheetUrl } = require('../../lib/fonts');
 const FontFaceObserver = require('fontfaceobserver');
-const googFontsUrl = require('./goog-fonts-url');
 const loadPromise = require('../events/load-promise');
 
-const fontId = (name, weight) => `${name}:${weight}`;
-
-function loadFontStylesheet(doc, name, weight) {
-  const href = googFontsUrl(name, weight);
+function loadFontStylesheet(doc, id) {
+  const href = googFontStylesheetUrl(id);
   const link = doc.createElement('link');
   link.setAttribute('href', href);
   link.setAttribute('rel', 'stylesheet');
@@ -42,19 +40,12 @@ class FontLoader {
     this.loadPromises_ = {};
   }
 
-  applyOn(element, name, weight) {
-    return this.load_(name, weight).then(() => {
-      element.style.fontFamily = `'${name}', sans-serif`;
-      element.style.fontWeight = weight;
-    });
-  }
-
-  load_(name, weight) {
-    const id = fontId(name, weight);
+  load(id) {
     if (id in this.loadPromises_) {
       return this.loadPromises_[id];
     }
-    const stylesheetLoaded = loadFontStylesheet(this.doc_, name, weight);
+    const [name, weight] = expandFontId(id);
+    const stylesheetLoaded = loadFontStylesheet(this.doc_, id);
     let observer = new FontFaceObserver(name, { weight });
     const promise = stylesheetLoaded
       .then(() => observer.load())

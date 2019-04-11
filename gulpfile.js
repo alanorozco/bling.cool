@@ -24,6 +24,7 @@ const { argv } = require('yargs');
 const { dest, parallel, series, src, watch: gulpWatch } = require('gulp');
 const { dirs } = require('./config');
 const { textures } = require('./builder/textures');
+const { textureFirstFrameUrl, textureId } = require('./lib/textures');
 const express = require('express');
 const babel = require('rollup-plugin-babel');
 const buffer = require('vinyl-buffer');
@@ -110,6 +111,8 @@ function bundleAmp(done) {
   const [selectedFont] = fontsSubset[
     Math.floor(fontsSubset.length * Math.random())
   ];
+  const textureSubset = textureSet.all().slice(0, 10);
+
   return src('./src/index.amp.html')
     .pipe(buffer())
     .pipe(
@@ -117,7 +120,12 @@ function bundleAmp(done) {
         css: path.join(dirs.dist.workspace, 'index.css'),
         fonts: fontsSubset,
         selectedFont,
-        selectedTexture: Math.floor(textureSet.all().length * Math.random()),
+        selectedTexture: Math.floor(
+          textureSubset.length * Math.random()
+        ).toString(),
+        textureOptions: textureSubset.map(path =>
+          textureFirstFrameUrl(textureId(path))
+        ),
       })
     )
     .pipe(dest(dirs.dist.root));
@@ -172,6 +180,9 @@ function watch() {
       '3p/*',
       'artifacts/*',
       'src/*',
+      'src/**/*',
+      'lib/*',
+      'lib/**/*',
       path.join(dirs.textures.gif, '*'),
       path.join(dirs.textures.frames, '*'),
     ],
