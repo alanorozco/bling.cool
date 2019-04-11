@@ -67,7 +67,7 @@ function fallbackToPreviousFrame(allFrames, frame, i) {
   return frame;
 }
 
-async function expandFrames(fromGif, toJson) {
+async function extractFramesJson(fromGif, toJson) {
   const frameOptionals = Array(await frameCount(fromGif))
     .fill(null)
     .map((_, f) => extractFrame(fromGif, f));
@@ -91,7 +91,10 @@ async function textures() {
         initialFrame,
         { encoding: 'binary' }
       );
-      await expandFrames(path, pathJoin(dirs.textures.frames, `f${i}.json`));
+      await extractFramesJson(
+        path,
+        pathJoin(dirs.textures.frames, `f${i}.json`)
+      );
     })
   );
 
