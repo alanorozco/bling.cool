@@ -120,8 +120,8 @@ main,
     -webkit-background-clip: text;
     position: relative;
 
-    // It would be nice to use `color: transparent`, but chrome "optimizes" it so
-    // it's clipped.
+    // It would be nice to use `color: transparent`, but chrome "optimizes"
+    // it so it's clipped.
     color: white;
     -webkit-text-fill-color: transparent;
 
@@ -131,8 +131,8 @@ main,
     // And for dynamic resizing:
     box-sizing: border-box;
 
-    // TODO: Maybe this can be analyzed on build time based on font, as some leave
-    // very large line gaps. Nice to have.
+    // TODO: Maybe this can be analyzed on build time based on font, as some
+    // leave very large line gaps. Nice to have.
     line-height: 1.3;
   }
 
@@ -141,7 +141,8 @@ main,
 
     > div,
     > textarea {
-      // no display: flex since we're using a textarea and not a [contenteditable]
+      // no display: flex since we're using a textarea and not a
+      // [contenteditable]
       text-align: center;
 
       // default for AMP (static)
