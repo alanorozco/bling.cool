@@ -161,6 +161,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Gulp plugin for sass
 
+- [**`gulp-uglifyjs`**](https://github.com/craigjennings11/gulp-uglifyjs.git) by **[Craig Jennings](mailto:craig.jennings@gmail.com)** (⚖ MIT)
+
+  Minify multiple files with UglifyJS.
+
 - [**`jsdom`**](https://www.npmjs.com/package/jsdom/jsdom) by **[Elijah Insua](http://tmpvar.com)**, **[Domenic Denicola](https://domenic.me/)**, **[Sebastian Mayr](https://blog.smayr.name/)**, **[Joris van der Wel](mailto:joris@jorisvanderwel.com)**, **[Timothy Gu](https://timothygu.me/)**, **[Zirro](mailto:code@zirro.se)** (⚖ MIT)
 
   A JavaScript implementation of many web standards
