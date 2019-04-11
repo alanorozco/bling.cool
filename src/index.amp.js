@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 
-const Editor = require('./ui/editor');
-const Panel = require('./ui/panel');
-const State = require('./ui/state');
-const Texturables = require('./ui/texturables');
+const Editor = require('./app/editor');
+const Toolbar = require('./app/toolbar');
+const State = require('./app/state');
+const Texturables = require('./app/texturables');
 
 const state = new State();
 
@@ -48,5 +48,5 @@ new Editor(self, state, {
   },
 });
 
-new Panel(self.document, state);
+new Toolbar(self.document, state);
 new Texturables(self.document, state);

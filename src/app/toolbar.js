@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-module.exports = class Panel {
+module.exports = class Toolbar {
   constructor(doc, state) {
     this.fontSelect_ = doc.querySelector('select');
     this.hueSlider_ = doc.querySelector('input[type=range]');
@@ -29,17 +29,7 @@ module.exports = class Panel {
       state.set(this, { font: target.value });
     });
 
-    state.on(this, 'font', id => {
-      const option = this.fontSelect_.querySelector(`option[value="${id}"]`);
-      if (!option) {
-        return;
-      }
-      const selected = this.fontSelect_.querySelector(`[selected]`);
-      if (selected) {
-        selected.removeAttribute('selected');
-      }
-      option.setAttribute('selected', '');
-    });
+    state.on(this, 'font', this.updateSelectedFontOption_.bind(this));
 
     const setHueOnSlide = ({ target }) => {
       state.set(this, { hue: parseFloat(target.value) });
@@ -52,5 +42,17 @@ module.exports = class Panel {
     state.on(this, 'hue', value => {
       this.hueSlider_.value = value;
     });
+  }
+
+  updateSelectedFontOption_(fontId) {
+    const option = this.fontSelect_.querySelector(`option[value="${fontId}"]`);
+    if (!option) {
+      return;
+    }
+    const selected = this.fontSelect_.querySelector(`[selected]`);
+    if (selected) {
+      selected.removeAttribute('selected');
+    }
+    option.setAttribute('selected', '');
   }
 };

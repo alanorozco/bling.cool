@@ -212,27 +212,40 @@ footer a {
   line-height: $toolbarHeight;
 
   > label {
-    margin: 0 20px;
+    margin: 0 ($marginUnit / 2);
 
-    > input,
-    > select {
+    &:first-child {
+      margin-left: 0;
+    }
+
+    > input {
       margin: 0 0 0 ($marginUnit / 2);
     }
   }
-}
 
-select {
-  font: inherit;
-  color: inherit;
-  outline: none;
-  -webkit-appearance: none;
-  background: transparent;
-  border: 2px solid $grayish;
-  border-radius: 32px;
-  padding: ($marginUnit / 4) ($marginUnit / 2);
-  text-align: center;
-  text-align-last: center;
-  line-height: $lineHeight;
+  input,
+  select,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+  button,
+  select {
+    outline: none;
+    background: transparent;
+    border: 2px solid $grayish;
+    border-radius: 32px;
+    text-align: center;
+    text-align-last: center;
+    line-height: $lineHeight;
+  }
+  button {
+    padding: ($marginUnit / 4) $marginUnit;
+  }
+  select {
+    padding: ($marginUnit / 4) ($marginUnit / 2);
+    -webkit-appearance: none;
+  }
 }
 
 option {

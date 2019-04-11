@@ -22,11 +22,11 @@
 
 const { fontId } = require('../lib/fonts');
 const { FontLoader } = require('./fonts/font-loader');
-const Editor = require('./ui/editor');
-const Panel = require('./ui/panel');
-const State = require('./ui/state');
+const Editor = require('./app/editor');
+const Toolbar = require('./app/toolbar');
+const State = require('./app/state');
 const focusAtEnd = require('./input/focus-at-end');
-const Texturables = require('./ui/texturables');
+const Texturables = require('./app/texturables');
 
 const fonts = require('../artifacts/fonts');
 const phrases = require('../artifacts/phrases');
@@ -70,7 +70,7 @@ new Editor(self, state, {
   },
 });
 
-new Panel(self.document, state);
+new Toolbar(self.document, state);
 new Texturables(self.document, state);
 
 const [text, phraseConfig] = fillPhrase(pickRandom(phrases));

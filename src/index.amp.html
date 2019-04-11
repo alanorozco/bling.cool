@@ -57,7 +57,14 @@
       <main>
         <h1>[package.description]</h1>
         <div class="toolbar">
-          <select name="font" id="font"></select>
+          <label for="toggle-textures"></label>
+            <button class="toggle" id="toggle-textures" data-toggle="textures">
+              texture
+            </button>
+          </label>
+          <label for="font">
+            <select name="font" id="font"></select>
+          </label>
           <label for="hue">
             hue
             <input
@@ -69,6 +76,11 @@
               value="0"
             />
           </label>
+        </div>
+        <div class="panel panel-textures hued" hidden>
+          <!-- <template>
+            <div class="texture-option"></div>
+          </template> -->
         </div>
         <label for="editable" class="editable-wrap">
           <div class="editable-shadow editable-sentinel default-font hued">
