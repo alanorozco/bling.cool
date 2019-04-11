@@ -48,11 +48,14 @@ async function extractFrame(path, frame) {
   try {
     const cmd = `gifsicle ${path} '#${frame}'`;
     const { stdout } = await execAsync(cmd, { encoding: 'binary' });
-    return [b64mime, Buffer.from(stdout, 'binary').toString('base64')].join('');
+    return Buffer.from(stdout, 'binary');
   } catch (_) {
     // meh. see `fallbackToPreviousFrame`
   }
 }
+
+const frameTob64 = frameBuffer =>
+  [b64mime, frameBuffer.toString('base64')].join('');
 
 function fallbackToPreviousFrame(allFrames, frame, i) {
   if (!frame) {
@@ -81,7 +84,13 @@ async function textures() {
   await Promise.all(
     all().map(async path => {
       const i = basename(path).replace(/[^0-9]+/g, '');
-      firstFrameMap[i] = await extractFrame(path, 0);
+      const initialFrame = await extractFrame(path, 0);
+      firstFrameMap[i] = frameTob64(initialFrame);
+      await writeFileAsync(
+        pathJoin(dirs.textures.gif, `i${i}.gif`),
+        initialFrame,
+        { encoding: 'binary' }
+      );
       await expandFrames(path, pathJoin(dirs.textures.frames, `f${i}.json`));
     })
   );
