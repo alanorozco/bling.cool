@@ -161,8 +161,19 @@ main,
   }
 }
 
-.textured {
+.textured,
+.texture-option {
   background-color: $blue;
+}
+
+.texture-option {
+  width: 100px;
+  height: 100px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: row;
 }
 
 #editable {

@@ -21,16 +21,16 @@
  */
 
 const { expect } = require('chai');
+const { fontId, googFontStylesheetUrl } = require('../lib/fonts');
 const fetch = require('node-fetch');
-const googFontsUrl = require('../src/fonts/goog-fonts-url');
 
 const fonts = require('../artifacts/fonts');
 
 describe('Hardcoded font set', () => {
   it('contains only fonts that point to valid stylesheets', async () => {
     await Promise.all(
-      fonts.map(async ([name]) => {
-        const url = googFontsUrl(name);
+      fonts.map(async font => {
+        const url = googFontStylesheetUrl(fontId(font));
         const { ok } = await fetch(url);
         expect(ok, url).to.be.true;
       })

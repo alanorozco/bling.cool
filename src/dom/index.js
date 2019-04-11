@@ -20,33 +20,19 @@
  * SOFTWARE.
  */
 
-const { textureUrl } = require('../../lib/textures');
-
-module.exports = class Texturables {
-  constructor(doc, state) {
-    this.textured_ = Array.from(doc.querySelectorAll('.textured'));
-    this.hued_ = this.textured_.concat(
-      Array.from(doc.querySelectorAll('.hued'))
-    );
-
-    state.on(this, 'texture', this.setTexture_.bind(this));
-    state.on(this, 'hue', this.setHueRotate_.bind(this));
+exports.closestByClassName = function closestByClassName(
+  doc,
+  element,
+  className
+) {
+  if (element.closest) {
+    return element.closest(`.${className}`);
   }
-
-  setTexture_(indexOrData) {
-    const url = indexOrData.toString().startsWith('data')
-      ? indexOrData
-      : textureUrl(indexOrData);
-    const backgroundImage = `url(${url})`;
-    this.textured_.forEach(({ style }) => {
-      style.backgroundImage = backgroundImage;
-    });
+  let current = element;
+  while (!element.classList.contains(className) && current != doc.body) {
+    current = element.parentNode;
   }
-
-  setHueRotate_(turns) {
-    const hueRotate = `hue-rotate(${360 * turns}deg)`;
-    this.hued_.forEach(({ style }) => {
-      style.filter = hueRotate;
-    });
+  if (current.classList.contains(className)) {
+    return current;
   }
 };

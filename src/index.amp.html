@@ -36,11 +36,7 @@
         window.location.reload();
       }
     </script>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=[font.all]"
-      class="font-preload"
-    />
+    <link rel="stylesheet" class="font-preload" />
     <meta charset="utf-8" />
     <!-- AMP_BOILERPLATE -->
     <style amp-custom></style>
@@ -57,7 +53,7 @@
       <main>
         <h1>[package.description]</h1>
         <div class="toolbar">
-          <label for="toggle-textures"></label>
+          <label for="toggle-textures">
             <button class="toggle" id="toggle-textures" data-toggle="textures">
               texture
             </button>
@@ -77,11 +73,7 @@
             />
           </label>
         </div>
-        <div class="panel panel-textures hued" hidden>
-          <!-- <template>
-            <div class="texture-option"></div>
-          </template> -->
-        </div>
+        <div class="panel panel-textures texture-options hued"></div>
         <label for="editable" class="editable-wrap">
           <div class="editable-shadow editable-sentinel default-font hued">
             [default.text]

@@ -20,6 +20,43 @@
  * SOFTWARE.
  */
 
+const { closestByClassName } = require('../dom');
+const { selectElementOption } = require('../../lib/renderers');
+const { textureId } = require('../../lib/textures');
+
+class TextureOptions {
+  constructor(doc, state) {
+    this.doc_ = doc;
+    this.element_ = doc.querySelector('.texture-options');
+
+    this.element_.addEventListener('click', ({ target }) => {
+      const option = closestByClassName(doc, target, 'texture-option');
+      if (!option) {
+        return;
+      }
+      selectElementOption(option);
+      state.set(this, {
+        texture: option.getAttribute('data-texture-id'),
+      });
+    });
+
+    state.on(this, 'texture', this.updateSelected_.bind(this));
+  }
+
+  updateSelected_(texture) {
+    if (textureUrl.startsWith('data')) {
+      return;
+    }
+    const option = this.container_.querySelector(
+      `.texture-option[data-texture-id=${texture}]`
+    );
+    if (!option) {
+      return;
+    }
+    selectElementOption(option);
+  }
+}
+
 module.exports = class Toolbar {
   constructor(doc, state) {
     this.fontSelect_ = doc.querySelector('select');
@@ -42,6 +79,8 @@ module.exports = class Toolbar {
     state.on(this, 'hue', value => {
       this.hueSlider_.value = value;
     });
+
+    new TextureOptions(doc, state);
   }
 
   updateSelectedFontOption_(fontId) {

@@ -19,27 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-const { dirs } = require('../config');
-const { fontId } = require('../lib/fonts');
+
+const { fontId, googFontStylesheetUrl } = require('../lib/fonts');
 const { pipedJsdom, elementWithFileContents } = require('./jsdom-util');
 const { promisify } = require('util');
 const { readFile } = require('fs');
+const { textureUrl } = require('../lib/textures');
+const renderers = require('../lib/renderers');
 
 const readFileAsync = promisify(readFile);
 
-function setTitle(doc, name) {
-  const title = doc.querySelector('title');
-  title.textContent = title.textContent.replace('[package.name]', name);
-}
-
-function setDescription(doc, description) {
-  const metaDesc = doc.querySelector('meta[name=description]');
-  metaDesc.setAttribute(
-    'content',
-    metaDesc
-      .getAttribute('content')
-      .replace('[package.description]', description)
-  );
+async function bundleJs(doc, js) {
+  if (!js) {
+    return;
+  }
+  doc.body.appendChild(await elementWithFileContents(doc, 'script', js));
 }
 
 async function bundleStyle(doc, css) {
@@ -54,6 +48,21 @@ async function bundleStyle(doc, css) {
   } else {
     doc.head.appendChild(style);
   }
+}
+
+function setTitle(doc, name) {
+  const title = doc.querySelector('title');
+  title.textContent = title.textContent.replace('[package.name]', name);
+}
+
+function setDescription(doc, description) {
+  const metaDesc = doc.querySelector('meta[name=description]');
+  metaDesc.setAttribute(
+    'content',
+    metaDesc
+      .getAttribute('content')
+      .replace('[package.description]', description)
+  );
 }
 
 function setDefaultText(doc, text) {
@@ -90,15 +99,7 @@ function setFontPreload(linkRel, fonts) {
   if (!linkRel) {
     return;
   }
-  linkRel.setAttribute(
-    'href',
-    linkRel
-      .getAttribute('href')
-      .replace(
-        '[font.all]',
-        fonts.map(([name]) => name.replace(/\s+/, '+')).join('|')
-      )
-  );
+  linkRel.setAttribute('href', googFontStylesheetUrl(fonts.map(fontId)));
   linkRel.removeAttribute('class');
 }
 
@@ -107,8 +108,29 @@ function setTexture(doc, selected) {
     return;
   }
   for (const { style } of doc.querySelectorAll('.textured')) {
-    style.backgroundImage = `url(${dirs.textures.gif}/t${selected}.gif)`;
+    style.backgroundImage = `url(${textureUrl(selected)})`;
   }
+}
+
+function setTextureOptions(doc, options, selected) {
+  if (!options) {
+    return;
+  }
+  const container = doc.querySelector('.texture-options');
+  if (!container) {
+    return;
+  }
+  options
+    .map(index =>
+      renderers.textureOption(
+        container.ownerDocument,
+        index,
+        selected === index
+      )
+    )
+    .forEach(el => {
+      container.appendChild(el);
+    });
 }
 
 module.exports = function bundleIndex({
@@ -117,6 +139,7 @@ module.exports = function bundleIndex({
   fonts,
   selectedFont,
   selectedTexture,
+  textureOptions,
 }) {
   return pipedJsdom(async doc => {
     const { name, description, repository, author } = JSON.parse(
@@ -134,10 +157,9 @@ module.exports = function bundleIndex({
     setTexture(doc, selectedTexture);
 
     await bundleStyle(doc, css);
+    await bundleJs(doc, js);
 
-    if (js) {
-      doc.body.appendChild(await elementWithFileContents(doc, 'script', js));
-    }
+    setTextureOptions(doc, textureOptions, selectedTexture);
 
     const h1 = doc.querySelector('h1');
     h1.textContent = description;
