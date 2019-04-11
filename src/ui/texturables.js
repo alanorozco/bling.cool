@@ -20,40 +20,35 @@
  * SOFTWARE.
  */
 
-const { expandFontId, googFontStylesheetUrl } = require('../../lib/fonts');
-const FontFaceObserver = require('fontfaceobserver');
-const loadPromise = require('../events/load-promise');
+const { dirs } = require('../../config');
 
-function loadFontStylesheet(doc, id) {
-  const href = googFontStylesheetUrl(id);
-  const link = doc.createElement('link');
-  link.setAttribute('href', href);
-  link.setAttribute('rel', 'stylesheet');
-  const promise = loadPromise(link);
-  doc.head.appendChild(link);
-  return promise;
-}
+const textureUrl = index => `/${dirs.textures.gif}/t${index}.gif`;
 
-class FontLoader {
-  constructor(doc) {
-    this.doc_ = doc;
-    this.loadPromises_ = {};
+module.exports = class Texturables {
+  constructor(doc, state) {
+    this.textured_ = Array.from(doc.querySelectorAll('.textured'));
+    this.hued_ = this.textured_.concat(
+      Array.from(doc.querySelectorAll('.hued'))
+    );
+
+    state.on(this, 'texture', this.setTexture_.bind(this));
+    state.on(this, 'hue', this.setHueRotate_.bind(this));
   }
 
-  load(id) {
-    if (id in this.loadPromises_) {
-      return this.loadPromises_[id];
-    }
-    const [name, weight] = expandFontId(id);
-    const stylesheetLoaded = loadFontStylesheet(this.doc_, id);
-    let observer = new FontFaceObserver(name, { weight });
-    const promise = stylesheetLoaded
-      .then(() => observer.load())
-      .then(() => {
-        observer = null; // gc
-      });
-    return (this.loadPromises_[id] = promise);
+  setTexture_(indexOrData) {
+    const url = indexOrData.toString().startsWith('data')
+      ? indexOrData
+      : textureUrl(indexOrData);
+    const backgroundImage = `url(${url})`;
+    this.textured_.forEach(({ style }) => {
+      style.backgroundImage = backgroundImage;
+    });
   }
-}
 
-exports.FontLoader = FontLoader;
+  setHueRotate_(turns) {
+    const hueRotate = `hue-rotate(${360 * turns}deg)`;
+    this.hued_.forEach(({ style }) => {
+      style.filter = hueRotate;
+    });
+  }
+};

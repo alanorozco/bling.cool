@@ -20,40 +20,33 @@
  * SOFTWARE.
  */
 
-const { expandFontId, googFontStylesheetUrl } = require('../../lib/fonts');
-const FontFaceObserver = require('fontfaceobserver');
-const loadPromise = require('../events/load-promise');
+const Editor = require('./ui/editor');
+const Panel = require('./ui/panel');
+const State = require('./ui/state');
+const Texturables = require('./ui/texturables');
 
-function loadFontStylesheet(doc, id) {
-  const href = googFontStylesheetUrl(id);
-  const link = doc.createElement('link');
-  link.setAttribute('href', href);
-  link.setAttribute('rel', 'stylesheet');
-  const promise = loadPromise(link);
-  doc.head.appendChild(link);
-  return promise;
-}
+const state = new State();
 
-class FontLoader {
-  constructor(doc) {
-    this.doc_ = doc;
-    this.loadPromises_ = {};
-  }
+new Editor(self, state, {
+  editableValueProp: 'value',
+  sentinelContentProp: 'innerHTML',
 
-  load(id) {
-    if (id in this.loadPromises_) {
-      return this.loadPromises_[id];
-    }
-    const [name, weight] = expandFontId(id);
-    const stylesheetLoaded = loadFontStylesheet(this.doc_, id);
-    let observer = new FontFaceObserver(name, { weight });
-    const promise = stylesheetLoaded
-      .then(() => observer.load())
-      .then(() => {
-        observer = null; // gc
-      });
-    return (this.loadPromises_[id] = promise);
-  }
-}
+  fontLoader: {
+    load(unusedFontId) {
+      // Fonts are loaded all at once.
+      return Promise.resolve();
+    },
+  },
 
-exports.FontLoader = FontLoader;
+  resizer(unusedEditable, unusedSentinels) {
+    // NOOP. worker-dom does not support measurements.
+  },
+
+  prepareValue(value) {
+    // Convert whitespace so it's actually visible
+    return value.replace(/\n/g, '<br>').replace(/ /g, '<span>\u00A0</span>');
+  },
+});
+
+new Panel(self.document, state);
+new Texturables(self.document, state);

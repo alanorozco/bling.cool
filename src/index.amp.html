@@ -1,0 +1,101 @@
+<!--
+  Copyright 2019 Alan Orozco <alan@orozco.xyz>
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to
+  deal in the Software without restriction, including without limitation the
+  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+  sell copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  SOFTWARE.
+-->
+<!DOCTYPE html>
+<html amp>
+  <head>
+    <title>[package.name], powered by amp-script ⚡</title>
+    <!-- no [async] since we need to check experiment flag -->
+    <script src="https://cdn.ampproject.org/v0.js"></script>
+    <script
+      async
+      custom-element="amp-script"
+      src="https://cdn.ampproject.org/v0/amp-script-latest.js"
+    ></script>
+    <script>
+      if (!AMP.isExperimentOn('amp-script')) {
+        AMP.toggleExperiment('amp-script', true);
+        window.location.reload();
+      }
+    </script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=[font.all]"
+      class="font-preload"
+    />
+    <meta charset="utf-8" />
+    <!-- AMP_BOILERPLATE -->
+    <style amp-custom></style>
+    <meta
+      name="description"
+      content="[package.description] &ndash; generate glitter, blingy GIFs or HTML Ɛ̸ CSS markup."
+    />
+  </head>
+
+  <!-- No need to hydrate, so we mark as ready. -->
+  <body class="ready">
+    <amp-script src="/index.amp.js" layout="fill">
+      <div class="border textured"></div>
+      <main>
+        <h1>[package.description]</h1>
+        <div class="toolbar">
+          <select name="font" id="font"></select>
+          <label for="hue">
+            hue
+            <input
+              id="hue"
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value="0"
+            />
+          </label>
+        </div>
+        <label for="editable" class="editable-wrap">
+          <div class="editable-shadow editable-sentinel default-font hued">
+            [default.text]
+          </div>
+          <div class="editable-fake editable-sentinel default-font textured">
+            [default.text]
+          </div>
+          <textarea id="editable" class="default-font" spellcheck="false">
+[default.text]</textarea
+          >
+        </label>
+        <footer class="meta">
+          ⚡ this is a limited tech demo meant to showcase
+          <a
+            href="https://github.com/ampproject/amphtml/blob/master/extensions/amp-script/amp-script.md"
+          >
+            amp-script
+          </a>
+          ⚡<br />
+          <a href="/">more bling</a> &ndash;
+          <a href="[package.repository]" id="meta-repository" target="_blank">
+            fork on github
+          </a>
+          <div class="preload-textures"></div>
+        </footer>
+      </main>
+    </amp-script>
+  </body>
+</html>

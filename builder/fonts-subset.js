@@ -20,7 +20,18 @@
  * SOFTWARE.
  */
 
-module.exports = (name, weight) =>
-  `https://fonts.googleapis.com/css?family=${name.replace(/\s+/g, '+')}${
-    weight && weight !== 400 ? `:${weight}` : ''
-  }`;
+const all = require('../artifacts/fonts');
+
+function select(all, size) {
+  const selected = new Set();
+  let i = 0;
+  while (selected.size < size) {
+    i += Math.floor(size * Math.random());
+    i %= all.length;
+    selected.add(all[i]);
+  }
+  return Array.from(selected).sort(([a], [b]) => (a < b ? -1 : 1));
+}
+
+/** Generate a random subset for limited environments. */
+module.exports = select(all, /* size */ 8);

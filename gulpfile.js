@@ -110,6 +110,8 @@ function bundleAmp(done) {
   const [selectedFont] = fontsSubset[
     Math.floor(fontsSubset.length * Math.random())
   ];
+  const textureSubset = textureSet.all().slice(0, 10);
+
   return src('./src/index.amp.html')
     .pipe(buffer())
     .pipe(
@@ -117,7 +119,8 @@ function bundleAmp(done) {
         css: path.join(dirs.dist.workspace, 'index.css'),
         fonts: fontsSubset,
         selectedFont,
-        selectedTexture: Math.floor(textureSet.all().length * Math.random()),
+        selectedTexture: Math.floor(textureSubset.length * Math.random()),
+        textures: textureSubset,
       })
     )
     .pipe(dest(dirs.dist.root));
@@ -172,6 +175,9 @@ function watch() {
       '3p/*',
       'artifacts/*',
       'src/*',
+      'src/**/*',
+      'lib/*',
+      'lib/**/*',
       path.join(dirs.textures.gif, '*'),
       path.join(dirs.textures.frames, '*'),
     ],

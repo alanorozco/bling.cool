@@ -20,40 +20,51 @@
  * SOFTWARE.
  */
 
-const { expandFontId, googFontStylesheetUrl } = require('../../lib/fonts');
-const FontFaceObserver = require('fontfaceobserver');
-const loadPromise = require('../events/load-promise');
-
-function loadFontStylesheet(doc, id) {
-  const href = googFontStylesheetUrl(id);
-  const link = doc.createElement('link');
-  link.setAttribute('href', href);
-  link.setAttribute('rel', 'stylesheet');
-  const promise = loadPromise(link);
-  doc.head.appendChild(link);
-  return promise;
-}
-
-class FontLoader {
-  constructor(doc) {
-    this.doc_ = doc;
-    this.loadPromises_ = {};
+module.exports = class State {
+  constructor() {
+    this.state_ = {};
+    this.observerId_ = 0;
+    this.observers_ = {};
   }
 
-  load(id) {
-    if (id in this.loadPromises_) {
-      return this.loadPromises_[id];
-    }
-    const [name, weight] = expandFontId(id);
-    const stylesheetLoaded = loadFontStylesheet(this.doc_, id);
-    let observer = new FontFaceObserver(name, { weight });
-    const promise = stylesheetLoaded
-      .then(() => observer.load())
-      .then(() => {
-        observer = null; // gc
-      });
-    return (this.loadPromises_[id] = promise);
+  set(dispatcher, state) {
+    this.state_ = Object.assign(this.state_, state);
+    return this.fire_(dispatcher, state);
   }
-}
 
-exports.FontLoader = FontLoader;
+  get(field) {
+    return this.state_[field];
+  }
+
+  on(listener, signal, handler) {
+    const id = this.observerId_++;
+    this.observers_[signal] =
+      signal in this.observers_ ? this.observers_[signal] : {};
+    this.observers_[signal][id] = { listener, handler };
+    return () => this.remove_(signal, id);
+  }
+
+  remove_(signal, id) {
+    delete this.observers_[signal][id];
+  }
+
+  fire_(dispatcher, state) {
+    return Promise.all(
+      Object.keys(state).map(signal => {
+        if (!(signal in this.observers_)) {
+          return;
+        }
+        return Promise.all(
+          Object.values(this.observers_[signal]).map(
+            ({ listener, handler }) => {
+              if (listener == dispatcher) {
+                return;
+              }
+              return handler(state[signal]);
+            }
+          )
+        );
+      })
+    );
+  }
+};

@@ -20,40 +20,37 @@
  * SOFTWARE.
  */
 
-const { expandFontId, googFontStylesheetUrl } = require('../../lib/fonts');
-const FontFaceObserver = require('fontfaceobserver');
-const loadPromise = require('../events/load-promise');
+module.exports = class Panel {
+  constructor(doc, state) {
+    this.fontSelect_ = doc.querySelector('select');
+    this.hueSlider_ = doc.querySelector('input[type=range]');
 
-function loadFontStylesheet(doc, id) {
-  const href = googFontStylesheetUrl(id);
-  const link = doc.createElement('link');
-  link.setAttribute('href', href);
-  link.setAttribute('rel', 'stylesheet');
-  const promise = loadPromise(link);
-  doc.head.appendChild(link);
-  return promise;
-}
+    this.fontSelect_.addEventListener('change', ({ target }) => {
+      state.set(this, { font: target.value });
+    });
 
-class FontLoader {
-  constructor(doc) {
-    this.doc_ = doc;
-    this.loadPromises_ = {};
+    state.on(this, 'font', id => {
+      const option = this.fontSelect_.querySelector(`option[value="${id}"]`);
+      if (!option) {
+        return;
+      }
+      const selected = this.fontSelect_.querySelector(`[selected]`);
+      if (selected) {
+        selected.removeAttribute('selected');
+      }
+      option.setAttribute('selected', '');
+    });
+
+    const setHueOnSlide = ({ target }) => {
+      state.set(this, { hue: parseFloat(target.value) });
+    };
+
+    ['change', 'input'].forEach(e => {
+      this.hueSlider_.addEventListener(e, setHueOnSlide);
+    });
+
+    state.on(this, 'hue', value => {
+      this.hueSlider_.value = value;
+    });
   }
-
-  load(id) {
-    if (id in this.loadPromises_) {
-      return this.loadPromises_[id];
-    }
-    const [name, weight] = expandFontId(id);
-    const stylesheetLoaded = loadFontStylesheet(this.doc_, id);
-    let observer = new FontFaceObserver(name, { weight });
-    const promise = stylesheetLoaded
-      .then(() => observer.load())
-      .then(() => {
-        observer = null; // gc
-      });
-    return (this.loadPromises_[id] = promise);
-  }
-}
-
-exports.FontLoader = FontLoader;
+};

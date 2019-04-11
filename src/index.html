@@ -30,7 +30,7 @@
     />
   </head>
   <body class="not-ready">
-    <div class="border"></div>
+    <div class="border textured"></div>
     <main>
       <h1>[package.description]</h1>
       <div class="toolbar">
@@ -47,9 +47,20 @@
           />
         </label>
       </div>
+      <div class="textures hued">
+        <!-- <template>
+          <div class="texture-option"></div>
+        </template> -->
+      </div>
       <label for="editable" class="editable-wrap">
-        <div class="editable-shadow"></div>
-        <div id="editable" spellcheck="false" contenteditable autofocus></div>
+        <div class="editable-shadow editable-sentinel hued"></div>
+        <div
+          id="editable"
+          class="textured"
+          spellcheck="false"
+          contenteditable
+          autofocus
+        ></div>
       </label>
       <footer class="meta">
         <p class="buggy">

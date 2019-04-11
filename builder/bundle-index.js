@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 const { dirs } = require('../config');
+const { fontId } = require('../lib/fonts');
 const { pipedJsdom, elementWithFileContents } = require('./jsdom-util');
 const { promisify } = require('util');
 const { readFile } = require('fs');
@@ -55,11 +56,13 @@ async function bundleStyle(doc, css) {
   }
 }
 
-function setDefaultText(containers) {
-  for (const container of containers) {
+function setDefaultText(doc, text) {
+  for (const container of doc.querySelectorAll(
+    '#editable, .editable-sentinel'
+  )) {
     container.textContent = container.textContent.replace(
       '[default.text]',
-      'Hello World!'
+      text
     );
   }
 }
@@ -69,9 +72,9 @@ function setFonts(doc, fonts, selectedFont) {
   if (!select) {
     return;
   }
-  fonts.forEach(([name], i) => {
+  fonts.forEach(([name, weight]) => {
     const option = doc.createElement('option');
-    option.value = i;
+    option.value = fontId([name, weight]);
     option.textContent = name;
     if (name == selectedFont) {
       option.setAttribute('selected', '');
@@ -126,7 +129,7 @@ module.exports = function bundleIndex({
     setFonts(doc, fonts, selectedFont);
     setFontPreload(doc.querySelector('link.font-preload'), fonts);
 
-    setDefaultText(doc.querySelectorAll('.default-text-container'));
+    setDefaultText(doc, 'Hello World!');
 
     setTexture(doc, selectedTexture);
 
