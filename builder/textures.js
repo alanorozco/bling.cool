@@ -25,6 +25,7 @@ const { Buffer } = require('buffer');
 const { dirs } = require('../config');
 const { exec } = require('child_process');
 const { promisify } = require('util');
+const { textureId } = require('../lib/textures');
 const { writeFile } = require('fs');
 const glob = require('fast-glob');
 
@@ -36,7 +37,11 @@ const validNameRe = /^.+\/t([0-9]+)\.gif$/;
 
 const b64mime = 'data:image/gif;base64,';
 
-const all = () => glob.sync(gifGlobDir).filter(path => validNameRe.test(path));
+const all = () =>
+  glob
+    .sync(gifGlobDir)
+    .filter(path => validNameRe.test(path))
+    .sort((a, b) => parseInt(textureId(a), 10) - parseInt(textureId(b), 10));
 
 const frameCount = async path =>
   parseInt((await execAsync(`exiftool -b -FrameCount ${path}`)).stdout, 10);
