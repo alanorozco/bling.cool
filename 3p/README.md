@@ -113,6 +113,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   get colors in your node.js console
 
+- [**`del`**](https://www.npmjs.com/package/sindresorhus/del) by **[Sindre Sorhus](sindresorhus.com)** (⚖ MIT)
+
+  Delete files and folders
+
 - [**`eslint`**](https://eslint.org) by **[Nicholas C. Zakas](mailto:nicholas+npm@nczconsulting.com)** (⚖ MIT)
 
   An AST-based pattern checker for JavaScript.
