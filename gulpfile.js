@@ -31,6 +31,7 @@ const buffer = require('vinyl-buffer');
 const bundleIndex = require('./builder/bundle-index');
 const commonjs = require('rollup-plugin-commonjs');
 const docs = require('./builder/docs');
+const del = require('del');
 const htmlmin = require('gulp-html-minifier');
 const path = require('path');
 const rollup = require('rollup-stream');
@@ -188,8 +189,13 @@ function watch() {
   );
 }
 
+function clean() {
+  return del([dirs.dist.root, dirs.dist.workspace]);
+}
+
 exports.barebones = barebones;
 exports.default = series(parallel(barebones, copyTextures), watch);
+exports.clean = clean;
 exports.dist = dist;
 exports.docs = docs;
 exports.integrate = series(dist, test);
