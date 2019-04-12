@@ -42,6 +42,8 @@ module.exports = class Toolbar {
     this.state_ = state;
     this.element_ = doc.querySelector('.toolbar');
 
+    this.openPanel_ = null;
+
     this.element_.addEventListener('click', this.maybeTogglePanel_.bind(this));
   }
 
@@ -57,19 +59,18 @@ module.exports = class Toolbar {
       return;
     }
     e.preventDefault();
-    if (panelId === this.state_.get('panel')) {
+    if (panelId === this.openPanel_) {
       hidePanel(panel, button);
-      this.state_.set(this, { panel: null });
+      this.openPanel_ = null;
       return;
     }
-    const current = this.state_.get('panel');
-    if (current) {
+    if (this.openPanel_) {
       hidePanel(
-        getPanel(this.doc_, current),
-        getPanelToggleButton(this.doc_, current)
+        getPanel(this.doc_, this.openPanel_),
+        getPanelToggleButton(this.doc_, this.openPanel_)
       );
     }
-    this.state_.set(this, { panel: panelId });
+    this.openPanel_ = panelId;
     showPanel(panel, button);
   }
 };
