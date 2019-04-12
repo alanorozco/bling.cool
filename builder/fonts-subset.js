@@ -34,4 +34,4 @@ function select(all, size) {
 }
 
 /** Generate a random subset for limited environments. */
-module.exports = select(all, /* size */ 12);
+module.exports = select(all, /* size */ 16);

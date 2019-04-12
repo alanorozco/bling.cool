@@ -256,11 +256,11 @@ $panelGradientWidth: 60px;
     }
 
     &:before {
-      background: linear-gradient(to left, transparent, white 80%);
+      background: linear-gradient(to left, rgba(255, 255, 255, 0), white 80%);
     }
 
     &:after {
-      background: linear-gradient(to right, transparent, white 80%);
+      background: linear-gradient(to right, rgba(255, 255, 255, 0), white 80%);
       right: 0;
     }
 
@@ -415,7 +415,8 @@ $toggleButtonArrowWidth: 10px;
     &:after,
     &:before {
       pointer-events: none;
-      top: calc(100% + #{$marginUnit / 2});
+      // idk why 4px
+      top: calc(100% + 4px);
       left: 50%;
       border: solid transparent;
       content: ' ';
@@ -431,6 +432,10 @@ $toggleButtonArrowWidth: 10px;
       border-bottom-color: #fff;
       border-width: $toggleButtonArrowWidth;
       margin-left: -$toggleButtonArrowWidth;
+
+      // hack hack hack
+      transform-origin: center top;
+      transform: scale(1.1);
     }
     &:before {
       border-color: transparent;
