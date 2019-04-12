@@ -26,7 +26,7 @@ const getPanel = (doc, id) => doc.querySelector(`.panel-${id}`);
 const getPanelToggleButton = (doc, id) =>
   doc.querySelector(`.panel-toggle[data-toggle=${id}]`);
 
-function hidePanel(panel, button) {
+function closePanel(panel, button) {
   panel.setAttribute('hidden', 'hidden');
   button.classList.remove('selected');
 }
@@ -39,12 +39,13 @@ function showPanel(panel, button) {
 module.exports = class Toolbar {
   constructor(doc, state) {
     this.doc_ = doc;
-    this.state_ = state;
     this.element_ = doc.querySelector('.toolbar');
 
     this.openPanel_ = null;
 
     this.element_.addEventListener('click', this.maybeTogglePanel_.bind(this));
+
+    state.on(this, 'text', this.closePanel_.bind(this));
   }
 
   maybeTogglePanel_(e) {
@@ -60,17 +61,22 @@ module.exports = class Toolbar {
     }
     e.preventDefault();
     if (panelId === this.openPanel_) {
-      hidePanel(panel, button);
+      closePanel(panel, button);
       this.openPanel_ = null;
       return;
     }
-    if (this.openPanel_) {
-      hidePanel(
-        getPanel(this.doc_, this.openPanel_),
-        getPanelToggleButton(this.doc_, this.openPanel_)
-      );
-    }
+    this.closePanel_();
     this.openPanel_ = panelId;
     showPanel(panel, button);
+  }
+
+  closePanel_() {
+    if (!this.openPanel_) {
+      return;
+    }
+    closePanel(
+      getPanel(this.doc_, this.openPanel_),
+      getPanelToggleButton(this.doc_, this.openPanel_)
+    );
   }
 };

@@ -57,7 +57,9 @@ module.exports = class Editor {
     });
 
     this.editable_.addEventListener('input', ({ target }) => {
-      this.setSentinelText_(prepareValue(target[editableValueProp]));
+      const text = target[editableValueProp];
+      state.set(this, { text });
+      this.setSentinelText_(prepareValue(text));
     });
 
     win.addEventListener('resize', () => {
