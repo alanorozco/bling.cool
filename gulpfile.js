@@ -121,7 +121,7 @@ function bundleAmp(done) {
         css: path.join(dirs.dist.workspace, 'index.css'),
         fonts: fontsSubset,
         selectedFont,
-        selectedTexture: Math.floor(10 * Math.random()).toString(),
+        selectedTexture: Math.floor(10 * Math.random()),
         textureOptions: textureSubset.map(path =>
           textureFirstFrameUrl(textureId(path))
         ),

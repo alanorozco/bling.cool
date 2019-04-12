@@ -121,12 +121,8 @@ function setTextureOptions(doc, options, selected) {
     return;
   }
   options
-    .map(index =>
-      renderers.textureOption(
-        container.ownerDocument,
-        index,
-        selected === index
-      )
+    .map((url, index) =>
+      renderers.textureOption(container.ownerDocument, url, selected === index)
     )
     .forEach(el => {
       container.appendChild(el);
@@ -171,11 +167,10 @@ module.exports = function bundleIndex({
     setDefaultText(doc, 'Hello World!');
 
     setTexture(doc, selectedTexture);
+    setTextureOptions(doc, textureOptions, selectedTexture);
 
     await bundleStyle(doc, css);
     await bundleJs(doc, js);
-
-    setTextureOptions(doc, textureOptions, selectedTexture);
 
     const h1 = doc.querySelector('h1');
     h1.textContent = description;
