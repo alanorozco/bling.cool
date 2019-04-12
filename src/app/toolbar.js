@@ -31,7 +31,7 @@ function closePanel(panel, button) {
   button.classList.remove('selected');
 }
 
-function showPanel(panel, button) {
+function openPanel(panel, button) {
   panel.removeAttribute('hidden');
   button.classList.add('selected');
 }
@@ -61,13 +61,12 @@ module.exports = class Toolbar {
     }
     e.preventDefault();
     if (panelId === this.openPanel_) {
-      closePanel(panel, button);
-      this.openPanel_ = null;
+      this.closePanel_();
       return;
     }
     this.closePanel_();
+    openPanel(panel, button);
     this.openPanel_ = panelId;
-    showPanel(panel, button);
   }
 
   closePanel_() {
@@ -78,5 +77,6 @@ module.exports = class Toolbar {
       getPanel(this.doc_, this.openPanel_),
       getPanelToggleButton(this.doc_, this.openPanel_)
     );
+    this.openPanel_ = null;
   }
 };
