@@ -20,27 +20,27 @@
  * SOFTWARE.
  */
 
-const App = require('./app');
+module.exports = class FontSelector {
+  constructor(doc, state) {
+    this.doc_ = doc;
+    this.element_ = doc.querySelector('select');
 
-new App(self, {
-  editor: {
-    editableValueProp: 'value',
-    sentinelContentProp: 'innerHTML',
+    this.element_.addEventListener('change', () => {
+      state.set(this, { font: this.element_.value });
+    });
 
-    fontLoader: {
-      load(unusedFontId) {
-        // Fonts are loaded all at once.
-        return Promise.resolve();
-      },
-    },
+    state.on(this, 'font', this.updateOption_.bind(this));
+  }
 
-    resizer(unusedEditable, unusedSentinels) {
-      // NOOP. worker-dom does not support measurements.
-    },
-
-    prepareValue(value) {
-      // Convert whitespace so it's actually visible
-      return value.replace(/\n/g, '<br>').replace(/ /g, '<span>\u00A0</span>');
-    },
-  },
-});
+  updateOption_(fontId) {
+    const option = this.element_.querySelector(`option[value="${fontId}"]`);
+    if (!option) {
+      return;
+    }
+    const selected = this.element_.querySelector(`[selected]`);
+    if (selected) {
+      selected.removeAttribute('selected');
+    }
+    option.setAttribute('selected', '');
+  }
+};

@@ -20,27 +20,34 @@
  * SOFTWARE.
  */
 
-const App = require('./app');
+const Editor = require('./editor');
+const FontSelector = require('./font-selector');
+const FxPanel = require('./fx-panel');
+const Toolbar = require('./toolbar');
+const State = require('./state');
+const Texturables = require('./texturables');
+const TextureSelector = require('./texture-selector');
 
-new App(self, {
-  editor: {
-    editableValueProp: 'value',
-    sentinelContentProp: 'innerHTML',
+module.exports = class App {
+  constructor(
+    win,
+    { editor, fontSelector, fxPanel, toolbar, texturables, textureSelector },
+    opt_initialState
+  ) {
+    const state = new State();
 
-    fontLoader: {
-      load(unusedFontId) {
-        // Fonts are loaded all at once.
-        return Promise.resolve();
-      },
-    },
+    this.state = state;
 
-    resizer(unusedEditable, unusedSentinels) {
-      // NOOP. worker-dom does not support measurements.
-    },
+    new Editor(win, state, editor);
+    new Toolbar(win.document, state, toolbar || {});
+    new Texturables(win.document, state, texturables || {});
+    new TextureSelector(win.document, state, textureSelector || {});
+    new FontSelector(win.document, state, fontSelector || {});
+    new FxPanel(win.document, state, fxPanel || {});
 
-    prepareValue(value) {
-      // Convert whitespace so it's actually visible
-      return value.replace(/\n/g, '<br>').replace(/ /g, '<span>\u00A0</span>');
-    },
-  },
-});
+    this.ready = (opt_initialState
+      ? state.set(this, opt_initialState)
+      : Promise.resolve()
+    ).then(() => this);
+  }
+};

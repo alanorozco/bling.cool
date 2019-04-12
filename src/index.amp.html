@@ -37,8 +37,13 @@
       }
     </script>
     <link rel="stylesheet" class="font-preload" />
+    <link rel="canonical" href="/" />
     <meta charset="utf-8" />
-    <!-- AMP_BOILERPLATE -->
+    <meta
+      name="viewport"
+      content="width=device-width,minimum-scale=1,initial-scale=1"
+    />
+    <!-- partial:amp-boilerplate -->
     <style amp-custom></style>
     <meta
       name="description"
@@ -52,28 +57,7 @@
       <div class="border textured"></div>
       <main>
         <h1>[package.description]</h1>
-        <div class="toolbar">
-          <label for="toggle-textures">
-            <button class="toggle" id="toggle-textures" data-toggle="textures">
-              texture
-            </button>
-          </label>
-          <label for="font">
-            <select name="font" id="font"></select>
-          </label>
-          <label for="hue">
-            hue
-            <input
-              id="hue"
-              type="range"
-              min="0"
-              max="1"
-              step="0.05"
-              value="0"
-            />
-          </label>
-        </div>
-        <div class="panel panel-textures texture-options hued"></div>
+        <!-- partial:chrome -->
         <label for="editable" class="editable-wrap">
           <div class="editable-shadow editable-sentinel default-font hued">
             [default.text]
@@ -87,9 +71,7 @@
         </label>
         <footer class="meta">
           ⚡ this is a limited tech demo meant to showcase
-          <a
-            href="https://github.com/ampproject/amphtml/blob/master/extensions/amp-script/amp-script.md"
-          >
+          <a href="https://amp.dev/documentation/components/amp-script">
             amp-script
           </a>
           ⚡<br />

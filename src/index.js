@@ -20,13 +20,12 @@
  * SOFTWARE.
  */
 
+const { dirs } = require('../config');
 const { fontId } = require('../lib/fonts');
 const { FontLoader } = require('./fonts/font-loader');
-const Editor = require('./app/editor');
-const Toolbar = require('./app/toolbar');
-const State = require('./app/state');
+const { textureUrl } = require('../lib/textures');
+const App = require('./app');
 const focusAtEnd = require('./input/focus-at-end');
-const Texturables = require('./app/texturables');
 
 const fonts = require('../artifacts/fonts');
 const phrases = require('../artifacts/phrases');
@@ -50,40 +49,44 @@ function fillPhrase(phrase) {
   return phrase;
 }
 
-const state = new State();
-
-new Editor(self, state, {
-  fontLoader: new FontLoader(self.document),
-  editableValueProp: 'innerText',
-  sentinelContentProp: 'innerText',
-
-  resizer(editable, sentinels) {
-    const { width } = editable.getBoundingClientRect();
-    sentinels.forEach(s => {
-      s.style.width = `${width}px`;
-    });
-  },
-
-  prepareValue(value) {
-    // passthru.
-    return value;
-  },
-});
-
-new Toolbar(self.document, state);
-new Texturables(self.document, state);
-
 const [text, phraseConfig] = fillPhrase(pickRandom(phrases));
 
-state
-  .set('initial', {
+new App(
+  self,
+  {
+    textureSelector: { hoverUrl: textureUrl },
+    editor: {
+      fontLoader: new FontLoader(self.document),
+      editableValueProp: 'innerText',
+      sentinelContentProp: 'innerText',
+
+      resizer(editable, sentinels) {
+        const { width } = editable.getBoundingClientRect();
+        sentinels.forEach(s => {
+          s.style.width = `${width}px`;
+        });
+      },
+
+      prepareValue(value) {
+        // passthru.
+        return value;
+      },
+    },
+  },
+  {
     text,
     font: fontId(phraseConfig.font || pickRandom(fonts)),
     fontSize: defaultFontSize,
     hue: phraseConfig.hue || Math.random(),
     texture: randomTill(textureAssetsCount),
-  })
-  .then(() => {
-    self.document.body.classList.remove('not-ready');
-    focusAtEnd(editable);
-  });
+  }
+).ready.then(app => {
+  self.document.body.classList.remove('not-ready');
+  focusAtEnd(editable);
+
+  fetch(`/${dirs.textures.frames}/initial.json`)
+    .then(response => response.json())
+    .then(textureOptions => {
+      app.state.set('textureOptions', { textureOptions });
+    });
+});

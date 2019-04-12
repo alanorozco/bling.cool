@@ -34,6 +34,8 @@ $grayish: rgb(147, 153, 160);
 $track-color: $grayish;
 $thumb-color: $grayish;
 
+$smallView: '(max-width: 600px)';
+
 @import '../3p/style-range-inputs/style-range-inputs';
 
 body {
@@ -48,10 +50,22 @@ body {
   [amp] & {
     padding: 0;
   }
+
+  @media #{$smallView} {
+    font-size: 16px;
+  }
 }
 
 amp-script {
   padding: $marginUnit;
+}
+
+amp-script,
+body {
+  @media #{$smallView} {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
 
 .not-ready {
@@ -82,6 +96,11 @@ footer {
   > .buggy {
     color: darken($grayish, 20%);
   }
+
+  @media #{$smallView} {
+    font-size: 100%;
+    padding: 0 $marginUnit;
+  }
 }
 
 p {
@@ -94,6 +113,10 @@ main {
   width: calc(100vw - #{2 * $bodyBorder});
   height: calc(100vh - #{2 * $bodyBorder});
   padding: $marginUnit 0;
+
+  @media #{$smallView} {
+    width: 100vw;
+  }
 }
 
 main,
@@ -152,11 +175,17 @@ main,
       position: absolute;
       overflow: hidden;
       width: calc(100% - #{6 * $marginUnit});
+      height: 30vh;
       padding: 0;
-      height: 40vh;
+      margin-top: 20vh;
 
       // like textareas:
       word-wrap: break-word;
+
+      @media #{$smallView} {
+        font-size: 32px;
+        width: calc(100% - #{4 * $marginUnit});
+      }
     }
   }
 }
@@ -166,14 +195,104 @@ main,
   background-color: $blue;
 }
 
+$panelContentHeight: 90px;
+
 .texture-option {
-  width: 100px;
-  height: 100px;
+  width: $panelContentHeight;
+  height: $panelContentHeight;
+  margin: 0 $marginUnit / 2;
+  display: block;
+  cursor: pointer;
+  transition: transform 0.3s, opacity 0.3s;
+  opacity: 0.9;
+  position: relative;
+
+  &:hover,
+  &.selected {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+
+  &.selected {
+    outline: 2px solid $blue;
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(lighten($blue, 50%), 0.5);
+    }
+  }
 }
 
+$panelMarginForScrollbarUgh: 18px;
+$panelGradientWidth: 60px;
+
 .panel {
+  width: 100%;
+  position: relative;
+  border-top: 2px solid $grayish;
+  padding: $marginUnit;
+  box-sizing: border-box;
+
+  &.sliding {
+    overflow: hidden;
+    height: $panelContentHeight + $marginUnit * 2;
+    padding: 0;
+
+    &:after,
+    &:before {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      width: $panelGradientWidth;
+      height: $panelContentHeight + $marginUnit * 2;
+      pointer-events: none;
+      z-index: 10000;
+    }
+
+    &:before {
+      background: linear-gradient(to left, transparent, white 80%);
+    }
+
+    &:after {
+      background: linear-gradient(to right, transparent, white 80%);
+      right: 0;
+    }
+
+    > .panel-slider {
+      overflow-y: hidden;
+      overflow-x: scroll;
+      white-space: nowrap;
+      height: $panelContentHeight + 2 * $marginUnit +
+        $panelMarginForScrollbarUgh;
+      box-sizing: border-box;
+      padding: $marginUnit ($marginUnit / 2 + $panelGradientWidth)
+        ($marginUnit + $panelMarginForScrollbarUgh);
+
+      > div {
+        display: inline-block;
+      }
+    }
+  }
+}
+
+@keyframes slideDownFadeIn {
+  to {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}
+
+.panel-fx {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 #editable {
@@ -212,6 +331,8 @@ footer a {
   text-shadow: 6px 6px 12px rgba($blue, 0.48);
 }
 
+$buttonRadius: 32px;
+
 .toolbar {
   display: flex;
   flex-direction: row;
@@ -225,12 +346,8 @@ footer a {
   > label {
     margin: 0 ($marginUnit / 2);
 
-    &:first-child {
-      margin-left: 0;
-    }
-
-    > input {
-      margin: 0 0 0 ($marginUnit / 2);
+    @media #{$smallView} {
+      margin: 0;
     }
   }
 
@@ -245,11 +362,41 @@ footer a {
     outline: none;
     background: transparent;
     border: 2px solid $grayish;
-    border-radius: 32px;
+    border-radius: $buttonRadius;
     text-align: center;
     text-align-last: center;
     line-height: $lineHeight;
   }
+
+  @media #{$smallView} {
+    button,
+    select {
+      border-radius: 0;
+      margin-left: -2px;
+    }
+  }
+
+  > label:first-child {
+    button,
+    select {
+      @media #{$smallView} {
+        margin-left: 0;
+        border-top-left-radius: $buttonRadius;
+        border-bottom-left-radius: $buttonRadius;
+      }
+    }
+  }
+
+  > label:last-child {
+    button,
+    select {
+      @media #{$smallView} {
+        border-top-right-radius: $buttonRadius;
+        border-bottom-right-radius: $buttonRadius;
+      }
+    }
+  }
+
   button {
     padding: ($marginUnit / 4) $marginUnit;
   }
@@ -259,6 +406,46 @@ footer a {
   }
 }
 
+$toggleButtonArrowWidth: 10px;
+
+.panel-toggle {
+  position: relative;
+
+  &.selected {
+    &:after,
+    &:before {
+      pointer-events: none;
+      top: calc(100% + #{$marginUnit / 2});
+      left: 50%;
+      border: solid transparent;
+      content: ' ';
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+      z-index: 10000;
+    }
+
+    &:after {
+      border-color: transparent;
+      border-bottom-color: #fff;
+      border-width: $toggleButtonArrowWidth;
+      margin-left: -$toggleButtonArrowWidth;
+    }
+    &:before {
+      border-color: transparent;
+      border-bottom-color: $grayish;
+      border-width: $toggleButtonArrowWidth + 3px;
+      margin-left: -($toggleButtonArrowWidth + 3px);
+      margin-top: -6px;
+    }
+  }
+}
+
 option {
   text-align: left;
+}
+
+[hidden] {
+  display: none;
 }

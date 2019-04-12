@@ -20,17 +20,13 @@
  * SOFTWARE.
  */
 
-exports.closestByClassName = function closestByClassName(
-  doc,
-  element,
-  className
-) {
+exports.closestByClassName = function closestByClassName(element, className) {
   if (element.closest) {
     return element.closest(`.${className}`);
   }
   let current = element;
-  while (!element.classList.contains(className) && current != doc.body) {
-    current = element.parentNode;
+  while (!element.classList.contains(className) && current.parentNode) {
+    current = current.parentNode;
   }
   if (current.classList.contains(className)) {
     return current;

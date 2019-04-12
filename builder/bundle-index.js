@@ -146,6 +146,22 @@ module.exports = function bundleIndex({
       (await readFileAsync('./package.json')).toString()
     );
 
+    let match;
+    const partialsRe = /<!-- partial:([^\s]+) -->/;
+    do {
+      match = partialsRe.exec(doc.documentElement.innerHTML);
+      if (match) {
+        const [fullMatch, id] = match;
+        const content = (await readFileAsync(
+          `src/partials/${id}.html`
+        )).toString();
+        doc.documentElement.innerHTML = doc.documentElement.innerHTML.replace(
+          fullMatch,
+          content
+        );
+      }
+    } while (match);
+
     setTitle(doc, name);
     setDescription(doc, description);
 
@@ -176,13 +192,6 @@ module.exports = function bundleIndex({
     const repoLink = doc.querySelector('a#meta-repository');
     if (repoLink) {
       repoLink.setAttribute('href', repository);
-    }
-
-    if (doc.documentElement.hasAttribute('amp')) {
-      doc.head.innerHTML = doc.head.innerHTML.replace(
-        '<!-- AMP_BOILERPLATE -->',
-        (await readFileAsync('./artifacts/amp-boilerplate.html')).toString()
-      );
     }
   });
 };

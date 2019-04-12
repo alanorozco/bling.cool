@@ -21,80 +21,55 @@
  */
 
 const { closestByClassName } = require('../dom');
-const { selectElementOption } = require('../../lib/renderers');
 
-class TextureOptions {
-  constructor(doc, state) {
-    this.doc_ = doc;
-    this.element_ = doc.querySelector('.texture-options');
+const getPanel = (doc, id) => doc.querySelector(`.panel-${id}`);
+const getPanelToggleButton = (doc, id) =>
+  doc.querySelector(`.panel-toggle[data-toggle=${id}]`);
 
-    if (!this.element_) {
-      return this;
-    }
+function hidePanel(panel, button) {
+  panel.setAttribute('hidden', 'hidden');
+  button.classList.remove('selected');
+}
 
-    this.element_.addEventListener('click', ({ target }) => {
-      const option = closestByClassName(doc, target, 'texture-option');
-      if (!option) {
-        return;
-      }
-      selectElementOption(option);
-      state.set(this, {
-        texture: option.getAttribute('data-texture-id'),
-      });
-    });
-
-    state.on(this, 'texture', this.updateSelected_.bind(this));
-  }
-
-  updateSelected_(texture) {
-    if (textureUrl.startsWith('data')) {
-      return;
-    }
-    const option = this.container_.querySelector(
-      `.texture-option[data-texture-id=${texture}]`
-    );
-    if (!option) {
-      return;
-    }
-    selectElementOption(option);
-  }
+function showPanel(panel, button) {
+  panel.removeAttribute('hidden');
+  button.classList.add('selected');
 }
 
 module.exports = class Toolbar {
   constructor(doc, state) {
-    this.fontSelect_ = doc.querySelector('select');
-    this.hueSlider_ = doc.querySelector('input[type=range]');
+    this.doc_ = doc;
+    this.state_ = state;
+    this.element_ = doc.querySelector('.toolbar');
 
-    this.fontSelect_.addEventListener('change', ({ target }) => {
-      state.set(this, { font: target.value });
-    });
-
-    state.on(this, 'font', this.updateSelectedFontOption_.bind(this));
-
-    const setHueOnSlide = ({ target }) => {
-      state.set(this, { hue: parseFloat(target.value) });
-    };
-
-    ['change', 'input'].forEach(e => {
-      this.hueSlider_.addEventListener(e, setHueOnSlide);
-    });
-
-    state.on(this, 'hue', value => {
-      this.hueSlider_.value = value;
-    });
-
-    new TextureOptions(doc, state);
+    this.element_.addEventListener('click', this.maybeTogglePanel_.bind(this));
   }
 
-  updateSelectedFontOption_(fontId) {
-    const option = this.fontSelect_.querySelector(`option[value="${fontId}"]`);
-    if (!option) {
+  maybeTogglePanel_(e) {
+    const { target } = e;
+    const button = closestByClassName(target, 'panel-toggle');
+    if (!button) {
       return;
     }
-    const selected = this.fontSelect_.querySelector(`[selected]`);
-    if (selected) {
-      selected.removeAttribute('selected');
+    const panelId = button.getAttribute('data-toggle');
+    const panel = getPanel(this.doc_, panelId);
+    if (!panel) {
+      return;
     }
-    option.setAttribute('selected', '');
+    e.preventDefault();
+    if (panelId === this.state_.get('panel')) {
+      hidePanel(panel, button);
+      this.state_.set(this, { panel: null });
+      return;
+    }
+    const current = this.state_.get('panel');
+    if (current) {
+      hidePanel(
+        getPanel(this.doc_, current),
+        getPanelToggleButton(this.doc_, current)
+      );
+    }
+    this.state_.set(this, { panel: panelId });
+    showPanel(panel, button);
   }
 };
