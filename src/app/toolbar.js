@@ -21,6 +21,7 @@
  */
 
 const { closestByClassName } = require('../dom');
+const Events = require('./events');
 
 const getPanel = (doc, id) => doc.querySelector(`.panel-${id}`);
 const getPanelToggleButton = (doc, id) =>
@@ -33,6 +34,7 @@ function closePanel(panel, button) {
 
 function openPanel(panel, button) {
   panel.removeAttribute('hidden');
+  panel.dispatchEvent(new Event(Events.OPEN));
   button.classList.add('selected');
 }
 
