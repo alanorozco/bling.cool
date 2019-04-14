@@ -40,7 +40,11 @@ class FontLoader {
     this.loadPromises_ = {};
   }
 
-  load(id) {
+  load(idOrIds) {
+    if (Array.isArray(idOrIds)) {
+      return loadFontStylesheet(idOrIds);
+    }
+    const id = idOrIds;
     if (id in this.loadPromises_) {
       return this.loadPromises_[id];
     }
