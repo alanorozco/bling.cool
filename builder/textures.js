@@ -78,7 +78,7 @@ async function extractFramesJson(fromGif, toJson) {
     .map((_, f) => extractFrame(fromGif, f));
   const allFrames = await Promise.all(frameOptionals);
   const sequence = allFrames.map((frame, i) =>
-    fallbackToPreviousFrame(allFrames, frame, i)
+    frameTob64(fallbackToPreviousFrame(allFrames, frame, i))
   );
   await writeJson(toJson, sequence);
 }
