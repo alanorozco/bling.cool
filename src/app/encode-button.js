@@ -35,7 +35,7 @@ module.exports = class EncodeButton {
         fetchFrames(state.get('texture')),
         modules.get('encoder'),
       ]).then(([frames, Encoder]) => {
-        new Encoder(doc, state).playback(frames, unusedIsFinal => {});
+        new Encoder(doc, state).asGif(frames);
       });
     });
   }

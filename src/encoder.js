@@ -21,26 +21,57 @@
  */
 
 const pushAsync = require('./app/push-async');
-// const html2Canvas = require('html2canvas');
+const html2Canvas = require('html2canvas');
 
 pushAsync(self, {
   encoder: class Encoder {
     constructor(unusedDoc, state) {
       this.state_ = state;
+      this.playbackPromise_ = null;
+      this.playbackResolver_ = null;
     }
 
-    playback(frames, cb) {
-      const frame = frames.shift();
-      const isFinal = frames.length == 0;
-      this.state_.set(this, { texture: frame });
-      Promise.resolve(cb(isFinal)).then(() => {
-        if (isFinal) {
+    playback_(frames, cb) {
+      if (!this.playbackPromise_) {
+        this.playbackPromise_ = new Promise(resolve => {
+          this.playbackResolver_ = resolve;
+        });
+      }
+
+      this.state_.set(this, { texture: frames.shift() });
+
+      Promise.resolve(cb()).then(() => {
+        if (frames.length == 0) {
+          this.playbackResolver_();
           return;
         }
-
         setTimeout(() => {
-          this.playback(frames, cb);
-        }, 500);
+          this.playback_(frames, cb);
+        }, 100);
+      });
+
+      return this.playbackPromise_;
+    }
+
+    asGif(frames) {
+      const gif = new GIF({
+        workers: 2,
+        quality: 10,
+      });
+      gif.on('finished', blob => {
+        window.open(URL.createObjectURL(blob));
+      });
+
+      this.playback_(frames, () =>
+        html2Canvas(document.querySelector('.editable-wrap')).then(canvas => {
+          gif.addFrame(canvas, {
+            // TODO: Each texture has different delay params, extract in build
+            // process.
+            delay: 100,
+          });
+        })
+      ).then(() => {
+        gif.render();
       });
     }
   },

@@ -30,6 +30,7 @@ const babel = require('rollup-plugin-babel');
 const buffer = require('vinyl-buffer');
 const bundleIndex = require('./builder/bundle-index');
 const commonjs = require('rollup-plugin-commonjs');
+const concat = require('gulp-concat');
 const docs = require('./builder/docs');
 const del = require('del');
 const htmlmin = require('gulp-html-minifier');
@@ -65,11 +66,26 @@ function jsAmp(done) {
   return jsRollup('index.amp.js').pipe(dest(dirs.dist.root));
 }
 
-function jsEncoder() {
-  return jsRollup('encoder.js').pipe(dest(dirs.dist.root));
+async function jsEncoder() {
+  await new Promise(resolve => {
+    jsRollup('encoder.js')
+      .pipe(dest(dirs.dist.workspace))
+      .on('end', resolve);
+  });
+
+  await new Promise(resolve => {
+    src(['3p/gif.js/gif.js', path.join(dirs.dist.workspace, 'encoder.js')])
+      .pipe(concat('encoder.js'))
+      .pipe(dest(dirs.dist.root))
+      .on('end', resolve);
+  });
 }
 
-const js = parallel(jsDefault, jsAmp, jsEncoder);
+function jsEncoderWorker() {
+  return src('3p/gif.js/gif.worker.js').pipe(dest(dirs.dist.root));
+}
+
+const js = parallel(jsDefault, jsAmp, jsEncoder, jsEncoderWorker);
 
 function css() {
   return src('./src/index.scss')
