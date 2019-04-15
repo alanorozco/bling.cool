@@ -1,0 +1,7 @@
+{
+  "name": "gif.js",
+  "description": "JavaScript GIF encoding library",
+  "url": "http://jnordberg.github.io/gif.js/",
+  "author": "Johan Nordberg <code@johan-nordberg.com>",
+  "license": "MIT"
+}

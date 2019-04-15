@@ -24,7 +24,10 @@ or were patched somehow, **including:**
 
 <!-- gen:3p -->
 
-- [**`darlanrod/input-range-sass`**](https://github.com/darlanrod/input-range-sass) originally by **[Darlan Rod](https://github.com/darlanrod)** (⚖ MIT)<br>
+- [**`gif.js`**](http://jnordberg.github.io/gif.js/) by **[Johan Nordberg](mailto:code@johan-nordberg.com)** (⚖ MIT)
+
+  JavaScript GIF encoding library
+  ,- [**`darlanrod/input-range-sass`**](https://github.com/darlanrod/input-range-sass) originally by **[Darlan Rod](https://github.com/darlanrod)** (⚖ MIT)<br>
   _Simplified for the use-case of this project._
 
   Styling Cross-Browser Compatible Range Inputs with Sass
@@ -168,6 +171,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 - [**`gulp-uglifyjs`**](https://github.com/craigjennings11/gulp-uglifyjs.git) by **[Craig Jennings](mailto:craig.jennings@gmail.com)** (⚖ MIT)
 
   Minify multiple files with UglifyJS.
+
+- [**`html2canvas`**](https://html2canvas.hertzen.com) by **[Niklas von Hertzen](https://hertzen.com)** (⚖ MIT)
+
+  Screenshots with JavaScript
 
 - [**`jsdom`**](https://www.npmjs.com/package/jsdom/jsdom) by **[Elijah Insua](http://tmpvar.com)**, **[Domenic Denicola](https://domenic.me/)**, **[Sebastian Mayr](https://blog.smayr.name/)**, **[Joris van der Wel](mailto:joris@jorisvanderwel.com)**, **[Timothy Gu](https://timothygu.me/)**, **[Zirro](mailto:code@zirro.se)** (⚖ MIT)
 
