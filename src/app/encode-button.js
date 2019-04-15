@@ -20,9 +20,23 @@
  * SOFTWARE.
  */
 
-const { dirs } = require('../config');
+const { textureFramesUrl } = require('../../lib/textures');
 
-exports.textureUrl = index => `/${dirs.textures.gif}/t${index}.gif`;
-exports.textureFirstFrameUrl = index => `/${dirs.textures.gif}/i${index}.gif`;
-exports.textureFramesUrl = index => `/${dirs.textures.frames}/f${index}.json`;
-exports.textureId = urlOrPath => urlOrPath.replace(/[^0-9]+/gim, '');
+function fetchFrames(textureId) {
+  return fetch(textureFramesUrl(textureId)).then(r => r.json());
+}
+
+module.exports = class EncodeButton {
+  constructor(doc, state, { modules }) {
+    const button = doc.querySelector('.encode-button');
+
+    button.addEventListener('click', () => {
+      Promise.all([
+        fetchFrames(state.get('texture')),
+        modules.get('encoder'),
+      ]).then(([frames, Encoder]) => {
+        new Encoder(doc, state).playback(frames, unusedIsFinal => {});
+      });
+    });
+  }
+};

@@ -20,7 +20,9 @@
  * SOFTWARE.
  */
 
+const adoptAsync = require('./adopt-async');
 const Editor = require('./editor');
+const EncodeButton = require('./encode-button');
 const FontSelector = require('./font-selector');
 const FxPanel = require('./fx-panel');
 const Toolbar = require('./toolbar');
@@ -31,12 +33,21 @@ const TextureSelector = require('./texture-selector');
 module.exports = class App {
   constructor(
     win,
-    { editor, fontSelector, fxPanel, toolbar, texturables, textureSelector },
+    {
+      editor,
+      encodeButton,
+      fontSelector,
+      fxPanel,
+      texturables,
+      textureSelector,
+      toolbar,
+    },
     opt_initialState
   ) {
     const state = new State();
 
     this.state = state;
+    this.modules_ = adoptAsync(win);
 
     new Editor(win, state, editor);
     new Toolbar(win.document, state, toolbar || {});
@@ -44,6 +55,11 @@ module.exports = class App {
     new TextureSelector(win.document, state, textureSelector || {});
     new FontSelector(win.document, state, fontSelector || {});
     new FxPanel(win.document, state, fxPanel || {});
+    new EncodeButton(
+      win.document,
+      state,
+      Object.assign(encodeButton || {}, { modules: this.modules_ })
+    );
 
     this.ready = (opt_initialState
       ? state.set(this, opt_initialState)

@@ -20,9 +20,28 @@
  * SOFTWARE.
  */
 
-const { dirs } = require('../config');
+const pushAsync = require('./app/push-async');
+// const html2Canvas = require('html2canvas');
 
-exports.textureUrl = index => `/${dirs.textures.gif}/t${index}.gif`;
-exports.textureFirstFrameUrl = index => `/${dirs.textures.gif}/i${index}.gif`;
-exports.textureFramesUrl = index => `/${dirs.textures.frames}/f${index}.json`;
-exports.textureId = urlOrPath => urlOrPath.replace(/[^0-9]+/gim, '');
+pushAsync(self, {
+  encoder: class Encoder {
+    constructor(unusedDoc, state) {
+      this.state_ = state;
+    }
+
+    playback(frames, cb) {
+      const frame = frames.shift();
+      const isFinal = frames.length == 0;
+      this.state_.set(this, { texture: frame });
+      Promise.resolve(cb(isFinal)).then(() => {
+        if (isFinal) {
+          return;
+        }
+
+        setTimeout(() => {
+          this.playback(frames, cb);
+        }, 500);
+      });
+    }
+  },
+});

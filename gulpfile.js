@@ -65,7 +65,11 @@ function jsAmp(done) {
   return jsRollup('index.amp.js').pipe(dest(dirs.dist.root));
 }
 
-const js = parallel(jsDefault, jsAmp);
+function jsEncoder() {
+  return jsRollup('encoder.js').pipe(dest(dirs.dist.root));
+}
+
+const js = parallel(jsDefault, jsAmp, jsEncoder);
 
 function css() {
   return src('./src/index.scss')
