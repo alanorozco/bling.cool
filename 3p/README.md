@@ -27,7 +27,8 @@ or were patched somehow, **including:**
 - [**`gif.js`**](http://jnordberg.github.io/gif.js/) by **[Johan Nordberg](mailto:code@johan-nordberg.com)** (⚖ MIT)
 
   JavaScript GIF encoding library
-  ,- [**`darlanrod/input-range-sass`**](https://github.com/darlanrod/input-range-sass) originally by **[Darlan Rod](https://github.com/darlanrod)** (⚖ MIT)<br>
+
+- [**`darlanrod/input-range-sass`**](https://github.com/darlanrod/input-range-sass) originally by **[Darlan Rod](https://github.com/darlanrod)** (⚖ MIT)<br>
   _Simplified for the use-case of this project._
 
   Styling Cross-Browser Compatible Range Inputs with Sass

@@ -164,7 +164,9 @@ async function threepAttribution() {
   const threepAttributionFiles = await glob('./3p/*/attribution.json');
   const threepAttribution = (await Promise.all(
     threepAttributionFiles.map(parseFileJson)
-  )).map(mdAttribution);
+  ))
+    .map(mdAttribution)
+    .join('\n');
 
   const { dependencies, devDependencies } = await parsePkg('./');
   const allPkgs = nonFileDependencies(dependencies).concat(
