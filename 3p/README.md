@@ -173,10 +173,6 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Minify multiple files with UglifyJS.
 
-- [**`html2canvas`**](https://html2canvas.hertzen.com) by **[Niklas von Hertzen](https://hertzen.com)** (⚖ MIT)
-
-  Screenshots with JavaScript
-
 - [**`jsdom`**](https://www.npmjs.com/package/jsdom/jsdom) by **[Elijah Insua](http://tmpvar.com)**, **[Domenic Denicola](https://domenic.me/)**, **[Sebastian Mayr](https://blog.smayr.name/)**, **[Joris van der Wel](mailto:joris@jorisvanderwel.com)**, **[Timothy Gu](https://timothygu.me/)**, **[Zirro](mailto:code@zirro.se)** (⚖ MIT)
 
   A JavaScript implementation of many web standards
