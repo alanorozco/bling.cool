@@ -82,9 +82,7 @@ function setFonts(doc, fonts, selectedFont) {
     return;
   }
   fonts.forEach(([name, weight]) => {
-    const option = doc.createElement('option');
-    option.value = fontId([name, weight]);
-    option.textContent = name;
+    const option = renderers.fontOption(doc, name, weight);
     if (name == selectedFont) {
       option.setAttribute('selected', '');
     }
