@@ -21,12 +21,30 @@
  */
 
 const { expandFontId } = require('../../lib/fonts');
+const { getLengthNumeral } = require('../../lib/css');
 const { hueRotate } = require('./colors');
 const { splitLines } = require('./text');
 const loadPromise = require('../events/load-promise');
+const scssVars = require('variables!../index.scss');
 
-const BLUE = [0, 68, 214];
-const MARGIN = 2 * 20;
+const BLUE = [
+  getLengthNumeral(scssVars.blueR),
+  getLengthNumeral(scssVars.blueG),
+  getLengthNumeral(scssVars.blueG),
+];
+
+const MARGIN = 2 * getLengthNumeral(scssVars.marginUnit);
+
+// Same as .editable-shadow in index.scss
+const SHADOW = {
+  x: getLengthNumeral(scssVars.shadowX),
+  y: getLengthNumeral(scssVars.shadowY),
+  blur: getLengthNumeral(scssVars.shadowBlur),
+  opacity: getLengthNumeral(scssVars.shadowOpacity),
+};
+
+const fontDef = (name, size) => `${size}px '${name}', sans-serif`;
+const rgba = (...parts) => `rgba(${parts.join(',')})`;
 
 function createCanvas(doc, width, height) {
   const canvas = doc.createElement('canvas');
@@ -46,7 +64,7 @@ function fillText(canvas, ctx, fontSize, fontName, lines, margin) {
   const lineHeight = Math.floor((canvas.height - margin * 2) / lines.length);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.font = `${fontSize}px '${fontName}', sans-serif`;
+  ctx.font = fontDef(fontName, fontSize);
   lines.forEach((text, i) => {
     ctx.fillText(
       text,
@@ -89,7 +107,7 @@ module.exports = class CanvasRenderer {
 
       ctx.globalCompositeOperation = 'destination-over';
 
-      ctx.fillStyle = `rgba(${BLUE.join(',')},1)`;
+      ctx.fillStyle = rgba(...BLUE.concat([1]));
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -114,13 +132,14 @@ module.exports = class CanvasRenderer {
   render(width, height) {
     const { font, fontSize, text, hue } = this.options_;
     const [fontName] = expandFontId(font);
+
     const { canvas, ctx } = createCanvas(
       this.win_.document,
       Math.ceil(width),
       Math.ceil(height)
     );
 
-    ctx.font = `${fontSize}px '${fontName}', sans-serif`;
+    ctx.font = fontDef(fontName, fontSize);
     const lines = splitLines(ctx, text, canvas.width, MARGIN);
 
     return this.renderTexture_(width, height).then(texture => {
@@ -134,14 +153,17 @@ module.exports = class CanvasRenderer {
       ctx.drawImage(texture, 0, 0);
       ctx.restore();
 
-      // text shadow.
       ctx.save();
       ctx.beginPath();
       ctx.globalCompositeOperation = 'destination-over';
-      ctx.shadowColor = `rgba(${hueRotate(BLUE, hue).join(',')},0.48)`;
-      ctx.shadowOffsetX = 6;
-      ctx.shadowOffsetY = 6;
-      ctx.shadowBlur = 12;
+
+      // Hack to remove separate layer text jaggies.
+      ctx.fillStyle = rgba(1, 1, 1, SHADOW.opacity);
+      ctx.shadowColor = rgba(...hueRotate(BLUE, hue).concat([1]));
+
+      ctx.shadowOffsetX = SHADOW.x;
+      ctx.shadowOffsetY = SHADOW.y;
+      ctx.shadowBlur = SHADOW.blur;
       fillText(canvas, ctx, fontSize, fontName, lines, MARGIN);
       ctx.restore();
 

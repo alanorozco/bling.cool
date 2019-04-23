@@ -38,6 +38,7 @@ const path = require('path');
 const rollup = require('rollup-stream');
 const rollupResolve = require('rollup-plugin-node-resolve');
 const sass = require('gulp-sass');
+const scssVariables = require('rollup-plugin-sass-variables');
 const source = require('vinyl-source-stream');
 const test = require('./builder/test');
 const uglify = require('gulp-uglifyjs');
@@ -51,7 +52,7 @@ function jsRollup(input) {
     input: path.join('src', input),
     format: 'iife',
     name: 'bling',
-    plugins: [rollupResolve(), commonjs(), babel()],
+    plugins: [rollupResolve(), scssVariables(), commonjs(), babel()],
   }).pipe(source(input));
 }
 

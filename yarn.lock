@@ -5368,6 +5368,11 @@ rollup-plugin-node-resolve@^4.0.1:
     is-module "^1.0.0"
     resolve "^1.10.0"
 
+rollup-plugin-sass-variables@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-sass-variables/-/rollup-plugin-sass-variables-0.1.1.tgz#6eae8a6ca9777356de9758bcfdaf3489570dd1f6"
+  integrity sha512-nTj4onwZwxI1VIkV8eMBZBOpqA9QkskGz4VSt36yHLNXnz758mHGIyaL5lMoWhplk2475TcGLZ+CSL+iMB6D5w==
+
 rollup-pluginutils@^2.0.1, rollup-pluginutils@^2.3.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/rollup-pluginutils/-/rollup-pluginutils-2.6.0.tgz#203706edd43dfafeaebc355d7351119402fc83ad"

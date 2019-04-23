@@ -209,6 +209,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Bundle third-party dependencies in node_modules
 
+- [**`rollup-plugin-sass-variables`**](https://github.com/gmfun/rollup-plugin-sass-variables) by **gmfun** (⚖ MIT)
+
+  load sass/scss variables as javascript object
+
 - [**`rollup-stream`**](https://github.com/permutatrix/rollup-stream#readme) by **[Permutator](mailto:permutatorem@gmail.com)** (⚖ MIT)
 
   a wrapper around Rollup that returns a stream instead of a Promise
