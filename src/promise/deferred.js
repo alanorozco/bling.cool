@@ -20,9 +20,10 @@
  * SOFTWARE.
  */
 
-const { dirs } = require('../config');
-
-exports.textureUrl = index => `/${dirs.textures.gif}/t${index}.gif`;
-exports.textureFirstFrameUrl = index => `/${dirs.textures.gif}/i${index}.gif`;
-exports.textureFramesUrl = index => `/${dirs.textures.frames}/f${index}.json`;
-exports.textureId = urlOrPath => urlOrPath.replace(/[^0-9]+/gim, '');
+module.exports = class Deferred {
+  constructor() {
+    this.promise = new Promise(resolve => {
+      this.resolve = resolve;
+    });
+  }
+};

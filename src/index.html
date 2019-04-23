@@ -40,6 +40,7 @@
       <!-- partial:chrome -->
       </div>
       <label for="editable" class="editable-wrap">
+        <div class="editable-text-fitter editable-sentinel"></div>
         <div class="editable-shadow editable-sentinel hued"></div>
         <div
           id="editable"
@@ -64,5 +65,12 @@
         ✨
       </footer>
     </main>
+    <div class="encoded-lightbox" hidden>
+      <h2>here's your gif ✨</h2>
+      <div class="img-container"></div>
+      <p><a class="download-button">⬇️ download</a></p>
+      <p><a href="#✍" class="close-button">✍ keep editing</a></p>
+    </div>
+    <script src="/encoder.js" async></script>
   </body>
 </html>

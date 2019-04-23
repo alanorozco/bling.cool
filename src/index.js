@@ -49,6 +49,30 @@ function fillPhrase(phrase) {
   return phrase;
 }
 
+// From AMPHTML: https://git.io/fj3uF
+function calculateFontSize(
+  measurer,
+  expectedHeight,
+  expectedWidth,
+  minFontSize,
+  maxFontSize
+) {
+  maxFontSize++;
+  // Binomial search for the best font size.
+  while (maxFontSize - minFontSize > 1) {
+    const mid = Math.floor((minFontSize + maxFontSize) / 2);
+    measurer.style.fontSize = `${mid}px`;
+    const height = measurer./*OK*/ offsetHeight;
+    const width = measurer./*OK*/ offsetWidth;
+    if (height > expectedHeight || width > expectedWidth) {
+      maxFontSize = mid;
+    } else {
+      minFontSize = mid;
+    }
+  }
+  return minFontSize;
+}
+
 const [text, phraseConfig] = fillPhrase(pickRandom(phrases));
 
 new App(
@@ -57,13 +81,21 @@ new App(
     textureSelector: { hoverUrl: textureUrl },
     editor: {
       fontLoader: new FontLoader(self.document),
-      editableValueProp: 'innerText',
-      sentinelContentProp: 'innerText',
+      editableValueProp: 'innerHTML',
+      sentinelContentProp: 'innerHTML',
 
       resizer(editable, sentinels) {
-        const { width } = editable.getBoundingClientRect();
-        sentinels.forEach(s => {
-          s.style.width = `${width}px`;
+        const fontSize =
+          calculateFontSize(
+            self.document.querySelector('.editable-text-fitter'),
+            0.4 * self.innerHeight,
+            self.innerWidth - 80,
+            /* minFontSize */ 24,
+            /* maxFontSize */ 90
+          ) + 'px';
+        editable.style.fontSize = fontSize;
+        sentinels.forEach(({ style }) => {
+          style.fontSize = fontSize;
         });
       },
 

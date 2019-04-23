@@ -30,6 +30,7 @@ const babel = require('rollup-plugin-babel');
 const buffer = require('vinyl-buffer');
 const bundleIndex = require('./builder/bundle-index');
 const commonjs = require('rollup-plugin-commonjs');
+const concat = require('gulp-concat');
 const docs = require('./builder/docs');
 const del = require('del');
 const htmlmin = require('gulp-html-minifier');
@@ -65,7 +66,26 @@ function jsAmp(done) {
   return jsRollup('index.amp.js').pipe(dest(dirs.dist.root));
 }
 
-const js = parallel(jsDefault, jsAmp);
+async function jsEncoder() {
+  await new Promise(resolve => {
+    jsRollup('encoder.js')
+      .pipe(dest(dirs.dist.workspace))
+      .on('end', resolve);
+  });
+
+  await new Promise(resolve => {
+    src(['3p/gif.js/gif.js', path.join(dirs.dist.workspace, 'encoder.js')])
+      .pipe(concat('encoder.js'))
+      .pipe(dest(dirs.dist.root))
+      .on('end', resolve);
+  });
+}
+
+function jsEncoderWorker() {
+  return src('3p/gif.js/gif.worker.js').pipe(dest(dirs.dist.root));
+}
+
+const js = parallel(jsDefault, jsAmp, jsEncoder, jsEncoderWorker);
 
 function css() {
   return src('./src/index.scss')
@@ -159,7 +179,7 @@ function uglifyJs() {
 
 const minify = parallel(minifyHtml, uglifyJs);
 
-function copyTextureFiles(from) {
+function copyAssetFiles(from) {
   return src([path.join(from, '*'), '!*.md']).pipe(
     dest(path.join(dirs.dist.root, from))
   );
@@ -167,12 +187,13 @@ function copyTextureFiles(from) {
 
 const barebones = series(parallel(js, css), bundle);
 
-const copyTextureFrames = () => copyTextureFiles(dirs.textures.frames);
-const copyTextureGifs = () => copyTextureFiles(dirs.textures.gif);
+const copyAssets = () => copyAssetFiles('assets');
+const copyTextureFrames = () => copyAssetFiles(dirs.textures.frames);
+const copyTextureGifs = () => copyAssetFiles(dirs.textures.gif);
 
-const copyTextures = parallel(copyTextureGifs, copyTextureFrames);
+const copyAllAssets = parallel(copyAssets, copyTextureGifs, copyTextureFrames);
 
-const dist = parallel(series(barebones, minify), copyTextures);
+const dist = parallel(series(barebones, minify), copyAllAssets);
 
 function watch() {
   serve();
@@ -180,6 +201,7 @@ function watch() {
     [
       '3p/*',
       'artifacts/*',
+      'assets/*',
       'src/*',
       'src/**/*',
       'lib/*',
@@ -187,7 +209,7 @@ function watch() {
       path.join(dirs.textures.gif, '*'),
       path.join(dirs.textures.frames, '*'),
     ],
-    parallel(copyTextures, barebones)
+    parallel(copyAllAssets, barebones)
   );
 }
 
@@ -196,7 +218,7 @@ function clean() {
 }
 
 exports.barebones = barebones;
-exports.default = series(parallel(barebones, copyTextures), watch);
+exports.default = series(parallel(barebones, copyAllAssets), watch);
 exports.clean = clean;
 exports.dist = dist;
 exports.docs = docs;

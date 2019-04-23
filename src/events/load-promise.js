@@ -23,7 +23,7 @@
 module.exports = element =>
   new Promise(resolve => {
     let listener = () => {
-      resolve();
+      resolve(element);
       element.removeEventListener('load', listener);
       listener = null; // gc
     };

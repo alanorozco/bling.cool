@@ -161,6 +161,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   The streaming build system.
 
+- [**`gulp-concat`**](https://www.npmjs.com/package/contra/gulp-concat) by **[Contra](http://contra.io/)** (⚖ MIT)
+
+  Concatenates files
+
 - [**`gulp-html-minifier`**](https://github.com/origin1tech/gulp-html-minifier) by **[Origin1 Technologies](https://github.com/origin1tech)** (⚖ MIT)
 
   Minify HTML with html-minifier.

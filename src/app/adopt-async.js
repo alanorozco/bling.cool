@@ -20,9 +20,41 @@
  * SOFTWARE.
  */
 
-const { dirs } = require('../config');
+class ModuleGetter {
+  constructor(win) {
+    const boundPush = this.push_.bind(this);
 
-exports.textureUrl = index => `/${dirs.textures.gif}/t${index}.gif`;
-exports.textureFirstFrameUrl = index => `/${dirs.textures.gif}/i${index}.gif`;
-exports.textureFramesUrl = index => `/${dirs.textures.frames}/f${index}.json`;
-exports.textureId = urlOrPath => urlOrPath.replace(/[^0-9]+/gim, '');
+    this.promises_ = [];
+    this.resolvers_ = [];
+
+    win.BLING = win.BLING || [];
+    win.BLING.push = boundPush;
+    win.BLING.forEach(boundPush);
+  }
+
+  push_(props) {
+    Object.keys(props).forEach(k => {
+      this.fire_(k, props[k]);
+    });
+  }
+
+  get(key) {
+    return this.buildPromise_(key);
+  }
+
+  buildPromise_(key) {
+    if (!this.promises_[key]) {
+      this.promises_[key] = new Promise(resolver => {
+        this.resolvers_[key] = resolver;
+      });
+    }
+    return this.promises_[key];
+  }
+
+  fire_(key, value) {
+    this.buildPromise_(key);
+    this.resolvers_[key](value);
+  }
+}
+
+module.exports = win => new ModuleGetter(win);
