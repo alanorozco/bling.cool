@@ -41,9 +41,9 @@ function getLines(ctx, text, maxWidth) {
 }
 
 // https://stackoverflow.com/q/2936112#comment79378090_16599668
-exports.splitLines = function splitLines(ctx, text, width) {
+exports.splitLines = function splitLines(ctx, text, width, margin) {
   return text
     .split('\n')
-    .map(line => getLines(ctx, line, width))
+    .map(line => getLines(ctx, line, width - margin * 2))
     .reduce((a, b) => a.concat(b), []);
 };

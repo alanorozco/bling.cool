@@ -26,6 +26,7 @@ const { splitLines } = require('./text');
 const loadPromise = require('../events/load-promise');
 
 const BLUE = [0, 68, 214];
+const MARGIN = 2 * 20;
 
 function createCanvas(doc, width, height) {
   const canvas = doc.createElement('canvas');
@@ -41,8 +42,8 @@ function img(doc, src) {
   return promise;
 }
 
-function fillText(canvas, ctx, fontSize, fontName, lines) {
-  const lineHeight = Math.floor(canvas.height / lines.length);
+function fillText(canvas, ctx, fontSize, fontName, lines, margin) {
+  const lineHeight = Math.floor((canvas.height - margin * 2) / lines.length);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.font = `${fontSize}px '${fontName}', sans-serif`;
@@ -50,8 +51,8 @@ function fillText(canvas, ctx, fontSize, fontName, lines) {
     ctx.fillText(
       text,
       canvas.width / 2,
-      lineHeight / 2 + i * lineHeight,
-      canvas.width
+      margin + lineHeight / 2 + i * lineHeight,
+      canvas.width - margin * 2
     );
   });
 }
@@ -108,13 +109,13 @@ module.exports = class CanvasRenderer {
     ctx.filter = `hue-rotate(${360 * hue}deg)`;
 
     ctx.font = `${fontSize}px '${fontName}', sans-serif`;
-    const lines = splitLines(ctx, text, canvas.width);
+    const lines = splitLines(ctx, text, canvas.width, MARGIN);
 
     return this.renderTexture_(width, height).then(texture => {
       // clipped text.
       ctx.save();
       ctx.beginPath();
-      fillText(canvas, ctx, fontSize, fontName, lines);
+      fillText(canvas, ctx, fontSize, fontName, lines, MARGIN);
       ctx.fill();
       ctx.beginPath();
       ctx.globalCompositeOperation = 'source-in';
@@ -129,7 +130,7 @@ module.exports = class CanvasRenderer {
       ctx.shadowOffsetX = 6;
       ctx.shadowOffsetY = 6;
       ctx.shadowBlur = 12;
-      fillText(canvas, ctx, fontSize, fontName, lines);
+      fillText(canvas, ctx, fontSize, fontName, lines, MARGIN);
       ctx.restore();
 
       // white background

@@ -48,6 +48,8 @@ module.exports = class Editor {
       this.doc_.querySelectorAll('.editable-sentinel')
     );
 
+    this.initialTextSet_ = false;
+
     this.textContainers_ = [this.editable_].concat(this.sentinels_);
 
     this.editable_.parentNode.addEventListener('click', () => {
@@ -58,8 +60,43 @@ module.exports = class Editor {
 
     this.editable_.addEventListener('input', ({ target }) => {
       const text = target[editableValueProp];
-      state.set(this, { text });
+      state.set(this, {
+        text: this.getEditablePropAsPlainText_(target, this.editableValueProp_),
+      });
       this.setSentinelText_(prepareValue(text));
+      this.resize_();
+    });
+
+    this.editable_.addEventListener('keypress', e => {
+      if (this.editableValueProp_ != 'innerHTML') {
+        return true;
+      }
+
+      if (e.which != /* ENTER */ 13) {
+        return true;
+      }
+
+      e.preventDefault();
+
+      if (this.win_.navigator.userAgent.indexOf('msie') > 0) {
+        insertHtml('<br />');
+        return;
+      }
+
+      const selection = this.win_.getSelection();
+      const range = selection.getRangeAt(0);
+      const br = this.win_.document.createElement('br');
+
+      range.deleteContents();
+      range.insertNode(br);
+      range.setStartAfter(br);
+      range.setEndAfter(br);
+      range.collapse(false);
+
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      this.editable_.dispatchEvent(new Event('input'));
     });
 
     win.addEventListener('resize', () => {
@@ -72,14 +109,24 @@ module.exports = class Editor {
   }
 
   setText_(text) {
-    this.editable_[this.editableValueProp_] = text;
+    this.setEditableProp_(this.editable_, this.editableValueProp_, text);
     this.setSentinelText_(text);
+    this.resize_();
+    this.resize_();
   }
 
   setSentinelText_(text) {
     this.sentinels_.forEach(el => {
-      el[this.sentinelContentProp_] = text;
+      this.setEditableProp_(el, this.sentinelContentProp_, text);
     });
+  }
+
+  setEditableProp_(element, prop, value) {
+    element[prop] = value;
+  }
+
+  getEditablePropAsPlainText_(element, prop) {
+    return prop == 'innerHTML' ? element.innerText : element[prop];
   }
 
   setFont_(fontId) {

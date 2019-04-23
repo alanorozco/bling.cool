@@ -48,6 +48,11 @@ module.exports = class EncodeButton {
             height,
             hue: state.get('hue'),
             font: state.get('font'),
+            fontSize: parseFloat(
+              win.document
+                .querySelector('#editable')
+                .style.fontSize.replace(/[^0-9\.]+/gi, '')
+            ),
             text: state.get('text'),
           })
         )
