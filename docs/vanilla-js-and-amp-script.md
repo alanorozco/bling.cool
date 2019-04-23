@@ -24,7 +24,7 @@ be able to access the main thread's DOM from the worker.
 This means that the DOM API in the worker is (at the moment) incomplete. This
 particular application relies on
 [`contenteditable`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/contentEditable) which proves problems since its support in `worker-dom` is
-incomplete ([`ampproject/worker-dom#430`](https://github.com/ampproject/worker-dom/issues/430)).
+incomplete ([`ampproject/worker-dom#430`](https://github.com/ampproject/worker-dom/issues/430)). See the [compatibility table](http://bit.ly/amp-script-compat) for more info.
 
 In most scenarios, you can work around `worker-dom` gaps by using alternative APIs.
 In this case, instead of using a `contenteditable` it uses a `<textarea>` with transparent text and background with the actual rendered text underneath it.
