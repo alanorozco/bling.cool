@@ -92,8 +92,8 @@ body {
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  top: $marginUnit * 3 + $toolbarHeight;
-  height: $toolbarHeight;
+  top: $marginUnit * 3 + 0.5 * $toolbarHeight;
+  height: $toolbarHeight * 2;
   left: $marginUnit;
   right: $marginUnit;
   z-index: 2;
