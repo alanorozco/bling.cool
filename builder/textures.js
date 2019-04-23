@@ -74,7 +74,8 @@ function fallbackToPreviousFrame(allFrames, frame, i) {
 
 async function frameDelays(path) {
   const { stdout } = await execAsync(`exiftool -v ${path}`);
-  const [_, ...parts] = stdout.split(/image\:/gi);
+  const parts = stdout.split(/image\:/gi);
+  parts.pop();
   return parts.map(
     part =>
       1000 *
