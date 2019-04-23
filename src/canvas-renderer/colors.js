@@ -20,70 +20,49 @@
  * SOFTWARE.
  */
 
-// https://stackoverflow.com/a/17243070
-function RGBtoHSV(r, g, b) {
-  let max = Math.max(r, g, b),
-    min = Math.min(r, g, b),
-    d = max - min,
-    h,
-    s = max === 0 ? 0 : d / max,
-    v = max / 255;
+const clamp = num => Math.round(Math.max(0, Math.min(255, num)));
 
-  switch (max) {
-    case min:
-      h = 0;
-      break;
-    case r:
-      h = g - b + d * (g < b ? 6 : 0);
-      h /= 6 * d;
-      break;
-    case g:
-      h = b - r + d * 2;
-      h /= 6 * d;
-      break;
-    case b:
-      h = r - g + d * 4;
-      h /= 6 * d;
-      break;
-  }
-
-  return [h, s, v];
-}
-
-// https://stackoverflow.com/a/17243070
-function HSVtoRGB(h, s, v) {
-  let r, g, b, i, f, p, q, t;
-  i = Math.floor(h * 6);
-  f = h * 6 - i;
-  p = v * (1 - s);
-  q = v * (1 - f * s);
-  t = v * (1 - (1 - f) * s);
-  switch (i % 6) {
-    case 0:
-      (r = v), (g = t), (b = p);
-      break;
-    case 1:
-      (r = q), (g = v), (b = p);
-      break;
-    case 2:
-      (r = p), (g = v), (b = t);
-      break;
-    case 3:
-      (r = p), (g = q), (b = v);
-      break;
-    case 4:
-      (r = t), (g = p), (b = v);
-      break;
-    case 5:
-      (r = v), (g = p), (b = q);
-      break;
-  }
-  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-}
-
+// https://stackoverflow.com/a/29521147
 exports.hueRotate = function hueRotate(color, turns) {
-  let [h, s, v] = RGBtoHSV(...color);
-  h += turns;
-  h %= 1;
-  return HSVtoRGB(h, s, v);
+  const [r, g, b] = color;
+
+  const angle = (((turns * 360) % 360) + 360) % 360;
+
+  // prettier-ignore
+  const matrix = [
+    1, 0, 0, // Reds
+    0, 1, 0, // Greens
+    0, 0, 1, // Blues
+  ];
+
+  // Luminance coefficients.
+  const lumR = 0.2126;
+  const lumG = 0.7152;
+  const lumB = 0.0722;
+
+  // Hue rotate coefficients.
+  const hueRotateR = 0.143;
+  const hueRotateG = 0.14;
+  const hueRotateB = 0.283;
+
+  const cos = Math.cos((angle * Math.PI) / 180);
+  const sin = Math.sin((angle * Math.PI) / 180);
+
+  matrix[0] = lumR + (1 - lumR) * cos - lumR * sin;
+  matrix[1] = lumG - lumG * cos - lumG * sin;
+  matrix[2] = lumB - lumB * cos + (1 - lumB) * sin;
+
+  matrix[3] = lumR - lumR * cos + hueRotateR * sin;
+  matrix[4] = lumG + (1 - lumG) * cos + hueRotateG * sin;
+  matrix[5] = lumB - lumB * cos - hueRotateB * sin;
+
+  matrix[6] = lumR - lumR * cos - (1 - lumR) * sin;
+  matrix[7] = lumG - lumG * cos + lumG * sin;
+  matrix[8] = lumB + (1 - lumB) * cos + lumB * sin;
+
+  const R = clamp(matrix[0] * r + matrix[1] * g + matrix[2] * b);
+  const G = clamp(matrix[3] * r + matrix[4] * g + matrix[5] * b);
+  const B = clamp(matrix[6] * r + matrix[7] * g + matrix[8] * b);
+
+  return [R, G, B];
 };
