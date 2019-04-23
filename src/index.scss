@@ -27,8 +27,17 @@ $bodyBorder: 20px;
 $marginUnit: 20px;
 
 // colors
-$blue: rgb(0, 68, 214);
+$blueR: 0;
+$blueG: 68;
+$blueB: 214;
+$blue: rgb($blueR, $blueG, $blueB);
 $grayish: rgb(147, 153, 160);
+
+// text shadow
+$shadowX: 6px;
+$shadowY: 6px;
+$shadowBlur: 12px;
+$shadowOpacity: 0.48;
 
 // overrides: 3p/style-range-inputs/style-range-inputs
 $track-color: $grayish;
@@ -366,7 +375,7 @@ a {
 
 .editable-shadow {
   // TODO: expose via ui
-  text-shadow: 6px 6px 12px rgba($blue, 0.48);
+  text-shadow: $shadowX $shadowY $shadowBlur rgba($blue, $shadowOpacity);
 }
 
 $buttonRadius: 32px;

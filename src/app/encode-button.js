@@ -20,6 +20,7 @@
  * SOFTWARE.
  */
 
+const { getLengthNumeral } = require('../../lib/css');
 const { textureFramesUrl } = require('../../lib/textures');
 
 const fetchFrames = textureId =>
@@ -48,10 +49,8 @@ module.exports = class EncodeButton {
             height,
             hue: state.get('hue'),
             font: state.get('font'),
-            fontSize: parseFloat(
-              win.document
-                .querySelector('#editable')
-                .style.fontSize.replace(/[^0-9\.]+/gi, '')
+            fontSize: getLengthNumeral(
+              win.document.querySelector('#editable').style.fontSize
             ),
             text: state.get('text'),
           })

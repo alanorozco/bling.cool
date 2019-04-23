@@ -36,6 +36,7 @@
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^8.3.0",
     "rollup-plugin-node-resolve": "^4.0.1",
+    "rollup-plugin-sass-variables": "^0.1.1",
     "rollup-stream": "^1.24.1",
     "through2": "^3.0.1",
     "vinyl-buffer": "^1.0.1",
