@@ -77,6 +77,12 @@ body {
   }
 }
 
+.hide-on-small {
+  @media #{$smallView} {
+    display: none;
+  }
+}
+
 .not-ready {
   opacity: 0;
   pointer-events: none;
@@ -447,7 +453,12 @@ $buttonRadius: 32px;
 
   button {
     padding: ($marginUnit / 4) $marginUnit;
+
+    @media #{$smallView} {
+      padding: ($marginUnit / 4) ($marginUnit / 1.5);
+    }
   }
+
   select {
     padding: ($marginUnit / 4) ($marginUnit / 2);
     -webkit-appearance: none;
