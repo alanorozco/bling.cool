@@ -31,7 +31,7 @@ module.exports = class Editor {
       sentinelContentProp,
       resizer,
       fontLoader,
-      prepareValue,
+      prepareValue = v => v,
     }
   ) {
     this.win_ = win;
@@ -39,6 +39,7 @@ module.exports = class Editor {
     this.fontLoader_ = fontLoader;
     this.resizer_ = resizer;
     this.state_ = state;
+    this.prepareValue_ = prepareValue;
 
     this.editableValueProp_ = editableValueProp;
     this.sentinelContentProp_ = sentinelContentProp;
@@ -58,54 +59,55 @@ module.exports = class Editor {
       } catch (_) {}
     });
 
-    this.editable_.addEventListener('input', ({ target }) => {
-      const text = target[editableValueProp];
-      state.set(this, {
-        text: this.getEditablePropAsPlainText_(target, this.editableValueProp_),
-      });
-      this.setSentinelText_(prepareValue(text));
-      this.resize_();
-    });
+    win.addEventListener('resize', this.resize_.bind(this));
 
-    this.editable_.addEventListener('keypress', e => {
-      if (this.editableValueProp_ != 'innerHTML') {
-        return true;
-      }
-
-      if (e.which != /* ENTER */ 13) {
-        return true;
-      }
-
-      e.preventDefault();
-
-      if (this.win_.navigator.userAgent.indexOf('msie') > 0) {
-        insertHtml('<br />');
-        return;
-      }
-
-      const selection = this.win_.getSelection();
-      const range = selection.getRangeAt(0);
-      const br = this.win_.document.createElement('br');
-
-      range.deleteContents();
-      range.insertNode(br);
-      range.setStartAfter(br);
-      range.setEndAfter(br);
-      range.collapse(false);
-
-      selection.removeAllRanges();
-      selection.addRange(range);
-
-      this.editable_.dispatchEvent(new Event('input'));
-    });
-
-    win.addEventListener('resize', () => {
-      this.resize_();
-    });
+    this.editable_.addEventListener('input', this.onInput_.bind(this));
+    this.editable_.addEventListener('keypress', this.onKeypress_.bind(this));
 
     state.on(this, 'font', this.setFont_.bind(this));
     state.on(this, 'fontSize', this.setFontSize_.bind(this));
     state.on(this, 'text', this.setText_.bind(this));
+  }
+
+  onInput_({ target }) {
+    const text = target[editableValueProp];
+    this.state_.set(this, {
+      text: this.getEditablePropAsPlainText_(target, this.editableValueProp_),
+    });
+    this.setSentinelText_(this.prepareValue_(text));
+    this.resize_();
+  }
+
+  onKeypress_(e) {
+    if (this.editableValueProp_ != 'innerHTML') {
+      return true;
+    }
+
+    if (e.which != /* ENTER */ 13) {
+      return true;
+    }
+
+    e.preventDefault();
+
+    if (this.win_.navigator.userAgent.indexOf('msie') > 0) {
+      insertHtml('<br />');
+      return;
+    }
+
+    const selection = this.win_.getSelection();
+    const range = selection.getRangeAt(0);
+    const br = this.win_.document.createElement('br');
+
+    range.deleteContents();
+    range.insertNode(br);
+    range.setStartAfter(br);
+    range.setEndAfter(br);
+    range.collapse(false);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    this.onInput_(e);
   }
 
   setText_(text) {

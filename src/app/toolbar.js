@@ -21,7 +21,6 @@
  */
 
 const { closestByClassName } = require('../dom');
-const Events = require('./events');
 
 const getPanel = (doc, id) => doc.querySelector(`.panel-${id}`);
 const getPanelToggleButton = (doc, id) =>
@@ -34,25 +33,24 @@ function closePanel(panel, button) {
 
 function openPanel(panel, button) {
   panel.removeAttribute('hidden');
-  panel.dispatchEvent(new Event(Events.OPEN));
   button.classList.add('selected');
 }
 
 module.exports = class Toolbar {
   constructor(doc, state) {
     this.doc_ = doc;
-    this.element_ = Toolbar.get(doc);
+    this.element_ = doc.querySelector('.toolbar');
 
     this.openPanel_ = null;
 
     this.element_.addEventListener('click', this.maybeTogglePanel_.bind(this));
-    this.element_.addEventListener(Events.CLOSE, this.closePanel_.bind(this));
 
     state.on(this, 'text', this.closePanel_.bind(this));
-  }
-
-  static get(doc) {
-    return doc.querySelector('.toolbar');
+    state.on(this, 'encoding', isEncoding => {
+      if (isEncoding) {
+        this.closePanel_();
+      }
+    });
   }
 
   maybeTogglePanel_(e) {

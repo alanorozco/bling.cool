@@ -20,18 +20,8 @@
  * SOFTWARE.
  */
 
-const Events = require('./events');
-const Toolbar = require('./toolbar');
-
-module.exports = function Loader(win) {
-  const element = win.document.querySelector('.loader');
-
-  win.document.addEventListener(Events.ENCODE_START, () => {
-    element.classList.add('active');
-    Toolbar.get(win.document).dispatchEvent(new Event(Events.CLOSE));
-  });
-
-  win.document.addEventListener(Events.ENCODE_END, () => {
-    element.classList.remove('active');
+module.exports = function Loader(win, state) {
+  state.on(this, 'encoding', encoding => {
+    win.document.querySelector('.loader').classList.toggle('active', encoding);
   });
 };

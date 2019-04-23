@@ -22,7 +22,6 @@
 
 const { getLengthNumeral } = require('../../lib/css');
 const { textureFramesUrl } = require('../../lib/textures');
-const Events = require('./events');
 
 const fetchFrames = textureId =>
   fetch(textureFramesUrl(textureId)).then(response => response.json());
@@ -34,7 +33,7 @@ module.exports = function EncodeButton(win, state, { modules }) {
     const framesPromise = fetchFrames(state.get('texture'));
     const EncoderPromise = modules.get('Encoder');
 
-    win.document.dispatchEvent(new Event(Events.ENCODE_START));
+    state.set(this, { encoding: true });
 
     const { width, height } = win.document
       .querySelector('.editable-sentinel')
@@ -55,7 +54,7 @@ module.exports = function EncodeButton(win, state, { modules }) {
         })
       )
       .then(() => {
-        win.document.dispatchEvent(new Event(Events.ENCODE_END));
+        state.set(this, { encoding: false });
       });
   });
 };
