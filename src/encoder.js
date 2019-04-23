@@ -27,12 +27,16 @@ const pushAsync = require('./app/push-async');
 
 let attachedLightboxEvents;
 
-const toFilename = text =>
-  `${text
-    .toLowerCase()
+function toFilename(text) {
+  const combining = /[\u0300-\u036F]/g;
+
+  const normal = text
     .trim()
-    // TODO: this regex discriminates non-ascii readable characters
-    .replace(/[^a-z]+/g, '-')}.gif`;
+    .normalize('NFKD')
+    .replace(combining, '');
+
+  return `${normal.toLowerCase().replace(/[^a-z]+/g, '-')}.gif`;
+}
 
 function displayEncodedLightbox(doc, url, filename) {
   const lightbox = doc.querySelector('.encoded-lightbox');
