@@ -20,9 +20,9 @@
 
 ## Using
 
-[Write some bling text.](https://bling.cool)
+[Write some bling text.](https://bling.cool) Modify it as you please. Click the `GIF` button to get a GIF. ✨
 
-🐞 _This is a buggy work in progress, things will break._ GIF and markup output are
+🐞 _This is a buggy work in progress, things will break._ ~~GIF~~ Markup output is
 TODO. 🐞
 
 ## 3rd party code Ɛ̸ assets
