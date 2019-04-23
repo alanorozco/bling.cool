@@ -22,42 +22,40 @@
 
 const { getLengthNumeral } = require('../../lib/css');
 const { textureFramesUrl } = require('../../lib/textures');
+const Events = require('./events');
 
 const fetchFrames = textureId =>
   fetch(textureFramesUrl(textureId)).then(response => response.json());
 
-module.exports = class EncodeButton {
-  constructor(win, state, { modules }) {
-    const button = win.document.querySelector('.encode-button');
-    const loader = win.document.querySelector('.loader');
+module.exports = function EncodeButton(win, state, { modules }) {
+  const button = win.document.querySelector('.encode-button');
 
-    button.addEventListener('click', () => {
-      const framesPromise = fetchFrames(state.get('texture'));
-      const EncoderPromise = modules.get('Encoder');
+  button.addEventListener('click', () => {
+    const framesPromise = fetchFrames(state.get('texture'));
+    const EncoderPromise = modules.get('Encoder');
 
-      loader.classList.add('active');
+    win.document.dispatchEvent(new Event(Events.ENCODE_START));
 
-      const { width, height } = win.document
-        .querySelector('.editable-sentinel')
-        .getBoundingClientRect();
+    const { width, height } = win.document
+      .querySelector('.editable-sentinel')
+      .getBoundingClientRect();
 
-      Promise.all([framesPromise, EncoderPromise])
-        .then(([frames, Encoder]) =>
-          new Encoder(win).asGif({
-            frames,
-            width,
-            height,
-            hue: state.get('hue'),
-            font: state.get('font'),
-            fontSize: getLengthNumeral(
-              win.document.querySelector('#editable').style.fontSize
-            ),
-            text: state.get('text'),
-          })
-        )
-        .then(() => {
-          loader.classList.remove('active');
-        });
-    });
-  }
+    Promise.all([framesPromise, EncoderPromise])
+      .then(([frames, Encoder]) =>
+        new Encoder(win).asGif({
+          frames,
+          width,
+          height,
+          hue: state.get('hue'),
+          font: state.get('font'),
+          fontSize: getLengthNumeral(
+            win.document.querySelector('#editable').style.fontSize
+          ),
+          text: state.get('text'),
+        })
+      )
+      .then(() => {
+        win.document.dispatchEvent(new Event(Events.ENCODE_END));
+      });
+  });
 };

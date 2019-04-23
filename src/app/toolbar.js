@@ -41,13 +41,18 @@ function openPanel(panel, button) {
 module.exports = class Toolbar {
   constructor(doc, state) {
     this.doc_ = doc;
-    this.element_ = doc.querySelector('.toolbar');
+    this.element_ = Toolbar.get(doc);
 
     this.openPanel_ = null;
 
     this.element_.addEventListener('click', this.maybeTogglePanel_.bind(this));
+    this.element_.addEventListener(Events.CLOSE, this.closePanel_.bind(this));
 
     state.on(this, 'text', this.closePanel_.bind(this));
+  }
+
+  static get(doc) {
+    return doc.querySelector('.toolbar');
   }
 
   maybeTogglePanel_(e) {
