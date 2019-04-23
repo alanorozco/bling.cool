@@ -20,40 +20,30 @@
  * SOFTWARE.
  */
 
-const { textureFramesUrl } = require('../../lib/textures');
+// https://stackoverflow.com/a/16599668
+function getLines(ctx, text, maxWidth) {
+  let words = text.split(/\s+/gim);
+  let lines = [];
+  let currentLine = words[0];
 
-const fetchFrames = textureId =>
-  fetch(textureFramesUrl(textureId)).then(response => response.json());
-
-module.exports = class EncodeButton {
-  constructor(win, state, { modules }) {
-    const button = win.document.querySelector('.encode-button');
-    const loader = win.document.querySelector('.loader');
-
-    button.addEventListener('click', () => {
-      const framesPromise = fetchFrames(state.get('texture'));
-      const EncoderPromise = modules.get('Encoder');
-
-      loader.classList.add('active');
-
-      const { width, height } = win.document
-        .querySelector('.editable-sentinel')
-        .getBoundingClientRect();
-
-      Promise.all([framesPromise, EncoderPromise])
-        .then(([frames, Encoder]) =>
-          new Encoder(win).asGif({
-            frames,
-            width,
-            height,
-            hue: state.get('hue'),
-            font: state.get('font'),
-            text: state.get('text'),
-          })
-        )
-        .then(() => {
-          loader.classList.remove('active');
-        });
-    });
+  for (let i = 1; i < words.length; i++) {
+    let word = words[i];
+    let width = ctx.measureText(currentLine + ' ' + word).width;
+    if (width < maxWidth) {
+      currentLine += ' ' + word;
+    } else {
+      lines.push(currentLine);
+      currentLine = word;
+    }
   }
+  lines.push(currentLine);
+  return lines;
+}
+
+// https://stackoverflow.com/q/2936112#comment79378090_16599668
+exports.splitLines = function splitLines(ctx, text, width) {
+  return text
+    .split('\n')
+    .map(line => getLines(ctx, line, width))
+    .reduce((a, b) => a.concat(b), []);
 };

@@ -21,6 +21,8 @@
  */
 
 const { expandFontId } = require('../../lib/fonts');
+const { hueRotate } = require('./colors');
+const { splitLines } = require('./text');
 const loadPromise = require('../events/load-promise');
 
 const BLUE = [0, 68, 214];
@@ -39,93 +41,31 @@ function img(doc, src) {
   return promise;
 }
 
-// https://stackoverflow.com/a/17243070
-function RGBtoHSV(r, g, b) {
-  let max = Math.max(r, g, b),
-    min = Math.min(r, g, b),
-    d = max - min,
-    h,
-    s = max === 0 ? 0 : d / max,
-    v = max / 255;
-
-  switch (max) {
-    case min:
-      h = 0;
-      break;
-    case r:
-      h = g - b + d * (g < b ? 6 : 0);
-      h /= 6 * d;
-      break;
-    case g:
-      h = b - r + d * 2;
-      h /= 6 * d;
-      break;
-    case b:
-      h = r - g + d * 4;
-      h /= 6 * d;
-      break;
-  }
-
-  return [h, s, v];
-}
-
-// https://stackoverflow.com/a/17243070
-function HSVtoRGB(h, s, v) {
-  let r, g, b, i, f, p, q, t;
-  i = Math.floor(h * 6);
-  f = h * 6 - i;
-  p = v * (1 - s);
-  q = v * (1 - f * s);
-  t = v * (1 - (1 - f) * s);
-  switch (i % 6) {
-    case 0:
-      (r = v), (g = t), (b = p);
-      break;
-    case 1:
-      (r = q), (g = v), (b = p);
-      break;
-    case 2:
-      (r = p), (g = v), (b = t);
-      break;
-    case 3:
-      (r = p), (g = q), (b = v);
-      break;
-    case 4:
-      (r = t), (g = p), (b = v);
-      break;
-    case 5:
-      (r = v), (g = p), (b = q);
-      break;
-  }
-  return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-}
-
-function hueRotate(color, turns) {
-  let [h, s, v] = RGBtoHSV(...color);
-  h += turns;
-  h %= 1;
-  return HSVtoRGB(h, s, v);
-}
-
-function fillText(canvas, ctx, fontSize, fontName, text) {
+function fillText(canvas, ctx, fontSize, fontName, lines) {
+  const lineHeight = Math.floor(canvas.height / lines.length);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.font = `${fontSize}px '${fontName}', sans-serif`;
-  ctx.fillText(text, canvas.width / 2, canvas.height / 2, canvas.width);
+  lines.forEach((text, i) => {
+    ctx.fillText(
+      text,
+      canvas.width / 2,
+      lineHeight / 2 + i * lineHeight,
+      canvas.width
+    );
+  });
 }
 
 module.exports = class CanvasRenderer {
   constructor(win) {
     this.win_ = win;
-    this.text_ = null;
-    this.font_ = null;
+
+    this.options_ = null;
     this.img_ = null;
   }
 
-  setText(text, font, hue) {
-    this.text_ = text;
-    this.hue_ = hue;
-    this.font_ = font;
+  setOptions(options) {
+    this.options_ = options;
   }
 
   setTexture(texture) {
@@ -155,19 +95,26 @@ module.exports = class CanvasRenderer {
     });
   }
 
-  render() {
-    const [width, height] = [600, 400];
-    const [fontName] = expandFontId(this.font_);
-    const { canvas, ctx } = createCanvas(this.win_.document, width, height);
+  render(width, height) {
+    const { font, fontSize, text, hue } = this.options_;
+    const [fontName] = expandFontId(font);
+    const { canvas, ctx } = createCanvas(
+      this.win_.document,
+      Math.ceil(width),
+      Math.ceil(height)
+    );
 
     // TODO: This won't work on Safari. Redraw texture.
-    ctx.filter = `hue-rotate(${360 * this.hue_}deg)`;
+    ctx.filter = `hue-rotate(${360 * hue}deg)`;
+
+    ctx.font = `${fontSize}px '${fontName}', sans-serif`;
+    const lines = splitLines(ctx, text, canvas.width);
 
     return this.renderTexture_(width, height).then(texture => {
       // clipped text.
       ctx.save();
       ctx.beginPath();
-      fillText(canvas, ctx, 72, fontName, this.text_);
+      fillText(canvas, ctx, fontSize, fontName, lines);
       ctx.fill();
       ctx.beginPath();
       ctx.globalCompositeOperation = 'source-in';
@@ -178,11 +125,11 @@ module.exports = class CanvasRenderer {
       ctx.save();
       ctx.beginPath();
       ctx.globalCompositeOperation = 'destination-over';
-      ctx.shadowColor = `rgba(${hueRotate(BLUE, this.hue_).join(',')},0.48)`;
+      ctx.shadowColor = `rgba(${hueRotate(BLUE, hue).join(',')},0.48)`;
       ctx.shadowOffsetX = 6;
       ctx.shadowOffsetY = 6;
       ctx.shadowBlur = 12;
-      fillText(canvas, ctx, 72, fontName, this.text_);
+      fillText(canvas, ctx, fontSize, fontName, lines);
       ctx.restore();
 
       // white background

@@ -22,41 +22,43 @@
 
 const CanvasRenderer = require('./canvas-renderer');
 const Deferred = require('./promise/deferred');
+const loadPromise = require('./events/load-promise');
 const pushAsync = require('./app/push-async');
 
-let downloadLink;
+let attachedLightboxEvents;
 
-function createDownloadLink(doc) {
-  const a = doc.createElement('a');
-  a.style.display = 'none';
-  doc.body.appendChild(a);
-  return a;
-}
-
-function download(win, blob, fileName) {
-  const url = win.URL.createObjectURL(blob);
-  downloadLink = downloadLink || createDownloadLink(win.document);
-  downloadLink.href = url;
-  downloadLink.download = fileName;
-  downloadLink.click();
-  win.URL.revokeObjectURL(url);
-}
-
-function display(win, blob) {
-  const url = win.URL.createObjectURL(blob);
-  const img = win.document.createElement('img');
-  img.src = url;
-  img.style.position = 'absolute';
-  img.style.zIndex = 1000;
-  win.document.body.insertBefore(img, win.document.body.firstElementChild);
-}
-
-const toFileName = text =>
+const toFilename = text =>
   `${text
     .toLowerCase()
     .trim()
     // TODO: this regex discriminates non-ascii readable characters
     .replace(/[^a-z]+/g, '-')}.gif`;
+
+function displayEncodedLightbox(doc, url, filename) {
+  const lightbox = doc.querySelector('.encoded-lightbox');
+  const imgContainer = doc.querySelector('.img-container');
+  const downloadButton = doc.querySelector('.download-button');
+  const closeButton = doc.querySelector('.close-button');
+  const img = doc.createElement('img');
+  if (!attachedLightboxEvents) {
+    closeButton.addEventListener('click', e => {
+      e.preventDefault();
+      if (imgContainer.firstElementChild) {
+        imgContainer.removeChild(imgContainer.firstElementChild);
+      }
+      lightbox.setAttribute('hidden', 'hidden');
+    });
+  }
+  const imgLoadPromise = loadPromise(img);
+  img.src = url;
+  imgContainer.appendChild(img);
+  downloadButton.href = url;
+  downloadButton.download = filename;
+  imgLoadPromise.then(() => {
+    lightbox.removeAttribute('hidden');
+  });
+  return imgLoadPromise;
+}
 
 class Encoder {
   constructor(win) {
@@ -64,20 +66,31 @@ class Encoder {
     this.renderer_ = new CanvasRenderer(win);
   }
 
-  playback_({ frames, text, font, hue }, onFrame) {
+  playback_(
+    {
+      frames,
+      text = 'Hola',
+      font = 'Helvetica',
+      fontSize = 72,
+      hue = 0,
+      width,
+      height,
+    },
+    onFrame
+  ) {
     const { promise, resolve } = new Deferred();
-    this.renderer_.setText(text, font, hue);
-    this.playFrame_(frames, onFrame, resolve);
+    this.renderer_.setOptions({ text, font, fontSize, hue });
+    this.playFrame_(width, height, frames, onFrame, resolve);
     return promise;
   }
 
-  playFrame_(frames, onFrame, done) {
+  playFrame_(width, height, frames, onFrame, done) {
     const [delay, texture] = frames.shift();
 
     this.renderer_.setTexture(texture);
 
     this.renderer_
-      .render()
+      .render(width, height)
       .then(canvas => onFrame(delay, canvas))
       .then(() => {
         if (frames.length == 0) {
@@ -86,23 +99,25 @@ class Encoder {
         }
 
         this.win_.requestAnimationFrame(() => {
-          this.playFrame_(frames, onFrame, done);
+          this.playFrame_(width, height, frames, onFrame, done);
         });
       });
   }
 
   asGif(options) {
-    const { promise, resolve } = new Deferred();
     const { text } = options;
+
+    const { promise, resolve } = new Deferred();
+
     const gif = new GIF({
       workers: 2,
       quality: 10,
     });
 
     gif.on('finished', blob => {
-      resolve();
-      // download(this.win_, blob, toFileName(text));
-      display(this.win_, blob);
+      const url = this.win_.URL.createObjectURL(blob);
+      const { document } = this.win_;
+      displayEncodedLightbox(document, url, toFilename(text)).then(resolve);
     });
 
     this.playback_(options, (delay, canvas) => {

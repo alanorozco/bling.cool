@@ -88,9 +88,21 @@ body {
 
 .loader {
   background: white url(/assets/cat.gif) no-repeat center center;
+  background-size: 604px 32px;
   opacity: 0;
   pointer-events: none;
+  position: absolute;
+  top: $marginUnit * 3 + $toolbarHeight;
+  height: $toolbarHeight;
+  left: $marginUnit;
+  right: $marginUnit;
   z-index: 2;
+
+  @media #{$smallView} {
+    // no borders on left/right
+    left: 0;
+    right: 0;
+  }
 
   &.active {
     opacity: 1;
@@ -159,6 +171,8 @@ main,
     background-clip: text;
     -webkit-background-clip: text;
     position: relative;
+
+    max-width: calc(100vw - #{$marginUnit * 2});
 
     // It would be nice to use `color: transparent`, but chrome "optimizes"
     // it so it's clipped.
@@ -331,7 +345,7 @@ textarea#editable {
   resize: none;
 }
 
-footer a {
+a {
   color: $blue;
   font-weight: bold;
   text-decoration: none;
@@ -463,6 +477,44 @@ $toggleButtonArrowWidth: 10px;
       margin-top: -6px;
     }
   }
+}
+
+.encoded-lightbox {
+  position: absolute;
+  left: $marginUnit;
+  top: $marginUnit;
+  right: $marginUnit;
+  bottom: $marginUnit;
+  z-index: 3;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: $marginUnit * 2;
+  background: white;
+  align-items: center;
+  justify-content: center;
+
+  &:not([hidden]) {
+    opacity: 0;
+    transform: scale(0);
+    animation: 0.3s whoa ease-out;
+    animation-fill-mode: both;
+  }
+
+  a {
+    padding: $marginUnit / 2;
+  }
+}
+
+@keyframes whoa {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.close-button {
+  font-weight: normal;
 }
 
 option {
