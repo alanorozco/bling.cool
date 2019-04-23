@@ -98,11 +98,6 @@ new App(
           style.fontSize = fontSize;
         });
       },
-
-      prepareValue(value) {
-        // passthru.
-        return value;
-      },
     },
   },
   {

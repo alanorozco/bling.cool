@@ -54,7 +54,7 @@ module.exports = class App {
     new Toolbar(win.document, state, toolbar);
     new Texturables(win.document, state, texturables);
     new TextureSelector(win.document, state, textureSelector);
-    new Loader(win);
+    new Loader(win, state);
     new FontSelector(win.document, state, fontSelector);
     new FxPanel(win.document, state, fxPanel);
     new EncodeButton(
