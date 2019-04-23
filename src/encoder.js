@@ -76,20 +76,19 @@ class Encoder {
 
     this.renderer_.setTexture(texture);
 
-    Promise.resolve(onFrame(delay)).then(() => {
-      if (frames.length == 0) {
-        done();
-        return;
-      }
+    this.renderer_
+      .render()
+      .then(canvas => onFrame(delay, canvas))
+      .then(() => {
+        if (frames.length == 0) {
+          done();
+          return;
+        }
 
-      setTimeout(
-        () => {
+        this.win_.requestAnimationFrame(() => {
           this.playFrame_(frames, onFrame, done);
-        },
-        // TODO: figure something out about this magic number
-        50
-      );
-    });
+        });
+      });
   }
 
   asGif(options) {
@@ -106,14 +105,9 @@ class Encoder {
       display(this.win_, blob);
     });
 
-    this.playback_(
-      options,
-      /* onFrame */ delay => {
-        this.renderer_.render().then(canvas => {
-          gif.addFrame(canvas, { delay });
-        });
-      }
-    ).then(() => {
+    this.playback_(options, (delay, canvas) => {
+      gif.addFrame(canvas, { delay });
+    }).then(() => {
       gif.render();
     });
 
