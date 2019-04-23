@@ -20,9 +20,9 @@
  * SOFTWARE.
  */
 
-const { expandFontId, googFontStylesheetUrl } = require('../../lib/fonts');
-const FontFaceObserver = require('fontfaceobserver');
-const loadPromise = require('../events/load-promise');
+import { expandFontId, googFontStylesheetUrl } from '../../lib/fonts';
+import FontFaceObserver from '../../lib/fontfaceobserver';
+import loadPromise from '../events/load-promise';
 
 function loadFontStylesheet(doc, id) {
   const href = googFontStylesheetUrl(id);
@@ -60,5 +60,4 @@ class FontLoader {
   }
 }
 
-exports.FontLoader = FontLoader;
-exports.loadFontStylesheet = loadFontStylesheet;
+export { FontLoader, loadFontStylesheet };

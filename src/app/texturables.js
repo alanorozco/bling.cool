@@ -20,9 +20,9 @@
  * SOFTWARE.
  */
 
-const { textureUrl } = require('../../lib/textures');
+import { textureUrl } from '../../lib/textures';
 
-module.exports = class Texturables {
+export default class Texturables {
   constructor(win, state) {
     const doc = win.document;
 
@@ -51,4 +51,4 @@ module.exports = class Texturables {
       style.filter = hueRotate;
     });
   }
-};
+}

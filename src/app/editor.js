@@ -20,9 +20,9 @@
  * SOFTWARE.
  */
 
-const { expandFontId } = require('../../lib/fonts');
+import { expandFontId } from '../../lib/fonts';
 
-module.exports = class Editor {
+export default class Editor {
   constructor(
     win,
     state,
@@ -158,4 +158,4 @@ module.exports = class Editor {
   resize_() {
     this.resizer_(this.editable_, this.sentinels_);
   }
-};
+}

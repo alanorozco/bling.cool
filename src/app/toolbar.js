@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const { closestByClassName } = require('../dom');
+import { closestByClassName } from '../dom/dom';
 
 const getPanel = (doc, id) => doc.querySelector(`.panel-${id}`);
 const getPanelToggleButton = (doc, id) =>
@@ -36,7 +36,7 @@ function openPanel(panel, button) {
   button.classList.add('selected');
 }
 
-module.exports = class Toolbar {
+export default class Toolbar {
   constructor(win, state) {
     this.doc_ = win.document;
     this.state_ = state;
@@ -84,4 +84,4 @@ module.exports = class Toolbar {
     );
     this.state_.set(this, { panel: null });
   }
-};
+}

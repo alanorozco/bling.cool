@@ -20,13 +20,14 @@
  * SOFTWARE.
  */
 
-const { getLengthNumeral } = require('../../lib/css');
-const { textureFramesUrl } = require('../../lib/textures');
+import { getLengthNumeral } from '../../lib/css';
+
+import { textureFramesUrl } from '../../lib/textures';
 
 const fetchFrames = textureId =>
   fetch(textureFramesUrl(textureId)).then(response => response.json());
 
-module.exports = function EncodeButton(win, state, { modules }) {
+export default function EncodeButton(win, state, { modules }) {
   const button = win.document.querySelector('.encode-button');
 
   button.addEventListener('click', () => {
@@ -57,4 +58,4 @@ module.exports = function EncodeButton(win, state, { modules }) {
         state.set(this, { encoding: false });
       });
   });
-};
+}

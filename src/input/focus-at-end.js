@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-module.exports = function(el) {
+export default function(el) {
   el.focus();
   if (
     typeof window.getSelection != 'undefined' &&
@@ -40,4 +40,4 @@ module.exports = function(el) {
     textRange.collapse(false);
     textRange.select();
   }
-};
+}

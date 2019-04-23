@@ -20,8 +20,7 @@
  * SOFTWARE.
  */
 
-export default function Loader(win, state) {
-  state.on(this, 'encoding', encoding => {
-    win.document.querySelector('.loader').classList.toggle('active', encoding);
-  });
+export default function pushAsync(win, obj) {
+  win.BLING = win.BLING || [];
+  win.BLING.push(obj);
 }

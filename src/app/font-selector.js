@@ -20,11 +20,12 @@
  * SOFTWARE.
  */
 
-const { closestByClassName } = require('../dom');
-const { expandFontId } = require('../../lib/fonts');
-const { loadFontStylesheet } = require('../fonts/font-loader');
+import { closestByClassName } from '../dom/dom';
 
-module.exports = class FontSelector {
+import { expandFontId } from '../../lib/fonts';
+import { loadFontStylesheet } from '../fonts/font-loader';
+
+export default class FontSelector {
   constructor(win, state) {
     const doc = win.document;
 
@@ -96,4 +97,4 @@ module.exports = class FontSelector {
     option.classList.add('selected');
     this.button_.textContent = name;
   }
-};
+}

@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 
-const CanvasRenderer = require('./canvas-renderer');
-const Deferred = require('./promise/deferred');
-const loadPromise = require('./events/load-promise');
-const pushAsync = require('./app/push-async');
+import CanvasRenderer from './canvas-renderer/renderer';
+import Deferred from './promise/deferred';
+import loadPromise from './events/load-promise';
+import pushAsync from './async-modules/push-async';
 
 let attachedLightboxEvents;
 
