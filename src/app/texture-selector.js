@@ -29,7 +29,9 @@ const textureIdAttr = 'data-texture-id';
 const staticUrlAttr = 'data-static';
 
 module.exports = class TextureSelector {
-  constructor(doc, state, { hoverUrl } = {}) {
+  constructor(win, state, { hoverUrl } = {}) {
+    const doc = win.document;
+
     this.doc_ = doc;
     this.state_ = state;
     this.element_ = doc.querySelector(`.${containerClassName}`);

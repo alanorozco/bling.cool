@@ -51,12 +51,12 @@ module.exports = class App {
     this.modules_ = adoptAsync(win);
 
     new Editor(win, state, editor);
-    new Toolbar(win.document, state, toolbar);
-    new Texturables(win.document, state, texturables);
-    new TextureSelector(win.document, state, textureSelector);
+    new Toolbar(win, state, toolbar);
+    new Texturables(win, state, texturables);
+    new TextureSelector(win, state, textureSelector);
     new Loader(win, state);
-    new FontSelector(win.document, state, fontSelector);
-    new FxPanel(win.document, state, fxPanel);
+    new FontSelector(win, state, fontSelector);
+    new FxPanel(win, state, fxPanel);
     new EncodeButton(
       win,
       state,

@@ -21,7 +21,9 @@
  */
 
 module.exports = class FontSelector {
-  constructor(doc, state) {
+  constructor(win, state) {
+    const doc = win.document;
+
     this.doc_ = doc;
     this.element_ = doc.querySelector('select');
 

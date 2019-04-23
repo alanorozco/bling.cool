@@ -21,7 +21,9 @@
  */
 
 module.exports = class FxPanel {
-  constructor(doc, state) {
+  constructor(win, state) {
+    const doc = win.document;
+
     this.hueSlider_ = doc.querySelector('#hue');
 
     const setHueOnSlide = ({ target }) => {

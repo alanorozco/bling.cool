@@ -37,9 +37,9 @@ function openPanel(panel, button) {
 }
 
 module.exports = class Toolbar {
-  constructor(doc, state) {
-    this.doc_ = doc;
-    this.element_ = doc.querySelector('.toolbar');
+  constructor(win, state) {
+    this.doc_ = win.document;
+    this.element_ = win.document.querySelector('.toolbar');
 
     this.openPanel_ = null;
 
