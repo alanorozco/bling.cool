@@ -92,6 +92,21 @@ module.exports = class CanvasRenderer {
       ctx.fillStyle = `rgba(${BLUE.join(',')},1)`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      const { data } = imgData;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const [r, g, b] = hueRotate(data.slice(i, i + 3), this.options_.hue);
+
+        data[i + 0] = r;
+        data[i + 1] = g;
+        data[i + 2] = b;
+        data[i + 3] = 255;
+      }
+
+      ctx.putImageData(imgData, 0, 0);
+
       return canvas;
     });
   }
@@ -104,9 +119,6 @@ module.exports = class CanvasRenderer {
       Math.ceil(width),
       Math.ceil(height)
     );
-
-    // TODO: This won't work on Safari. Redraw texture.
-    ctx.filter = `hue-rotate(${360 * hue}deg)`;
 
     ctx.font = `${fontSize}px '${fontName}', sans-serif`;
     const lines = splitLines(ctx, text, canvas.width, MARGIN);
