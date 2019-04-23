@@ -72,9 +72,11 @@ class Encoder {
   }
 
   playFrame_(frames, onFrame, done) {
-    this.renderer_.setTexture(frames.shift());
+    const [delay, texture] = frames.shift();
 
-    Promise.resolve(onFrame()).then(() => {
+    this.renderer_.setTexture(texture);
+
+    Promise.resolve(onFrame(delay)).then(() => {
       if (frames.length == 0) {
         done();
         return;
@@ -106,13 +108,9 @@ class Encoder {
 
     this.playback_(
       options,
-      /* onFrame */ () => {
+      /* onFrame */ delay => {
         this.renderer_.render().then(canvas => {
-          gif.addFrame(canvas, {
-            // TODO: Each texture has different delay params, extract in build
-            // process.
-            delay: 100,
-          });
+          gif.addFrame(canvas, { delay });
         });
       }
     ).then(() => {

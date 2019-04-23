@@ -72,14 +72,26 @@ function fallbackToPreviousFrame(allFrames, frame, i) {
   return frame;
 }
 
+async function frameDelays(path) {
+  const { stdout } = await execAsync(`exiftool -v ${path}`);
+  const [_, ...parts] = stdout.split(/image\:/gi);
+  return parts.map(
+    part =>
+      1000 *
+      parseFloat(part.replace(/^[\s\S]+delay=([0-9\.]+)[\s\S]+$/gim, '$1'))
+  );
+}
+
 async function extractFramesJson(fromGif, toJson) {
   const frameOptionals = Array(await frameCount(fromGif))
     .fill(null)
     .map((_, f) => extractFrame(fromGif, f));
   const allFrames = await Promise.all(frameOptionals);
-  const sequence = allFrames.map((frame, i) =>
-    frameTob64(fallbackToPreviousFrame(allFrames, frame, i))
-  );
+  const delays = await frameDelays(fromGif);
+  const sequence = allFrames.map((frame, i) => [
+    delays[i],
+    frameTob64(fallbackToPreviousFrame(allFrames, frame, i)),
+  ]);
   await writeJson(toJson, sequence);
 }
 

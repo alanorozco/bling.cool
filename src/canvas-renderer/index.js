@@ -107,6 +107,13 @@ function hueRotate(color, turns) {
   return HSVtoRGB(h, s, v);
 }
 
+function fillText(canvas, ctx, fontSize, fontName, text) {
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `${fontSize}px '${fontName}', sans-serif`;
+  ctx.fillText(text, canvas.width / 2, canvas.height / 2, canvas.width);
+}
+
 module.exports = class CanvasRenderer {
   constructor(win) {
     this.win_ = win;
@@ -150,49 +157,39 @@ module.exports = class CanvasRenderer {
 
   render() {
     const [width, height] = [600, 400];
-    const { canvas, ctx } = createCanvas(this.win_.document, width, height);
     const [fontName] = expandFontId(this.font_);
+    const { canvas, ctx } = createCanvas(this.win_.document, width, height);
 
+    // TODO: This won't work on Safari. Redraw texture.
     ctx.filter = `hue-rotate(${360 * this.hue_}deg)`;
 
     return this.renderTexture_(width, height).then(texture => {
+      // clipped text.
       ctx.save();
       ctx.beginPath();
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = `72px '${fontName}', sans-serif`;
-      ctx.fillText(
-        this.text_,
-        canvas.width / 2,
-        canvas.height / 2,
-        canvas.width
-      );
+      fillText(canvas, ctx, 72, fontName, this.text_);
       ctx.fill();
       ctx.beginPath();
       ctx.globalCompositeOperation = 'source-in';
       ctx.drawImage(texture, 0, 0);
       ctx.restore();
+
+      // text shadow.
       ctx.save();
       ctx.beginPath();
       ctx.globalCompositeOperation = 'destination-over';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = `72px '${fontName}', sans-serif`;
       ctx.shadowColor = `rgba(${hueRotate(BLUE, this.hue_).join(',')},0.48)`;
       ctx.shadowOffsetX = 6;
       ctx.shadowOffsetY = 6;
       ctx.shadowBlur = 12;
-      ctx.fillText(
-        this.text_,
-        canvas.width / 2,
-        canvas.height / 2,
-        canvas.width
-      );
-      // ctx.fill();
+      fillText(canvas, ctx, 72, fontName, this.text_);
       ctx.restore();
+
+      // white background
       ctx.globalCompositeOperation = 'destination-over';
       ctx.fillStyle = 'white';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       return canvas;
     });
   }
