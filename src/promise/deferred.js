@@ -20,34 +20,10 @@
  * SOFTWARE.
  */
 
-const { textureFramesUrl } = require('../../lib/textures');
-
-const fetchFrames = textureId =>
-  fetch(textureFramesUrl(textureId)).then(response => response.json());
-
-module.exports = class EncodeButton {
-  constructor(win, state, { modules }) {
-    const button = win.document.querySelector('.encode-button');
-    const loader = win.document.querySelector('.loader');
-
-    button.addEventListener('click', () => {
-      const framesPromise = fetchFrames(state.get('texture'));
-      const EncoderPromise = modules.get('Encoder');
-
-      loader.classList.add('active');
-
-      Promise.all([framesPromise, EncoderPromise])
-        .then(([frames, Encoder]) =>
-          new Encoder(win).asGif({
-            frames,
-            hue: state.get('hue'),
-            font: state.get('font'),
-            text: state.get('text'),
-          })
-        )
-        .then(() => {
-          loader.classList.remove('active');
-        });
+module.exports = class Deferred {
+  constructor() {
+    this.promise = new Promise(resolve => {
+      this.resolve = resolve;
     });
   }
 };

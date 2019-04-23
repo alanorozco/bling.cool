@@ -20,59 +20,107 @@
  * SOFTWARE.
  */
 
+const CanvasRenderer = require('./canvas-renderer');
+const Deferred = require('./promise/deferred');
 const pushAsync = require('./app/push-async');
-const html2Canvas = require('html2canvas');
 
-pushAsync(self, {
-  encoder: class Encoder {
-    constructor(unusedDoc, state) {
-      this.state_ = state;
-      this.playbackPromise_ = null;
-      this.playbackResolver_ = null;
-    }
+let downloadLink;
 
-    playback_(frames, cb) {
-      if (!this.playbackPromise_) {
-        this.playbackPromise_ = new Promise(resolve => {
-          this.playbackResolver_ = resolve;
-        });
+function createDownloadLink(doc) {
+  const a = doc.createElement('a');
+  a.style.display = 'none';
+  doc.body.appendChild(a);
+  return a;
+}
+
+function download(win, blob, fileName) {
+  const url = win.URL.createObjectURL(blob);
+  downloadLink = downloadLink || createDownloadLink(win.document);
+  downloadLink.href = url;
+  downloadLink.download = fileName;
+  downloadLink.click();
+  win.URL.revokeObjectURL(url);
+}
+
+function display(win, blob) {
+  const url = win.URL.createObjectURL(blob);
+  const img = win.document.createElement('img');
+  img.src = url;
+  img.style.position = 'absolute';
+  img.style.zIndex = 1000;
+  win.document.body.insertBefore(img, win.document.body.firstElementChild);
+}
+
+const toFileName = text =>
+  `${text
+    .toLowerCase()
+    .trim()
+    // TODO: this regex discriminates non-ascii readable characters
+    .replace(/[^a-z]+/g, '-')}.gif`;
+
+class Encoder {
+  constructor(win) {
+    this.win_ = win;
+    this.renderer_ = new CanvasRenderer(win);
+  }
+
+  playback_({ frames, text, font, hue }, onFrame) {
+    const { promise, resolve } = new Deferred();
+    this.renderer_.setText(text, font, hue);
+    this.playFrame_(frames, onFrame, resolve);
+    return promise;
+  }
+
+  playFrame_(frames, onFrame, done) {
+    this.renderer_.setTexture(frames.shift());
+
+    Promise.resolve(onFrame()).then(() => {
+      if (frames.length == 0) {
+        done();
+        return;
       }
 
-      this.state_.set(this, { texture: frames.shift() });
+      setTimeout(
+        () => {
+          this.playFrame_(frames, onFrame, done);
+        },
+        // TODO: figure something out about this magic number
+        50
+      );
+    });
+  }
 
-      Promise.resolve(cb()).then(() => {
-        if (frames.length == 0) {
-          this.playbackResolver_();
-          return;
-        }
-        setTimeout(() => {
-          this.playback_(frames, cb);
-        }, 100);
-      });
+  asGif(options) {
+    const { promise, resolve } = new Deferred();
+    const { text } = options;
+    const gif = new GIF({
+      workers: 2,
+      quality: 10,
+    });
 
-      return this.playbackPromise_;
-    }
+    gif.on('finished', blob => {
+      resolve();
+      // download(this.win_, blob, toFileName(text));
+      display(this.win_, blob);
+    });
 
-    asGif(frames) {
-      const gif = new GIF({
-        workers: 2,
-        quality: 10,
-      });
-      gif.on('finished', blob => {
-        window.open(URL.createObjectURL(blob));
-      });
-
-      this.playback_(frames, () =>
-        html2Canvas(document.querySelector('.editable-wrap')).then(canvas => {
+    this.playback_(
+      options,
+      /* onFrame */ () => {
+        this.renderer_.render().then(canvas => {
           gif.addFrame(canvas, {
             // TODO: Each texture has different delay params, extract in build
             // process.
             delay: 100,
           });
-        })
-      ).then(() => {
-        gif.render();
-      });
-    }
-  },
-});
+        });
+      }
+    ).then(() => {
+      gif.render();
+    });
+
+    return promise;
+  }
+}
+
+pushAsync(self, { Encoder });

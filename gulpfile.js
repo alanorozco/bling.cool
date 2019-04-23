@@ -179,7 +179,7 @@ function uglifyJs() {
 
 const minify = parallel(minifyHtml, uglifyJs);
 
-function copyTextureFiles(from) {
+function copyAssetFiles(from) {
   return src([path.join(from, '*'), '!*.md']).pipe(
     dest(path.join(dirs.dist.root, from))
   );
@@ -187,12 +187,13 @@ function copyTextureFiles(from) {
 
 const barebones = series(parallel(js, css), bundle);
 
-const copyTextureFrames = () => copyTextureFiles(dirs.textures.frames);
-const copyTextureGifs = () => copyTextureFiles(dirs.textures.gif);
+const copyAssets = () => copyAssetFiles('assets');
+const copyTextureFrames = () => copyAssetFiles(dirs.textures.frames);
+const copyTextureGifs = () => copyAssetFiles(dirs.textures.gif);
 
-const copyTextures = parallel(copyTextureGifs, copyTextureFrames);
+const copyAllAssets = parallel(copyAssets, copyTextureGifs, copyTextureFrames);
 
-const dist = parallel(series(barebones, minify), copyTextures);
+const dist = parallel(series(barebones, minify), copyAllAssets);
 
 function watch() {
   serve();
@@ -200,6 +201,7 @@ function watch() {
     [
       '3p/*',
       'artifacts/*',
+      'assets/*',
       'src/*',
       'src/**/*',
       'lib/*',
@@ -207,7 +209,7 @@ function watch() {
       path.join(dirs.textures.gif, '*'),
       path.join(dirs.textures.frames, '*'),
     ],
-    parallel(copyTextures, barebones)
+    parallel(copyAllAssets, barebones)
   );
 }
 
@@ -216,7 +218,7 @@ function clean() {
 }
 
 exports.barebones = barebones;
-exports.default = series(parallel(barebones, copyTextures), watch);
+exports.default = series(parallel(barebones, copyAllAssets), watch);
 exports.clean = clean;
 exports.dist = dist;
 exports.docs = docs;

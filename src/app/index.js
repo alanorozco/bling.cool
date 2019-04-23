@@ -35,12 +35,12 @@ module.exports = class App {
     win,
     {
       editor,
-      encodeButton,
-      fontSelector,
-      fxPanel,
-      texturables,
-      textureSelector,
-      toolbar,
+      encodeButton = {},
+      fontSelector = {},
+      fxPanel = {},
+      texturables = {},
+      textureSelector = {},
+      toolbar = {},
     },
     opt_initialState
   ) {
@@ -50,15 +50,15 @@ module.exports = class App {
     this.modules_ = adoptAsync(win);
 
     new Editor(win, state, editor);
-    new Toolbar(win.document, state, toolbar || {});
-    new Texturables(win.document, state, texturables || {});
-    new TextureSelector(win.document, state, textureSelector || {});
-    new FontSelector(win.document, state, fontSelector || {});
-    new FxPanel(win.document, state, fxPanel || {});
+    new Toolbar(win.document, state, toolbar);
+    new Texturables(win.document, state, texturables);
+    new TextureSelector(win.document, state, textureSelector);
+    new FontSelector(win.document, state, fontSelector);
+    new FxPanel(win.document, state, fxPanel);
     new EncodeButton(
-      win.document,
+      win,
       state,
-      Object.assign(encodeButton || {}, { modules: this.modules_ })
+      Object.assign(encodeButton, { modules: this.modules_ })
     );
 
     this.ready = (opt_initialState
