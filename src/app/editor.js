@@ -70,7 +70,7 @@ module.exports = class Editor {
   }
 
   onInput_({ target }) {
-    const text = target[editableValueProp];
+    const text = target[this.editableValueProp_];
     this.state_.set(this, {
       text: this.getEditablePropAsPlainText_(target, this.editableValueProp_),
     });

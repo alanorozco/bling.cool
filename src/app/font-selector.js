@@ -20,29 +20,80 @@
  * SOFTWARE.
  */
 
+const { closestByClassName } = require('../dom');
+const { expandFontId } = require('../../lib/fonts');
+const { loadFontStylesheet } = require('../fonts/font-loader');
+
 module.exports = class FontSelector {
   constructor(win, state) {
     const doc = win.document;
 
     this.doc_ = doc;
-    this.element_ = doc.querySelector('select');
+    this.state_ = state;
 
-    this.element_.addEventListener('change', () => {
-      state.set(this, { font: this.element_.value });
+    this.element_ = doc.querySelector('.font-options');
+    this.button_ = doc.querySelector('.selected-font');
+
+    this.element_.addEventListener('click', ({ target }) => {
+      const option = closestByClassName(target, 'font-option');
+      if (!option) {
+        return;
+      }
+      const font = option.getAttribute('data-value');
+      this.updateOption_(font);
+      state.set(this, { font });
     });
 
     state.on(this, 'font', this.updateOption_.bind(this));
+    state.on(this, 'panel', this.maybeSetup_.bind(this));
+  }
+
+  maybeSetup_(panel) {
+    if (panel != 'font') {
+      return;
+    }
+
+    const previews = Array.from(this.doc_.querySelectorAll('.font-preview'));
+    const text = this.state_
+      .get('text')
+      .trim()
+      .replace(/\s+/gim, ' ');
+
+    const fontIds = previews
+      .map(preview => {
+        preview.textContent = text;
+        if (preview.classList.contains('font-set')) {
+          return;
+        }
+        const font = closestByClassName(preview, 'font-option').getAttribute(
+          'data-value'
+        );
+        const [name, weight] = expandFontId(font);
+        preview.style.fontFamily = `'${name}', sans-serif`;
+        preview.style.fontWeight = weight;
+        preview.classList.add('font-set');
+        return font;
+      })
+      .filter(opt => !!opt);
+
+    if (fontIds.length <= 0) {
+      return;
+    }
+
+    loadFontStylesheet(this.doc_, fontIds);
   }
 
   updateOption_(fontId) {
-    const option = this.element_.querySelector(`option[value="${fontId}"]`);
+    const [name] = expandFontId(fontId);
+    const option = this.element_.querySelector(`[data-value="${fontId}"]`);
     if (!option) {
       return;
     }
-    const selected = this.element_.querySelector(`[selected]`);
+    const selected = this.element_.querySelector('.selected');
     if (selected) {
-      selected.removeAttribute('selected');
+      selected.classList.remove('selected');
     }
-    option.setAttribute('selected', '');
+    option.classList.add('selected');
+    this.button_.textContent = name;
   }
 };

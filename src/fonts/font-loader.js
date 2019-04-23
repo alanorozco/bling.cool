@@ -61,3 +61,4 @@ class FontLoader {
 }
 
 exports.FontLoader = FontLoader;
+exports.loadFontStylesheet = loadFontStylesheet;
