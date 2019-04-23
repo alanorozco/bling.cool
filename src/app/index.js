@@ -24,6 +24,7 @@ const adoptAsync = require('./adopt-async');
 const Editor = require('./editor');
 const EncodeButton = require('./encode-button');
 const FontSelector = require('./font-selector');
+const Loader = require('./loader');
 const FxPanel = require('./fx-panel');
 const Toolbar = require('./toolbar');
 const State = require('./state');
@@ -53,6 +54,7 @@ module.exports = class App {
     new Toolbar(win.document, state, toolbar);
     new Texturables(win.document, state, texturables);
     new TextureSelector(win.document, state, textureSelector);
+    new Loader(win);
     new FontSelector(win.document, state, fontSelector);
     new FxPanel(win.document, state, fxPanel);
     new EncodeButton(
