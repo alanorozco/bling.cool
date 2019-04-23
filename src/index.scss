@@ -492,7 +492,7 @@ $toggleButtonArrowWidth: 10px;
   top: $marginUnit;
   right: $marginUnit;
   bottom: $marginUnit;
-  z-index: 3;
+  z-index: 10000 + 1;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
