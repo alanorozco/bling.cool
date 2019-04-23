@@ -506,6 +506,12 @@ $toggleButtonArrowWidth: 10px;
   }
 }
 
+.encode-button {
+  amp-script & {
+    display: none;
+  }
+}
+
 .encoded-lightbox {
   position: absolute;
   left: $marginUnit;
