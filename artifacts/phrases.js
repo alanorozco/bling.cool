@@ -6,6 +6,7 @@ const green = 0.6;
 const red = 0.45;
 
 module.exports = [
+  ['ばか !!!'],
   ['absolutely quixotic'],
   ['ayy lmao'],
   ['Defenestrate the Patriarchy.'],
