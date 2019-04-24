@@ -20,27 +20,16 @@
  * SOFTWARE.
  */
 
+@import 'vars';
+
 // defaults
 $lineHeight: 1.5;
 $toolbarHeight: 48px;
 $bodyBorder: 20px;
-$marginUnit: 20px;
 
 // colors
-$blueR: 0;
-$blueG: 68;
-$blueB: 214;
 $blue: rgb($blueR, $blueG, $blueB);
 $grayish: rgb(147, 153, 160);
-
-// text shadow
-$shadowX: 6px;
-$shadowY: 6px;
-$shadowBlur: 12px;
-$shadowOpacity: 0.48;
-
-// lightbox
-$lightboxAnimationDuration: 300ms;
 
 // overrides: 3p/style-range-inputs/style-range-inputs
 $track-color: $grayish;

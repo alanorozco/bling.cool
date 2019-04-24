@@ -25,7 +25,7 @@ import { getLengthNumeral } from '../../lib/css';
 import { hueRotate } from './colors';
 import { splitLines } from './text';
 import loadImage from '../dom/load-image';
-import scssVars from 'variables!../index.scss';
+import scssVars from 'variables!../vars.scss';
 
 const BLUE = [
   getLengthNumeral(scssVars.blueR),
