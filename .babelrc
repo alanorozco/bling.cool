@@ -1,6 +1,7 @@
 {
   "plugins": [
     "./builder/babel-plugins/bling-count-texture-files",
+    "./builder/babel-plugins/bling-inline-dirs",
     ["@babel/plugin-transform-template-literals", { "loose": true }]
   ],
   "presets": [
