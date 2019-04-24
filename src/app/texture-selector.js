@@ -20,16 +20,19 @@
  * SOFTWARE.
  */
 
-const { closestByClassName } = require('../dom');
-const { selectElementOption, textureOption } = require('../../lib/renderers');
+import { closestByClassName } from '../dom/dom';
+
+import { selectElementOption, textureOption } from '../../lib/renderers';
 
 const containerClassName = 'texture-options';
 const optionClassName = 'texture-option';
 const textureIdAttr = 'data-texture-id';
 const staticUrlAttr = 'data-static';
 
-module.exports = class TextureSelector {
-  constructor(doc, state, { hoverUrl } = {}) {
+export default class TextureSelector {
+  constructor(win, state, { hoverUrl } = {}) {
+    const doc = win.document;
+
     this.doc_ = doc;
     this.state_ = state;
     this.element_ = doc.querySelector(`.${containerClassName}`);
@@ -123,4 +126,4 @@ module.exports = class TextureSelector {
     this.element_.appendChild(fragment);
     this.listenToHover_();
   }
-};
+}

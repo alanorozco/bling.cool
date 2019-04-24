@@ -467,6 +467,74 @@ $buttonRadius: 32px;
 
 $toggleButtonArrowWidth: 10px;
 
+$fontPreviewHeight: 32px;
+$fontPreviewSize: 20px;
+
+$fontOptionWidth: 160px;
+$fontOptionHeight: $fontPreviewHeight + 20px;
+
+$fontOptionMargin: 0.5 * $marginUnit;
+
+$effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
+  $marginUnit;
+
+.panel-font.sliding {
+  height: $effectiveFontPanelHeight;
+
+  &:before,
+  &:after {
+    height: $effectiveFontPanelHeight;
+  }
+
+  > .panel-slider {
+    height: $effectiveFontPanelHeight + $panelMarginForScrollbarUgh;
+  }
+}
+
+.selected-font {
+  width: $fontOptionWidth;
+  text-align: center;
+}
+
+.font-option {
+  width: $fontOptionWidth;
+  height: $fontOptionHeight + 2 * $fontOptionMargin;
+  padding: $fontOptionMargin;
+  box-sizing: border-box;
+  margin-right: $fontOptionMargin;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &.selected {
+    background: lighten($blue, 10%);
+  }
+
+  &.selected,
+  &.selected .font-name {
+    color: white;
+  }
+
+  &:nth-child(even) {
+    position: absolute;
+    margin: ($fontOptionHeight + 3 * $fontOptionMargin) $fontOptionMargin 0
+      (-$fontOptionWidth - $fontOptionMargin);
+  }
+}
+
+.font-preview {
+  height: $fontPreviewHeight;
+  line-height: $fontPreviewHeight;
+  font-size: $fontPreviewSize;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.font-name {
+  color: $grayish;
+  font-size: 80%;
+}
+
 .panel-toggle {
   position: relative;
 

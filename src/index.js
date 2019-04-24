@@ -20,15 +20,15 @@
  * SOFTWARE.
  */
 
-const { dirs } = require('../config');
-const { fontId } = require('../lib/fonts');
-const { FontLoader } = require('./fonts/font-loader');
-const { textureUrl } = require('../lib/textures');
-const App = require('./app');
-const focusAtEnd = require('./input/focus-at-end');
+import { dirs } from '../config';
 
-const fonts = require('../artifacts/fonts');
-const phrases = require('../artifacts/phrases');
+import { fontId } from '../lib/fonts';
+import { FontLoader } from './fonts/font-loader';
+import { textureUrl } from '../lib/textures';
+import App from './app/app';
+import focusAtEnd from './input/focus-at-end';
+import fonts from '../artifacts/fonts';
+import phrases from '../artifacts/phrases';
 
 const defaultFontSize = 72;
 

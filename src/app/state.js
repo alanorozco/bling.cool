@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-module.exports = class State {
+export default class State {
   constructor() {
     this.state_ = {};
     this.observerId_ = 0;
@@ -67,4 +67,4 @@ module.exports = class State {
       })
     );
   }
-};
+}

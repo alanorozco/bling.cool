@@ -52,7 +52,7 @@ function jsRollup(input) {
     input: path.join('src', input),
     format: 'iife',
     name: 'bling',
-    plugins: [rollupResolve(), scssVariables(), commonjs(), babel()],
+    plugins: [rollupResolve(), commonjs(), scssVariables(), babel()],
   }).pipe(source(input));
 }
 
@@ -154,6 +154,7 @@ function bundleAmp(done) {
 }
 
 const bundle = parallel(bundleDefault, bundleAmp);
+const uglifyOptions = { toplevel: true };
 
 function minifyHtml() {
   return src(path.join(dirs.dist.root, '*.html'))
@@ -162,7 +163,7 @@ function minifyHtml() {
         collapseBooleanAttributes: true,
         collapseWhitespace: true,
         minifyCSS: true,
-        minifyJS: { toplevel: true },
+        minifyJS: uglifyOptions,
         removeAttributeQuotes: true,
         removeComments: true,
         sortAttributes: true,
@@ -172,11 +173,19 @@ function minifyHtml() {
     .pipe(dest(dirs.dist.root));
 }
 
-function uglifyJs() {
-  return src(path.join(dirs.dist.root, '*.js'))
-    .pipe(uglify())
-    .pipe(dest(dirs.dist.root));
+function uglifyJsItem(input) {
+  return () =>
+    src(path.join(dirs.dist.root, input))
+      .pipe(uglify(uglifyOptions))
+      .pipe(dest(dirs.dist.root));
 }
+
+// We have to do this separately because otherwise `gulp-uglify` does some weird
+// shit.
+const uglifyJs = parallel(
+  uglifyJsItem('encoder.js'),
+  uglifyJsItem('index.amp.js')
+);
 
 const minify = parallel(minifyHtml, uglifyJs);
 

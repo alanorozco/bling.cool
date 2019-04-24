@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-module.exports = element =>
+export default element =>
   new Promise(resolve => {
     let listener = () => {
       resolve(element);

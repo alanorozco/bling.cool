@@ -20,10 +20,12 @@
  * SOFTWARE.
  */
 
-const { textureUrl } = require('../../lib/textures');
+import { textureUrl } from '../../lib/textures';
 
-module.exports = class Texturables {
-  constructor(doc, state) {
+export default class Texturables {
+  constructor(win, state) {
+    const doc = win.document;
+
     this.textured_ = Array.from(doc.querySelectorAll('.textured'));
     this.hued_ = this.textured_.concat(
       Array.from(doc.querySelectorAll('.hued'))
@@ -49,4 +51,4 @@ module.exports = class Texturables {
       style.filter = hueRotate;
     });
   }
-};
+}

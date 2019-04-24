@@ -77,19 +77,31 @@ function setDefaultText(doc, text) {
 }
 
 function setFonts(doc, fonts, selectedFont) {
-  const select = doc.querySelector('select#font');
-  if (!select) {
+  const container = doc.querySelector('.font-options');
+  if (!container) {
     return;
   }
+  const template = container.querySelector('template');
+  if (!template) {
+    return;
+  }
+  container.removeChild(template);
   fonts.forEach(([name, weight]) => {
-    const option = renderers.fontOption(doc, name, weight);
+    const option = renderers.fontOption(
+      template.content.firstElementChild.cloneNode(/* deep */ true),
+      name,
+      weight
+    );
     if (name == selectedFont) {
-      option.setAttribute('selected', '');
+      renderers.selectElementOption(option);
     }
-    select.appendChild(option);
+    container.appendChild(option);
   });
   for (const { style } of doc.querySelectorAll('.default-font')) {
     style.fontFamily = `'${selectedFont}', sans-serif`;
+  }
+  if (selectedFont) {
+    doc.querySelector('.selected-font').textContent = selectedFont;
   }
 }
 

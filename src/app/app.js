@@ -20,18 +20,19 @@
  * SOFTWARE.
  */
 
-const adoptAsync = require('./adopt-async');
-const Editor = require('./editor');
-const EncodeButton = require('./encode-button');
-const FontSelector = require('./font-selector');
-const Loader = require('./loader');
-const FxPanel = require('./fx-panel');
-const Toolbar = require('./toolbar');
-const State = require('./state');
-const Texturables = require('./texturables');
-const TextureSelector = require('./texture-selector');
+import adoptAsync from '../async-modules/adopt-async';
 
-module.exports = class App {
+import Editor from './editor';
+import EncodeButton from './encode-button';
+import FontSelector from './font-selector';
+import Loader from './loader';
+import FxPanel from './fx-panel';
+import Toolbar from './toolbar';
+import State from './state';
+import Texturables from './texturables';
+import TextureSelector from './texture-selector';
+
+export default class App {
   constructor(
     win,
     {
@@ -51,12 +52,12 @@ module.exports = class App {
     this.modules_ = adoptAsync(win);
 
     new Editor(win, state, editor);
-    new Toolbar(win.document, state, toolbar);
-    new Texturables(win.document, state, texturables);
-    new TextureSelector(win.document, state, textureSelector);
+    new Toolbar(win, state, toolbar);
+    new Texturables(win, state, texturables);
+    new TextureSelector(win, state, textureSelector);
     new Loader(win, state);
-    new FontSelector(win.document, state, fontSelector);
-    new FxPanel(win.document, state, fxPanel);
+    new FontSelector(win, state, fontSelector);
+    new FxPanel(win, state, fxPanel);
     new EncodeButton(
       win,
       state,
@@ -68,4 +69,4 @@ module.exports = class App {
       : Promise.resolve()
     ).then(() => this);
   }
-};
+}

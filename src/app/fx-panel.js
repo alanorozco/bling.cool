@@ -20,8 +20,10 @@
  * SOFTWARE.
  */
 
-module.exports = class FxPanel {
-  constructor(doc, state) {
+export default class FxPanel {
+  constructor(win, state) {
+    const doc = win.document;
+
     this.hueSlider_ = doc.querySelector('#hue');
 
     const setHueOnSlide = ({ target }) => {
@@ -36,4 +38,4 @@ module.exports = class FxPanel {
       this.hueSlider_.value = value;
     });
   }
-};
+}

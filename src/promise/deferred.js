@@ -20,10 +20,10 @@
  * SOFTWARE.
  */
 
-module.exports = class Deferred {
+export default class Deferred {
   constructor() {
     this.promise = new Promise(resolve => {
       this.resolve = resolve;
     });
   }
-};
+}

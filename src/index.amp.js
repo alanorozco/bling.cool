@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const App = require('./app');
+import App from './app/app';
 
 new App(self, {
   editor: {

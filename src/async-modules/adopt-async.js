@@ -20,15 +20,41 @@
  * SOFTWARE.
  */
 
-exports.closestByClassName = function closestByClassName(element, className) {
-  if (element.closest) {
-    return element.closest(`.${className}`);
+class ModuleGetter {
+  constructor(win) {
+    const boundPush = this.push_.bind(this);
+
+    this.promises_ = [];
+    this.resolvers_ = [];
+
+    win.BLING = win.BLING || [];
+    win.BLING.push = boundPush;
+    win.BLING.forEach(boundPush);
   }
-  let current = element;
-  while (!element.classList.contains(className) && current.parentNode) {
-    current = current.parentNode;
+
+  push_(props) {
+    Object.keys(props).forEach(k => {
+      this.fire_(k, props[k]);
+    });
   }
-  if (current.classList.contains(className)) {
-    return current;
+
+  get(key) {
+    return this.buildPromise_(key);
   }
-};
+
+  buildPromise_(key) {
+    if (!this.promises_[key]) {
+      this.promises_[key] = new Promise(resolver => {
+        this.resolvers_[key] = resolver;
+      });
+    }
+    return this.promises_[key];
+  }
+
+  fire_(key, value) {
+    this.buildPromise_(key);
+    this.resolvers_[key](value);
+  }
+}
+
+export default win => new ModuleGetter(win);

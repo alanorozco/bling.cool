@@ -23,7 +23,7 @@
 const clamp = num => Math.round(Math.max(0, Math.min(255, num)));
 
 // https://stackoverflow.com/a/29521147
-exports.hueRotate = function hueRotate(color, turns) {
+export const hueRotate = function hueRotate(color, turns) {
   const [r, g, b] = color;
 
   const angle = (((turns * 360) % 360) + 360) % 360;

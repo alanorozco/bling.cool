@@ -20,12 +20,13 @@
  * SOFTWARE.
  */
 
-const { expandFontId } = require('../../lib/fonts');
-const { getLengthNumeral } = require('../../lib/css');
-const { hueRotate } = require('./colors');
-const { splitLines } = require('./text');
-const loadPromise = require('../events/load-promise');
-const scssVars = require('variables!../index.scss');
+import { expandFontId } from '../../lib/fonts';
+
+import { getLengthNumeral } from '../../lib/css';
+import { hueRotate } from './colors';
+import { splitLines } from './text';
+import loadPromise from '../events/load-promise';
+import scssVars from 'variables!../index.scss';
 
 const BLUE = [
   getLengthNumeral(scssVars.blueR),
@@ -75,7 +76,7 @@ function fillText(canvas, ctx, fontSize, fontName, lines, margin) {
   });
 }
 
-module.exports = class CanvasRenderer {
+export default class CanvasRenderer {
   constructor(win) {
     this.win_ = win;
 
@@ -175,4 +176,4 @@ module.exports = class CanvasRenderer {
       return canvas;
     });
   }
-};
+}

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const { closestByClassName } = require('../dom');
+import { closestByClassName } from '../dom/dom';
 
 const getPanel = (doc, id) => doc.querySelector(`.panel-${id}`);
 const getPanelToggleButton = (doc, id) =>
@@ -36,12 +36,11 @@ function openPanel(panel, button) {
   button.classList.add('selected');
 }
 
-module.exports = class Toolbar {
-  constructor(doc, state) {
-    this.doc_ = doc;
-    this.element_ = doc.querySelector('.toolbar');
-
-    this.openPanel_ = null;
+export default class Toolbar {
+  constructor(win, state) {
+    this.doc_ = win.document;
+    this.state_ = state;
+    this.element_ = win.document.querySelector('.toolbar');
 
     this.element_.addEventListener('click', this.maybeTogglePanel_.bind(this));
 
@@ -65,23 +64,24 @@ module.exports = class Toolbar {
       return;
     }
     e.preventDefault();
-    if (panelId === this.openPanel_) {
+    if (panelId === this.state_.get('panel')) {
       this.closePanel_();
       return;
     }
     this.closePanel_();
     openPanel(panel, button);
-    this.openPanel_ = panelId;
+    this.state_.set(this, { panel: panelId });
   }
 
   closePanel_() {
-    if (!this.openPanel_) {
+    const openPanel = this.state_.get('panel');
+    if (!openPanel) {
       return;
     }
     closePanel(
-      getPanel(this.doc_, this.openPanel_),
-      getPanelToggleButton(this.doc_, this.openPanel_)
+      getPanel(this.doc_, openPanel),
+      getPanelToggleButton(this.doc_, openPanel)
     );
-    this.openPanel_ = null;
+    this.state_.set(this, { panel: null });
   }
-};
+}

@@ -2,15 +2,15 @@
 <div class="toolbar">
   <label>
     <button class="panel-toggle" data-toggle="textures">
-      <span class="hide-on-small">🎨 </span>texture
+      <span class="hide-on-small">💎 </span>texture
     </button>
   </label>
-  <label for="font">
-    <select name="font" id="font"></select>
+  <label>
+    <button class="panel-toggle selected-font" data-toggle="font"></button>
   </label>
   <label>
     <button class="panel-toggle" data-toggle="fx">
-      <span class="hide-on-small">🧙 </span>fx
+      <span class="hide-on-small">🎨 </span>fx
     </button>
   </label>
   <label>
@@ -22,9 +22,19 @@
 <div class="panel sliding panel-textures hued" hidden>
   <div class="panel-slider texture-options"></div>
 </div>
-<div class="panel panel-fx hued" hidden>
+<div class="panel panel-fx" hidden>
   <label for="hue">
     hue
     <input id="hue" type="range" min="0" max="1" step="0.05" value="0" />
   </label>
+</div>
+<div class="panel sliding panel-font" hidden>
+  <div class="panel-slider font-options hued">
+    <template>
+      <div class="font-option">
+        <div class="font-preview"></div>
+        <div class="font-name"></div>
+      </div>
+    </template>
+  </div>
 </div>
