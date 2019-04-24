@@ -31,10 +31,13 @@ const buffer = require('vinyl-buffer');
 const bundleIndex = require('./builder/bundle-index');
 const commonjs = require('rollup-plugin-commonjs');
 const concat = require('gulp-concat');
+const cssnano = require('cssnano');
+const cssDeclarationSorter = require('css-declaration-sorter');
 const docs = require('./builder/docs');
 const del = require('del');
 const htmlmin = require('gulp-html-minifier');
 const path = require('path');
+const postcss = require('gulp-postcss');
 const rollup = require('rollup-stream');
 const rollupResolve = require('rollup-plugin-node-resolve');
 const sass = require('gulp-sass');
@@ -91,6 +94,7 @@ const js = parallel(jsDefault, jsAmp, jsEncoder, jsEncoderWorker);
 function css() {
   return src('./src/index.scss')
     .pipe(sass().on('error', sass.logError))
+    .pipe(postcss([cssnano(), cssDeclarationSorter({ order: 'smacss' })]))
     .pipe(dest(dirs.dist.workspace));
 }
 
