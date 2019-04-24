@@ -22,6 +22,7 @@
 
 import { closestByClassName } from '../dom/dom';
 import { selectElementOption, textureOption } from '../../lib/renderers';
+import loadImage from '../dom/load-image';
 
 const containerClassName = 'texture-options';
 const optionClassName = 'texture-option';
@@ -37,7 +38,7 @@ export default class TextureSelector {
     this.element_ = doc.querySelector(`.${containerClassName}`);
     this.hoverUrl_ = hoverUrl;
     this.hoverUnlistener_ = this.listenToHover_();
-    this.hoverEventId_ = {};
+    this.hoverEventId_ = 0;
 
     this.element_.addEventListener('click', ({ target }) => {
       const option = closestByClassName(target, optionClassName);
@@ -83,13 +84,18 @@ export default class TextureSelector {
   }
 
   onOptionMouseOver_({ target }) {
-    // TODO: Load image first to avoid FOUC.
-    target.style.backgroundImage = `url(${this.hoverUrl_(
-      target.getAttribute(textureIdAttr)
-    )})`;
+    const eventId = ++this.hoverEventId_;
+    const textureUrl = this.hoverUrl_(target.getAttribute(textureIdAttr));
+    loadImage(textureUrl).then(() => {
+      if (eventId != this.hoverEventId_) {
+        return;
+      }
+      target.style.backgroundImage = `url(${textureUrl})`;
+    });
   }
 
   onOptionMouseOut_({ target }) {
+    ++this.hoverEventId_;
     target.style.backgroundImage = `url(${target.getAttribute(staticUrlAttr)})`;
   }
 
