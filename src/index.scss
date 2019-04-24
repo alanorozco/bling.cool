@@ -28,8 +28,32 @@ $toolbarHeight: 48px;
 $bodyBorder: 20px;
 
 // colors
-$blue: rgb($blueR, $blueG, $blueB);
 $grayish: rgb(147, 153, 160);
+$darkGrayish: darken($grayish, 20%);
+$blue: rgb($blueR, $blueG, $blueB);
+$lightBlue: lighten($blue, 20%);
+$purple: adjust-hue(
+  $color: $blue,
+  $degrees: 60,
+);
+$orange: adjust-hue(
+  $color: $blue,
+  $degrees: 160,
+);
+$yellow: saturate(
+  adjust-hue(
+    $color: $blue,
+    $degrees: 190,
+  ),
+  20%
+);
+$pink: lighten(
+  adjust-hue(
+    $color: $blue,
+    $degrees: 70,
+  ),
+  20%
+);
 
 // overrides: 3p/style-range-inputs/style-range-inputs
 $track-color: $grayish;
@@ -130,7 +154,7 @@ footer {
   font-size: 82%;
 
   > .buggy {
-    color: darken($grayish, 20%);
+    color: $darkGrayish;
   }
 
   @media #{$smallView} {
@@ -367,7 +391,7 @@ a {
   text-decoration: none;
   &:hover,
   &:active {
-    color: lighten($blue, 20%);
+    color: $lightBlue;
   }
 }
 
@@ -385,7 +409,7 @@ $buttonRadius: 32px;
   justify-content: center;
   margin: 0 0 $marginUnit;
   font-size: 14px;
-  color: darken($grayish, 20%);
+  color: $darkGrayish;
   line-height: $toolbarHeight;
   position: relative;
 
@@ -411,14 +435,10 @@ $buttonRadius: 32px;
     }
 
     &.toggle-textures > svg {
-      fill: lighten($blue, 20%);
+      fill: $lightBlue;
     }
 
     &.toggle-fx > svg {
-      $purple: adjust-hue(
-        $color: $blue,
-        $degrees: 60,
-      );
       fill: $purple;
     }
 
@@ -426,10 +446,6 @@ $buttonRadius: 32px;
       height: 16px;
 
       > g {
-        $orange: adjust-hue(
-          $color: $blue,
-          $degrees: 160,
-        );
         fill: $orange;
         path[stroke] {
           stroke: $orange;
@@ -636,6 +652,53 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
 
   a {
     padding: $marginUnit / 2;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    > svg {
+      height: 24px;
+      margin: 0 0.5 * $marginUnit 0 0;
+    }
+
+    &.close-button {
+      color: $grayish;
+
+      > svg > g {
+        fill: $grayish;
+      }
+    }
+
+    &.download-button {
+      color: $blue; // hued
+
+      > svg {
+        fill: $blue; // hued
+      }
+    }
+  }
+}
+
+.fun {
+  position: relative;
+  color: $blue; // hued
+  font-size: inherit;
+
+  > svg {
+    top: -60px;
+    position: absolute;
+    width: 100px;
+    fill: $blue; // hued
+
+    &:first-child {
+      left: -90px;
+      transform: scale(-1, 1);
+    }
+
+    &:last-child {
+      right: -90px;
+    }
   }
 }
 
