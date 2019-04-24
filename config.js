@@ -33,5 +33,5 @@ exports.dirs = {
 
 exports.uglify = {
   toplevel: true,
-  mangleprops: { regex: /_$/ },
+  mangleProperties: { regex: /_$/ },
 };
