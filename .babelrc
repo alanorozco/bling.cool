@@ -3,5 +3,15 @@
     "./builder/babel-plugins/bling-count-texture-files",
     ["@babel/plugin-transform-template-literals", { "loose": true }]
   ],
-  "presets": [["@babel/preset-env", { "forceAllTransforms": true }]]
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "forceAllTransforms": true,
+        "targets": {
+          "browsers": "last 2 years and > 1%"
+        }
+      }
+    ]
+  ]
 }
