@@ -105,6 +105,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Babel compiler core.
 
+- [**`@babel/plugin-transform-classes`**](https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-classes) by (⚖ MIT)
+
+  Compile ES2015 classes to ES5
+
 - [**`@babel/preset-env`**](https://babeljs.io/) by **[Henry Zhu](mailto:hi@henryzoo.com)** (⚖ MIT)
 
   A Babel preset for each environment.
@@ -116,6 +120,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 - [**`colors`**](https://github.com/Marak/colors.js) by **Marak Squires** (⚖ MIT)
 
   get colors in your node.js console
+
+- [**`cssnano`**](https://github.com/cssnano/cssnano) by **[Ben Briggs](http://beneb.info)** (⚖ MIT)
+
+  A modular minifier, built on top of the PostCSS ecosystem.
 
 - [**`del`**](https://www.npmjs.com/package/sindresorhus/del) by **[Sindre Sorhus](sindresorhus.com)** (⚖ MIT)
 
@@ -172,6 +180,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 - [**`gulp-html-minifier`**](https://github.com/origin1tech/gulp-html-minifier) by **[Origin1 Technologies](https://github.com/origin1tech)** (⚖ MIT)
 
   Minify HTML with html-minifier.
+
+- [**`gulp-postcss`**](https://github.com/postcss/gulp-postcss) by **[Andrey Kuzmin](mailto:unsoundscapes@gmail.com)** (⚖ MIT)
+
+  PostCSS gulp plugin
 
 - [**`gulp-sass`**](https://github.com/dlmanning/gulp-sass) by **David Manning** (⚖ MIT)
 
