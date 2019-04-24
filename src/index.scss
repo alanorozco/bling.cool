@@ -99,7 +99,7 @@ body {
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  top: $marginUnit * 3 + 0.5 * $toolbarHeight;
+  top: 2.5 * $marginUnit + 0.5 * $toolbarHeight;
   height: $toolbarHeight * 2;
   left: $marginUnit;
   right: $marginUnit;
@@ -120,7 +120,7 @@ body {
 
 h1,
 footer {
-  margin: $marginUnit 0;
+  margin: 0.5 * $marginUnit 0;
   text-align: center;
   font: inherit;
   text-transform: lowercase;
@@ -148,7 +148,7 @@ main {
   box-sizing: border-box;
   width: calc(100vw - #{2 * $bodyBorder});
   height: calc(100vh - #{2 * $bodyBorder});
-  padding: $marginUnit 0;
+  padding: 0.5 * $marginUnit 0;
 
   @media #{$smallView} {
     width: 100vw;
@@ -390,7 +390,7 @@ $buttonRadius: 32px;
   position: relative;
 
   > label {
-    margin: 0 ($marginUnit / 2);
+    margin: 0 ($marginUnit / 4);
 
     @media #{$smallView} {
       margin: 0;
@@ -457,7 +457,7 @@ $buttonRadius: 32px;
   }
 }
 
-$toggleButtonArrowWidth: 10px;
+$toggleButtonArrowWidth: 6px;
 
 $fontPreviewHeight: 32px;
 $fontPreviewSize: 20px;
@@ -534,8 +534,7 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
     &:after,
     &:before {
       pointer-events: none;
-      // idk why 4px
-      top: calc(100% + 4px);
+      top: calc(#{2px + 0.5 * $marginUnit} + 100%);
       left: 50%;
       border: solid transparent;
       content: ' ';
@@ -543,7 +542,7 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
       width: 0;
       position: absolute;
       pointer-events: none;
-      z-index: 10000;
+      z-index: 4;
     }
 
     &:after {
