@@ -368,21 +368,21 @@ $panelGradientWidth: 60px;
 
 #editable {
   caret-color: rgba($blue, 0.8);
+  color: transparent;
   position: absolute;
 
   // ayy lmao 👽
   // hack to make chrome show the editor caret when the area is empty.
   min-width: 10px;
   text-align: center;
-}
 
-textarea#editable {
-  color: transparent;
-  -webkit-text-fill-color: auto;
-  background-clip: border-box;
-  background: transparent;
-  border: none;
-  resize: none;
+  &:is(textarea) {
+    -webkit-text-fill-color: auto;
+    background-clip: border-box;
+    background: transparent;
+    border: none;
+    resize: none;
+  }
 }
 
 a {
