@@ -86,7 +86,7 @@ export default class TextureSelector {
   onOptionMouseOver_({ target }) {
     const eventId = ++this.hoverEventId_;
     const textureUrl = this.hoverUrl_(target.getAttribute(textureIdAttr));
-    loadImage(textureUrl).then(() => {
+    loadImage(this.doc_, textureUrl).then(() => {
       if (eventId != this.hoverEventId_) {
         return;
       }
