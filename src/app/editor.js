@@ -90,7 +90,7 @@ export default class Editor {
     e.preventDefault();
 
     if (this.win_.navigator.userAgent.indexOf('msie') > 0) {
-      insertHtml('<br />');
+      insertHtml('<br />'); // eslint-disable-line no-undef
       return;
     }
 

@@ -21,11 +21,10 @@
  */
 
 import { expandFontId } from '../../lib/fonts';
-
 import { getLengthNumeral } from '../../lib/css';
 import { hueRotate } from './colors';
 import { splitLines } from './text';
-import loadPromise from '../events/load-promise';
+import loadImage from '../dom/load-image';
 import scssVars from 'variables!../index.scss';
 
 const BLUE = [
@@ -52,13 +51,6 @@ function createCanvas(doc, width, height) {
   canvas.width = width;
   canvas.height = height;
   return { canvas, ctx: canvas.getContext('2d') };
-}
-
-function img(doc, src) {
-  const img = doc.createElement('img');
-  const promise = loadPromise(img);
-  img.src = src;
-  return promise;
 }
 
 function fillText(canvas, ctx, fontSize, fontName, lines, margin) {
@@ -89,7 +81,7 @@ export default class CanvasRenderer {
   }
 
   setTexture(texture) {
-    this.img_ = img(this.win_.document, texture);
+    this.img_ = loadImage(this.win_.document, texture);
   }
 
   renderTexture_(width, height) {

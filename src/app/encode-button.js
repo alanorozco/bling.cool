@@ -21,41 +21,102 @@
  */
 
 import { getLengthNumeral } from '../../lib/css';
-
 import { textureFramesUrl } from '../../lib/textures';
+import loadImage from '../dom/load-image';
+import once from 'lodash.once';
+import scssVars from 'variables!../index.scss';
+
+const lightboxAnimationDuration = getLengthNumeral(
+  scssVars.lightboxAnimationDuration
+);
 
 const fetchFrames = textureId =>
   fetch(textureFramesUrl(textureId)).then(response => response.json());
 
-export default function EncodeButton(win, state, { modules }) {
-  const button = win.document.querySelector('.encode-button');
+const asciiNormal = text =>
+  text.normalize
+    ? text.normalize('NFKD').replace(/[\u0300-\u036F]/g, '')
+    : text;
 
-  button.addEventListener('click', () => {
-    const framesPromise = fetchFrames(state.get('texture'));
-    const EncoderPromise = modules.get('Encoder');
+const toFilename = text =>
+  `${asciiNormal(text.trim())
+    .toLowerCase()
+    .replace(/[^a-z]+/g, '-')}.gif`;
 
-    state.set(this, { encoding: true });
+export default class EncodeButton {
+  constructor(win, state, { modules }) {
+    this.win_ = win;
+    this.doc_ = win.document;
+    this.state_ = state;
+    this.modules_ = modules;
 
-    const { width, height } = win.document
+    this.attachLightboxEvents_ = once(lightbox => {
+      const closeButton = lightbox.querySelector('.close-button');
+      closeButton.addEventListener('click', this.closeLightbox_.bind(this));
+    });
+
+    const button = win.document.querySelector('.encode-button');
+    button.addEventListener('click', this.onClick_.bind(this));
+  }
+
+  onClick_() {
+    const framesPromise = fetchFrames(this.state_.get('texture'));
+    const EncoderPromise = this.modules_.get('Encoder');
+
+    const text = this.state_.get('text');
+
+    this.state_.set(this, { encoding: true });
+
+    const { width, height } = this.doc_
       .querySelector('.editable-sentinel')
       .getBoundingClientRect();
 
     Promise.all([framesPromise, EncoderPromise])
       .then(([frames, Encoder]) =>
-        new Encoder(win).asGif({
+        new Encoder(this.win_).asGif({
           frames,
           width,
           height,
-          hue: state.get('hue'),
-          font: state.get('font'),
+          text,
+          hue: this.state_.get('hue'),
+          font: this.state_.get('font'),
           fontSize: getLengthNumeral(
-            win.document.querySelector('#editable').style.fontSize
+            this.doc_.querySelector('#editable').style.fontSize
           ),
-          text: state.get('text'),
         })
       )
+      .then(url => this.openLightbox_(url, toFilename(text)))
       .then(() => {
-        state.set(this, { encoding: false });
+        this.win_.setTimeout(() => {
+          this.state_.set(this, { encoding: false });
+        }, lightboxAnimationDuration);
       });
-  });
+  }
+
+  openLightbox_(url, filename) {
+    const doc = this.doc_;
+    const lightbox = doc.querySelector('.encoded-lightbox');
+
+    const downloadButton = lightbox.querySelector('.download-button');
+    downloadButton.href = url;
+    downloadButton.download = filename;
+
+    const imgContainer = lightbox.querySelector('.img-container');
+    const imgLoadPromise = loadImage(doc, url);
+    return imgLoadPromise.then(img => {
+      imgContainer.appendChild(img);
+      lightbox.removeAttribute('hidden');
+      this.attachLightboxEvents_(lightbox);
+    });
+  }
+
+  closeLightbox_(e) {
+    e.preventDefault();
+    const lightbox = this.doc_.querySelector('.encoded-lightbox');
+    const imgContainer = lightbox.querySelector('.img-container');
+    if (imgContainer.firstElementChild) {
+      imgContainer.removeChild(imgContainer.firstElementChild);
+    }
+    lightbox.setAttribute('hidden', 'hidden');
+  }
 }

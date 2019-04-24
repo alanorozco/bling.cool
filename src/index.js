@@ -21,7 +21,6 @@
  */
 
 import { dirs } from '../config';
-
 import { fontId } from '../lib/fonts';
 import { FontLoader } from './fonts/font-loader';
 import { textureUrl } from '../lib/textures';
@@ -109,7 +108,7 @@ new App(
   }
 ).ready.then(app => {
   self.document.body.classList.remove('not-ready');
-  focusAtEnd(editable);
+  focusAtEnd(self.document.querySelector('#editable'));
 
   fetch(`/${dirs.textures.frames}/initial.json`)
     .then(response => response.json())

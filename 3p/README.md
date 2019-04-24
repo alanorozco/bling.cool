@@ -141,6 +141,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Runs prettier as an eslint rule
 
+- [**`eslint-plugin-sort-imports-es6-autofix`**](https://github.com/schuchertmanagementberatung/eslint-plugin-sort-imports-es6-autofix.git) by **rem**, **marudor** (⚖ MIT)
+
+  A sort-imports rule that properly distinguishes between ES6 import types.
+
 - [**`express`**](http://expressjs.com/) by **[TJ Holowaychuk](mailto:tj@vision-media.ca)** (⚖ MIT)
 
   Fast, unopinionated, minimalist web framework

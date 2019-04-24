@@ -20,30 +20,11 @@
  * SOFTWARE.
  */
 
-// https://stackoverflow.com/a/16599668
-function getLines(ctx, text, maxWidth) {
-  let words = text.split(/\s+/gim);
-  let lines = [];
-  let currentLine = words[0];
+import loadPromise from '../events/load-promise';
 
-  for (let i = 1; i < words.length; i++) {
-    let word = words[i];
-    let width = ctx.measureText(currentLine + ' ' + word).width;
-    if (width < maxWidth) {
-      currentLine += ' ' + word;
-    } else {
-      lines.push(currentLine);
-      currentLine = word;
-    }
-  }
-  lines.push(currentLine);
-  return lines;
-}
-
-// https://stackoverflow.com/q/2936112#comment79378090_16599668
-export function splitLines(ctx, text, width, margin) {
-  return text
-    .split('\n')
-    .map(line => getLines(ctx, line, width - margin * 2))
-    .reduce((a, b) => a.concat(b), []);
+export default function loadImage(doc, src) {
+  const img = doc.createElement('img');
+  const promise = loadPromise(img);
+  img.src = src;
+  return promise;
 }

@@ -39,6 +39,9 @@ $shadowY: 6px;
 $shadowBlur: 12px;
 $shadowOpacity: 0.48;
 
+// lightbox
+$lightboxAnimationDuration: 300ms;
+
 // overrides: 3p/style-range-inputs/style-range-inputs
 $track-color: $grayish;
 $thumb-color: $grayish;
@@ -598,7 +601,7 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
   &:not([hidden]) {
     opacity: 0;
     transform: scale(0);
-    animation: 0.3s whoa ease-out;
+    animation: $lightboxAnimationDuration whoa ease-out;
     animation-fill-mode: both;
   }
 

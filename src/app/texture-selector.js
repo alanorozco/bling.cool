@@ -21,7 +21,6 @@
  */
 
 import { closestByClassName } from '../dom/dom';
-
 import { selectElementOption, textureOption } from '../../lib/renderers';
 
 const containerClassName = 'texture-options';

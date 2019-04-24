@@ -4,10 +4,16 @@ module.exports = {
   },
   env: {
     es6: true,
+    node: true,
   },
   extends: ['plugin:prettier/recommended'],
-  plugins: ['disable', 'notice'],
+  plugins: ['disable', 'notice', 'sort-imports-es6-autofix'],
   rules: {
+    'no-undef': 1,
+    'sort-imports-es6-autofix/sort-imports-es6': [
+      'error',
+      { ignoreCase: true },
+    ],
     'no-unused-vars': [
       'error',
       {
