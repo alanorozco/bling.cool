@@ -139,7 +139,9 @@ export default class Editor {
   }
 
   getEditablePropAsPlainText_(element, prop) {
-    return prop == 'innerHTML' ? element.innerText : element[prop];
+    return prop == 'innerHTML'
+      ? element.innerText.replace(/\n[^\n\S]*$/, '')
+      : element[prop];
   }
 
   setFont_(fontId) {
