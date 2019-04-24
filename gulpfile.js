@@ -163,7 +163,7 @@ function minifyHtml() {
         collapseBooleanAttributes: true,
         collapseWhitespace: true,
         minifyCSS: true,
-        minifyJS: uglifyOptions,
+        minifyJS: { ...uglifyOptions },
         removeAttributeQuotes: true,
         removeComments: true,
         sortAttributes: true,
