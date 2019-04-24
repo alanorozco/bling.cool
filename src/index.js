@@ -26,7 +26,6 @@ import { FontLoader } from './fonts/font-loader';
 import { textureUrl } from '../lib/textures';
 import App from './app/app';
 import focusAtEnd from './input/focus-at-end';
-import fonts from '../artifacts/fonts';
 import phrases from '../artifacts/phrases';
 
 const defaultFontSize = 72;
@@ -74,6 +73,11 @@ function calculateFontSize(
 
 const [text, phraseConfig] = fillPhrase(pickRandom(phrases));
 
+const randomFont = () =>
+  pickRandom(
+    Array.from(self.document.querySelectorAll('.font-option'))
+  ).getAttribute('data-value');
+
 new App(
   self,
   {
@@ -101,7 +105,7 @@ new App(
   },
   {
     text,
-    font: fontId(phraseConfig.font || pickRandom(fonts)),
+    font: phraseConfig.font ? fontId(phraseConfig.font) : randomFont(),
     fontSize: defaultFontSize,
     hue: phraseConfig.hue || Math.random(),
     texture: randomTill(textureAssetsCount),
