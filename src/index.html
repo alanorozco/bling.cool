@@ -32,6 +32,10 @@
       name="description"
       content="[package.description] &ndash; generate glitter, blingy GIFs or HTML Ɛ̸ CSS markup."
     />
+    <link rel="preconnect" href="https://fonts.google.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <link rel="preload" href="/gif.worker.js" as="script">
+    <script src="/encoder.js" async></script>
   </head>
   <body class="not-ready">
     <div class="border textured"></div>
@@ -71,6 +75,5 @@
       <p><a class="download-button">⬇️ download</a></p>
       <p><a href="#✍" class="close-button">✍ keep editing</a></p>
     </div>
-    <script src="/encoder.js" async></script>
   </body>
 </html>
