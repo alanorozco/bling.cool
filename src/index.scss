@@ -397,6 +397,47 @@ $buttonRadius: 32px;
     }
   }
 
+  button {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  button {
+    > svg {
+      height: 18px;
+      margin: 0 6px 0 0;
+    }
+
+    &.toggle-textures > svg {
+      fill: lighten($blue, 20%);
+    }
+
+    &.toggle-fx > svg {
+      $purple: adjust-hue(
+        $color: $blue,
+        $degrees: 60,
+      );
+      fill: $purple;
+    }
+
+    &.encode-button > svg {
+      height: 16px;
+
+      > g {
+        $orange: adjust-hue(
+          $color: $blue,
+          $degrees: 160,
+        );
+        fill: $orange;
+        path[stroke] {
+          stroke: $orange;
+        }
+      }
+    }
+  }
+
   input,
   select,
   button {
