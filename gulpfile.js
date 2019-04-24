@@ -22,7 +22,7 @@
 
 const { argv } = require('yargs');
 const { dest, parallel, series, src, watch: gulpWatch } = require('gulp');
-const { dirs } = require('./config');
+const { dirs, uglify: uglifyConfig } = require('./config');
 const { textures } = require('./builder/textures');
 const { textureFirstFrameUrl, textureId } = require('./lib/textures');
 const express = require('express');
@@ -154,7 +154,6 @@ function bundleAmp(done) {
 }
 
 const bundle = parallel(bundleDefault, bundleAmp);
-const uglifyOptions = { toplevel: true };
 
 function minifyHtml() {
   return src(path.join(dirs.dist.root, '*.html'))
@@ -163,7 +162,7 @@ function minifyHtml() {
         collapseBooleanAttributes: true,
         collapseWhitespace: true,
         minifyCSS: true,
-        minifyJS: { ...uglifyOptions },
+        minifyJS: { ...uglifyConfig },
         removeAttributeQuotes: true,
         removeComments: true,
         sortAttributes: true,
@@ -176,7 +175,7 @@ function minifyHtml() {
 function uglifyJsItem(input) {
   return () =>
     src(path.join(dirs.dist.root, input))
-      .pipe(uglify(uglifyOptions))
+      .pipe(uglify({ ...uglifyConfig }))
       .pipe(dest(dirs.dist.root));
 }
 

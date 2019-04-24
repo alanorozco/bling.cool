@@ -20,15 +20,18 @@
  * SOFTWARE.
  */
 
-module.exports = {
-  dirs: {
-    textures: {
-      gif: 'textures/gif',
-      frames: 'textures/frames',
-    },
-    dist: {
-      root: 'dist',
-      workspace: 'dist/.workspace',
-    },
+exports.dirs = {
+  textures: {
+    gif: 'textures/gif',
+    frames: 'textures/frames',
   },
+  dist: {
+    root: 'dist',
+    workspace: 'dist/.workspace',
+  },
+};
+
+exports.uglify = {
+  toplevel: true,
+  mangleprops: { regex: /_$/ },
 };
