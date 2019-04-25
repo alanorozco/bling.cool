@@ -149,12 +149,29 @@ footer {
   text-transform: lowercase;
 }
 
-header {
-  color: $blue; // hued
+.fl-r,
+.fl-c,
+main,
+.editable-wrap,
+button {
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
+}
+
+.fl-r,
+button {
+  flex-direction: row;
+}
+
+.fl-c,
+main,
+.editable-wrap {
+  flex-direction: column;
+}
+
+header {
+  color: $blue; // hued
 
   h1 {
     display: inline;
@@ -198,14 +215,6 @@ main {
   @media #{$smallView} {
     width: 100vw;
   }
-}
-
-main,
-.editable-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .editable-wrap {
@@ -380,13 +389,6 @@ $panelGradientWidth: 60px;
   }
 }
 
-.panel-fx {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
 #editable {
   caret-color: rgba($blue, 0.8);
   color: transparent;
@@ -424,10 +426,6 @@ a {
 $buttonRadius: 32px;
 
 .toolbar {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
   margin: 0 0 $marginUnit;
   font-size: 14px;
   color: $darkGrayish;
@@ -440,13 +438,6 @@ $buttonRadius: 32px;
     @media #{$smallView} {
       margin: 0;
     }
-  }
-
-  button {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
   }
 
   button {
@@ -657,12 +648,8 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
   bottom: $marginUnit;
   z-index: 10000 + 1;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
   padding: $marginUnit * 2;
   background: white;
-  align-items: center;
-  justify-content: center;
 
   &:not([hidden]) {
     opacity: 0;
@@ -673,10 +660,6 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
 
   a {
     padding: $marginUnit / 2;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
 
     > svg {
       height: 24px;
