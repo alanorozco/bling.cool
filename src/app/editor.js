@@ -78,6 +78,8 @@ export default class Editor {
     editable.parentNode.addEventListener('click', () => tryFocus(editable));
     editable.addEventListener('input', this.onInput_.bind(this));
 
+    // TODO: Pause animation while typing.
+
     if (this.editableValueProp_ == 'innerHTML') {
       editable.addEventListener(
         'keypress',

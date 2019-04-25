@@ -25,6 +25,7 @@ const { pipedJsdom, elementWithFileContents } = require('./jsdom-util');
 const { promisify } = require('util');
 const { readFile } = require('fs');
 const { textureUrl } = require('../lib/textures');
+const emojiStrip = require('emoji-strip');
 const renderers = require('../lib/renderers');
 
 const readFileAsync = promisify(readFile);
@@ -183,7 +184,10 @@ module.exports = function bundleIndex({
     await bundleJs(doc, js);
 
     const h1 = doc.querySelector('h1');
-    h1.textContent = description;
+    h1.textContent = h1.textContent.replace(
+      '[package.description]',
+      emojiStrip(description).trim()
+    );
 
     const authorLink = doc.querySelector('a#meta-author');
     if (authorLink) {

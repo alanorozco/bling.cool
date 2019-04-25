@@ -142,12 +142,33 @@ body {
   }
 }
 
-h1,
+header,
 footer {
   margin: 0.5 * $marginUnit 0;
   text-align: center;
-  font: inherit;
   text-transform: lowercase;
+}
+
+header {
+  color: $blue; // hued
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    display: inline;
+    font: inherit;
+  }
+
+  > svg {
+    height: 20px;
+    margin: 0 0.5 * $marginUnit;
+
+    > use {
+      stroke: $blue; // hued
+    }
+  }
 }
 
 footer {
@@ -668,6 +689,14 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
       > svg > g {
         fill: $grayish;
       }
+
+      &:hover {
+        color: $blue;
+
+        > svg > g {
+          fill: $blue;
+        }
+      }
     }
 
     &.download-button {
@@ -675,6 +704,14 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
 
       > svg {
         fill: $blue; // hued
+      }
+
+      &:hover {
+        color: $lightBlue; // hued
+
+        > svg {
+          fill: $lightBlue; // hued
+        }
       }
     }
   }

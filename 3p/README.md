@@ -129,6 +129,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Delete files and folders
 
+- [**`emoji-strip`**](https://github.com/khalifenizar/emoji-strip) by **[Nizar Khalife Iglesias](mailto:khalifenizar@gmail.com)** (⚖ ISC)
+
+  Strip emoji from a string in Node.js and browsers.
+
 - [**`eslint`**](https://eslint.org) by **[Nicholas C. Zakas](mailto:nicholas+npm@nczconsulting.com)** (⚖ MIT)
 
   An AST-based pattern checker for JavaScript.
