@@ -20,23 +20,45 @@
  * SOFTWARE.
  */
 
-// Shared vars between JS and SCSS.
-// We could reference the SCSS directly but then we'd get a non-shaken object
-// containing presentation-only variables.
+const sass = require('sass-extract');
+const once = require('lodash.once');
 
-// base
-$marginUnit: 20px;
+const file = 'src/index.scss';
+const getVars = once(() => sass.renderSync({ file }).vars);
 
-// colors
-$blueR: 0;
-$blueG: 68;
-$blueB: 214;
+function inlineLiteral(t, name) {
+  const vars = getVars();
+  if (!name in vars) {
+    throw new Error(`Unknown SCSS var "${name}".`);
+  }
+  const { type, value } = vars.global[`$${name}`];
+  if (type == 'SassNumber') {
+    return t.numericLiteral(value);
+  }
+  return t.stringLiteral(value);
+}
 
-// text shadow
-$shadowX: 6px;
-$shadowY: 6px;
-$shadowBlur: 12px;
-$shadowOpacity: 0.48;
-
-// lightbox
-$lightboxAnimationDuration: 300ms;
+module.exports = function({ types: t }) {
+  return {
+    visitor: {
+      CallExpression(path) {
+        const { callee, arguments: args } = path.node;
+        if (!t.isIdentifier(callee)) {
+          return;
+        }
+        if (callee.name != 'scssVar') {
+          return;
+        }
+        if (args.length != 1) {
+          throw new Error('Incorrect scssVar usage. Must be 1 argument.');
+        }
+        if (!t.isStringLiteral(args[0])) {
+          throw new Error(
+            'Incorrect scssVar usage. Argument must be literal string'
+          );
+        }
+        path.replaceWith(inlineLiteral(t, args[0].value));
+      },
+    },
+  };
+};

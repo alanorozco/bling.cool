@@ -24,11 +24,7 @@ import { getLengthNumeral } from '../../lib/css';
 import { textureFramesUrl } from '../../lib/textures';
 import loadImage from '../dom/load-image';
 import once from 'lodash.once';
-import scssVars from 'variables!../vars.scss';
-
-const lightboxAnimationDuration = getLengthNumeral(
-  scssVars.lightboxAnimationDuration
-);
+import scssVar from './scss-var';
 
 const fetchFrames = textureId =>
   fetch(textureFramesUrl(textureId)).then(response => response.json());
@@ -89,7 +85,7 @@ export default class EncodeButton {
       .then(() => {
         this.win_.setTimeout(() => {
           this.state_.set(this, { encoding: false });
-        }, lightboxAnimationDuration);
+        }, scssVar('lightboxAnimationDuration'));
       });
   }
 

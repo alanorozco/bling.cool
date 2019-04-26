@@ -21,27 +21,13 @@
  */
 
 import { expandFontId } from '../../lib/fonts';
-import { getLengthNumeral } from '../../lib/css';
 import { hueRotate } from './colors';
 import { splitLines } from './text';
 import loadImage from '../dom/load-image';
-import scssVars from 'variables!../vars.scss';
+import scssVar from '../app/scss-var';
 
-const BLUE = [
-  getLengthNumeral(scssVars.blueR),
-  getLengthNumeral(scssVars.blueG),
-  getLengthNumeral(scssVars.blueG),
-];
-
-const MARGIN = 2 * getLengthNumeral(scssVars.marginUnit);
-
-// Same as .editable-shadow in index.scss
-const SHADOW = {
-  x: getLengthNumeral(scssVars.shadowX),
-  y: getLengthNumeral(scssVars.shadowY),
-  blur: getLengthNumeral(scssVars.shadowBlur),
-  opacity: getLengthNumeral(scssVars.shadowOpacity),
-};
+const BLUE = [scssVar('blueR'), scssVar('blueG'), scssVar('blueG')];
+const MARGIN = 2 * scssVar('marginUnit');
 
 const fontDef = (name, size) => `${size}px '${name}', sans-serif`;
 const rgba = (...parts) => `rgba(${parts.join(',')})`;
@@ -151,12 +137,12 @@ export default class CanvasRenderer {
       ctx.globalCompositeOperation = 'destination-over';
 
       // Hack to remove separate layer text jaggies.
-      ctx.fillStyle = rgba(1, 1, 1, SHADOW.opacity);
+      ctx.fillStyle = rgba(1, 1, 1, scssVar('shadowOpacity'));
       ctx.shadowColor = rgba(...hueRotate(BLUE, hue).concat([1]));
 
-      ctx.shadowOffsetX = SHADOW.x;
-      ctx.shadowOffsetY = SHADOW.y;
-      ctx.shadowBlur = SHADOW.blur;
+      ctx.shadowOffsetX = scssVar('shadowX');
+      ctx.shadowOffsetY = scssVar('shadowY');
+      ctx.shadowBlur = scssVar('shadowBlur');
       fillText(canvas, ctx, fontSize, fontName, lines, MARGIN);
       ctx.restore();
 
