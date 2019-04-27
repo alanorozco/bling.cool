@@ -20,11 +20,12 @@
  * SOFTWARE.
  */
 
-const { JSDOM } = require('jsdom');
-const { promisify } = require('util');
-const { readFile } = require('fs');
-const through = require('through2');
-const toStream = require('./to-stream');
+import { JSDOM } from 'jsdom';
+
+import { promisify } from 'util';
+import { readFile } from 'fs';
+import through from 'through2';
+import toStream from './to-stream';
 
 const readFileAsync = promisify(readFile);
 
@@ -54,6 +55,4 @@ async function elementWithFileContents(doc, tagName, path) {
   );
 }
 
-exports.elementWithContents = elementWithContents;
-exports.elementWithFileContents = elementWithFileContents;
-exports.pipedJsdom = pipedJsdom;
+export { elementWithContents, elementWithFileContents, pipedJsdom };

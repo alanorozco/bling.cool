@@ -20,14 +20,16 @@
  * SOFTWARE.
  */
 
-const { basename, join: pathJoin } = require('path');
-const { Buffer } = require('buffer');
-const { dirs } = require('../config');
-const { exec } = require('child_process');
-const { promisify } = require('util');
-const { textureId } = require('../lib/textures');
-const { writeFile } = require('fs');
-const glob = require('fast-glob');
+import { basename, join as pathJoin } from 'path';
+
+import { Buffer } from 'buffer';
+import { dirs } from '../config';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import { textureId } from '../lib/textures';
+import { writeFile } from 'fs';
+import glob from 'fast-glob';
+import memoize from 'lodash.memoize';
 
 const execAsync = promisify(exec);
 const writeFileAsync = promisify(writeFile);
@@ -49,9 +51,18 @@ const frameCount = async path =>
 const writeJson = (path, content) =>
   writeFileAsync(path, JSON.stringify(content));
 
+const unoptimize = memoize(async path => {
+  const output = `${dirs.dist.workspace}/${basename(path)}.u`;
+  const expandColors = `${dirs.dist.workspace}/${basename(path)}.e`;
+  await execAsync(`gifsicle --colors=255 ${path} > ${expandColors}`);
+  await execAsync(`gifsicle -U ${expandColors} > ${output}`);
+  return output;
+});
+
 async function extractFrame(path, frame) {
+  const unoptimized = await unoptimize(path);
   try {
-    const cmd = `gifsicle ${path} '#${frame}'`;
+    const cmd = `gifsicle ${unoptimized} '#${frame}'`;
     const { stdout } = await execAsync(cmd, { encoding: 'binary' });
     return Buffer.from(stdout, 'binary');
   } catch (_) {
@@ -126,5 +137,4 @@ async function textures() {
   );
 }
 
-exports.all = all;
-exports.textures = textures;
+export { all, textures };

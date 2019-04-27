@@ -21,6 +21,7 @@
  */
 
 import { expandFontId } from '../../lib/fonts';
+import { isEl, tryFocus } from '../dom/dom';
 
 export default class Editor {
   constructor(
@@ -53,20 +54,11 @@ export default class Editor {
 
     this.textContainers_ = [this.editable_].concat(this.sentinels_);
 
-    this.editable_.parentNode.addEventListener('click', () => {
-      try {
-        this.editable_.focus();
-      } catch (_) {}
-    });
-
-    win.addEventListener('resize', this.resize_.bind(this));
-
-    this.editable_.addEventListener('input', this.onInput_.bind(this));
-    this.editable_.addEventListener('keypress', this.onKeypress_.bind(this));
-
     state.on(this, 'font', this.setFont_.bind(this));
     state.on(this, 'fontSize', this.setFontSize_.bind(this));
     state.on(this, 'text', this.setText_.bind(this));
+
+    this.attachListeners_();
   }
 
   onInput_({ target }) {
@@ -78,10 +70,26 @@ export default class Editor {
     this.resize_();
   }
 
-  onKeypress_(e) {
-    if (this.editableValueProp_ != 'innerHTML') {
-      return true;
+  attachListeners_() {
+    const editable = this.editable_;
+
+    this.win_.addEventListener('resize', this.resize_.bind(this));
+
+    editable.parentNode.addEventListener('click', () => tryFocus(editable));
+    editable.addEventListener('input', this.onInput_.bind(this));
+
+    // TODO: Pause animation while typing.
+
+    if (this.editableValueProp_ == 'innerHTML') {
+      editable.addEventListener(
+        'keypress',
+        this.onInnerHtmlKeyPress_.bind(this)
+      );
     }
+  }
+
+  onInnerHtmlKeyPress_(e) {
+    this.forceLineBreakAtEnd_(e.target);
 
     if (e.which != /* ENTER */ 13) {
       return true;
@@ -89,11 +97,18 @@ export default class Editor {
 
     e.preventDefault();
 
-    if (this.win_.navigator.userAgent.indexOf('msie') > 0) {
-      insertHtml('<br />');
-      return;
-    }
+    this.insertLineBreak_();
+    this.onInput_(e);
+  }
 
+  forceLineBreakAtEnd_(element) {
+    const { childNodes } = element;
+    if (!childNodes || !isEl(childNodes[childNodes.length - 1], 'BR')) {
+      element.appendChild(this.doc_.createElement('br'));
+    }
+  }
+
+  insertLineBreak_() {
     const selection = this.win_.getSelection();
     const range = selection.getRangeAt(0);
     const br = this.win_.document.createElement('br');
@@ -106,8 +121,6 @@ export default class Editor {
 
     selection.removeAllRanges();
     selection.addRange(range);
-
-    this.onInput_(e);
   }
 
   setText_(text) {
@@ -128,7 +141,9 @@ export default class Editor {
   }
 
   getEditablePropAsPlainText_(element, prop) {
-    return prop == 'innerHTML' ? element.innerText : element[prop];
+    return prop == 'innerHTML'
+      ? element.innerText.replace(/\n[^\n\S]*$/, '')
+      : element[prop];
   }
 
   setFont_(fontId) {

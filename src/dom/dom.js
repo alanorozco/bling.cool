@@ -32,3 +32,12 @@ export function closestByClassName(element, className) {
     return current;
   }
 }
+
+export const isEl = (elOptional, tagName) =>
+  elOptional && elOptional.tagName == tagName;
+
+export function tryFocus(el) {
+  try {
+    el.focus();
+  } catch (_) {}
+}

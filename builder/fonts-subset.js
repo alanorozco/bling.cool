@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-const all = require('../artifacts/fonts');
+import all from '../artifacts/fonts';
 
 function select(all, size) {
   const selected = new Set();
@@ -34,4 +34,4 @@ function select(all, size) {
 }
 
 /** Generate a random subset for limited environments. */
-module.exports = select(all, /* size */ 16);
+export default select(all, /* size */ 16);

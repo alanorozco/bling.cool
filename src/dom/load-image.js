@@ -20,5 +20,11 @@
  * SOFTWARE.
  */
 
-// Unfortunately, due to https://git.io/fj35W
-module.exports = require('fontfaceobserver');
+import loadPromise from '../events/load-promise';
+
+export default function loadImage(doc, src) {
+  const img = doc.createElement('img');
+  const promise = loadPromise(img);
+  img.src = src;
+  return promise;
+}

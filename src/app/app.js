@@ -25,12 +25,12 @@ import adoptAsync from '../async-modules/adopt-async';
 import Editor from './editor';
 import EncodeButton from './encode-button';
 import FontSelector from './font-selector';
-import Loader from './loader';
 import FxPanel from './fx-panel';
-import Toolbar from './toolbar';
+import Loader from './loader';
 import State from './state';
 import Texturables from './texturables';
 import TextureSelector from './texture-selector';
+import Toolbar from './toolbar';
 
 export default class App {
   constructor(

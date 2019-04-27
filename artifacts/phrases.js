@@ -6,13 +6,16 @@ const green = 0.6;
 const red = 0.45;
 
 module.exports = [
+  ['ばか !!!'],
   ['absolutely quixotic'],
   ['ayy lmao'],
   ['Defenestrate the Patriarchy.'],
   ['Divine'],
+  ['Estupendo.'],
   ['Fabulous', { hue: pinkish }],
   ['Fantastic'],
   ['Gorgeous.'],
+  ['Magnífico'],
   ['pineapple', { hue: sometimesYellow }],
   ['Platinum Crew'],
   ['smoke errday', { hue: green }],

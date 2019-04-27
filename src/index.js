@@ -21,13 +21,12 @@
  */
 
 import { dirs } from '../config';
-
 import { fontId } from '../lib/fonts';
 import { FontLoader } from './fonts/font-loader';
 import { textureUrl } from '../lib/textures';
 import App from './app/app';
+import calculateFontSize from './fonts/calculate-font-size';
 import focusAtEnd from './input/focus-at-end';
-import fonts from '../artifacts/fonts';
 import phrases from '../artifacts/phrases';
 
 const defaultFontSize = 72;
@@ -49,31 +48,12 @@ function fillPhrase(phrase) {
   return phrase;
 }
 
-// From AMPHTML: https://git.io/fj3uF
-function calculateFontSize(
-  measurer,
-  expectedHeight,
-  expectedWidth,
-  minFontSize,
-  maxFontSize
-) {
-  maxFontSize++;
-  // Binomial search for the best font size.
-  while (maxFontSize - minFontSize > 1) {
-    const mid = Math.floor((minFontSize + maxFontSize) / 2);
-    measurer.style.fontSize = `${mid}px`;
-    const height = measurer./*OK*/ offsetHeight;
-    const width = measurer./*OK*/ offsetWidth;
-    if (height > expectedHeight || width > expectedWidth) {
-      maxFontSize = mid;
-    } else {
-      minFontSize = mid;
-    }
-  }
-  return minFontSize;
-}
-
 const [text, phraseConfig] = fillPhrase(pickRandom(phrases));
+
+const randomFont = () =>
+  pickRandom(
+    Array.from(self.document.querySelectorAll('.font-option'))
+  ).getAttribute('data-value');
 
 new App(
   self,
@@ -102,14 +82,14 @@ new App(
   },
   {
     text,
-    font: fontId(phraseConfig.font || pickRandom(fonts)),
+    font: phraseConfig.font ? fontId(phraseConfig.font) : randomFont(),
     fontSize: defaultFontSize,
     hue: phraseConfig.hue || Math.random(),
     texture: randomTill(textureAssetsCount),
   }
 ).ready.then(app => {
   self.document.body.classList.remove('not-ready');
-  focusAtEnd(editable);
+  focusAtEnd(self.document.querySelector('#editable'));
 
   fetch(`/${dirs.textures.frames}/initial.json`)
     .then(response => response.json())

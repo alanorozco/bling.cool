@@ -22,47 +22,7 @@
 
 import CanvasRenderer from './canvas-renderer/renderer';
 import Deferred from './promise/deferred';
-import loadPromise from './events/load-promise';
 import pushAsync from './async-modules/push-async';
-
-let attachedLightboxEvents;
-
-function toFilename(text) {
-  const combining = /[\u0300-\u036F]/g;
-
-  const normal = text
-    .trim()
-    .normalize('NFKD')
-    .replace(combining, '');
-
-  return `${normal.toLowerCase().replace(/[^a-z]+/g, '-')}.gif`;
-}
-
-function displayEncodedLightbox(doc, url, filename) {
-  const lightbox = doc.querySelector('.encoded-lightbox');
-  const imgContainer = doc.querySelector('.img-container');
-  const downloadButton = doc.querySelector('.download-button');
-  const closeButton = doc.querySelector('.close-button');
-  const img = doc.createElement('img');
-  if (!attachedLightboxEvents) {
-    closeButton.addEventListener('click', e => {
-      e.preventDefault();
-      if (imgContainer.firstElementChild) {
-        imgContainer.removeChild(imgContainer.firstElementChild);
-      }
-      lightbox.setAttribute('hidden', 'hidden');
-    });
-  }
-  const imgLoadPromise = loadPromise(img);
-  img.src = url;
-  imgContainer.appendChild(img);
-  downloadButton.href = url;
-  downloadButton.download = filename;
-  imgLoadPromise.then(() => {
-    lightbox.removeAttribute('hidden');
-  });
-  return imgLoadPromise;
-}
 
 class Encoder {
   constructor(win) {
@@ -109,9 +69,8 @@ class Encoder {
   }
 
   asGif(options) {
-    const { text } = options;
-
     const { promise, resolve } = new Deferred();
+    const { GIF } = this.win_;
 
     const gif = new GIF({
       workers: 2,
@@ -119,9 +78,7 @@ class Encoder {
     });
 
     gif.on('finished', blob => {
-      const url = this.win_.URL.createObjectURL(blob);
-      const { document } = this.win_;
-      displayEncodedLightbox(document, url, toFilename(text)).then(resolve);
+      resolve(this.win_.URL.createObjectURL(blob));
     });
 
     this.playback_(options, (delay, canvas) => {

@@ -20,12 +20,17 @@
  * SOFTWARE.
  */
 
-const { fontId, googFontStylesheetUrl } = require('../lib/fonts');
-const { pipedJsdom, elementWithFileContents } = require('./jsdom-util');
-const { promisify } = require('util');
-const { readFile } = require('fs');
-const { textureUrl } = require('../lib/textures');
-const renderers = require('../lib/renderers');
+import { elementWithFileContents, pipedJsdom } from './jsdom-util';
+import { fontId, googFontStylesheetUrl } from '../lib/fonts';
+import {
+  fontOption,
+  selectElementOption,
+  textureOption,
+} from '../lib/renderers';
+import { promisify } from 'util';
+import { readFile } from 'fs';
+import { textureUrl } from '../lib/textures';
+import emojiStrip from 'emoji-strip';
 
 const readFileAsync = promisify(readFile);
 
@@ -87,13 +92,13 @@ function setFonts(doc, fonts, selectedFont) {
   }
   container.removeChild(template);
   fonts.forEach(([name, weight]) => {
-    const option = renderers.fontOption(
+    const option = fontOption(
       template.content.firstElementChild.cloneNode(/* deep */ true),
       name,
       weight
     );
     if (name == selectedFont) {
-      renderers.selectElementOption(option);
+      selectElementOption(option);
     }
     container.appendChild(option);
   });
@@ -132,14 +137,14 @@ function setTextureOptions(doc, options, selected) {
   }
   options
     .map((url, index) =>
-      renderers.textureOption(container.ownerDocument, url, selected === index)
+      textureOption(container.ownerDocument, url, selected === index)
     )
     .forEach(el => {
       container.appendChild(el);
     });
 }
 
-module.exports = function bundleIndex({
+export default function bundleIndex({
   css,
   js,
   fonts,
@@ -183,7 +188,10 @@ module.exports = function bundleIndex({
     await bundleJs(doc, js);
 
     const h1 = doc.querySelector('h1');
-    h1.textContent = description;
+    h1.textContent = h1.textContent.replace(
+      '[package.description]',
+      emojiStrip(description).trim()
+    );
 
     const authorLink = doc.querySelector('a#meta-author');
     if (authorLink) {
@@ -199,4 +207,4 @@ module.exports = function bundleIndex({
       repoLink.setAttribute('href', repository);
     }
   });
-};
+}

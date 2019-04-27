@@ -105,6 +105,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Babel compiler core.
 
+- [**`@babel/plugin-transform-classes`**](https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-classes) by (⚖ MIT)
+
+  Compile ES2015 classes to ES5
+
 - [**`@babel/preset-env`**](https://babeljs.io/) by **[Henry Zhu](mailto:hi@henryzoo.com)** (⚖ MIT)
 
   A Babel preset for each environment.
@@ -117,9 +121,17 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   get colors in your node.js console
 
+- [**`cssnano`**](https://github.com/cssnano/cssnano) by **[Ben Briggs](http://beneb.info)** (⚖ MIT)
+
+  A modular minifier, built on top of the PostCSS ecosystem.
+
 - [**`del`**](https://www.npmjs.com/package/sindresorhus/del) by **[Sindre Sorhus](sindresorhus.com)** (⚖ MIT)
 
   Delete files and folders
+
+- [**`emoji-strip`**](https://github.com/khalifenizar/emoji-strip) by **[Nizar Khalife Iglesias](mailto:khalifenizar@gmail.com)** (⚖ ISC)
+
+  Strip emoji from a string in Node.js and browsers.
 
 - [**`eslint`**](https://eslint.org) by **[Nicholas C. Zakas](mailto:nicholas+npm@nczconsulting.com)** (⚖ MIT)
 
@@ -140,6 +152,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 - [**`eslint-plugin-prettier`**](https://github.com/prettier/eslint-plugin-prettier#readme) by **Teddy Katz** (⚖ MIT)
 
   Runs prettier as an eslint rule
+
+- [**`eslint-plugin-sort-imports-es6-autofix`**](https://github.com/schuchertmanagementberatung/eslint-plugin-sort-imports-es6-autofix.git) by **rem**, **marudor** (⚖ MIT)
+
+  A sort-imports rule that properly distinguishes between ES6 import types.
 
 - [**`express`**](http://expressjs.com/) by **[TJ Holowaychuk](mailto:tj@vision-media.ca)** (⚖ MIT)
 
@@ -169,6 +185,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Minify HTML with html-minifier.
 
+- [**`gulp-postcss`**](https://github.com/postcss/gulp-postcss) by **[Andrey Kuzmin](mailto:unsoundscapes@gmail.com)** (⚖ MIT)
+
+  PostCSS gulp plugin
+
 - [**`gulp-sass`**](https://github.com/dlmanning/gulp-sass) by **David Manning** (⚖ MIT)
 
   Gulp plugin for sass
@@ -181,6 +201,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   A JavaScript implementation of many web standards
 
+- [**`lodash.memoize`**](https://lodash.com/) by **[John-David Dalton](http://allyoucanleet.com/)** (⚖ MIT)
+
+  The lodash method `_.memoize` exported as a module.
+
 - [**`lodash.once`**](https://lodash.com/) by **[John-David Dalton](http://allyoucanleet.com/)** (⚖ MIT)
 
   The lodash method `_.once` exported as a module.
@@ -192,6 +216,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 - [**`node-fetch`**](https://github.com/bitinn/node-fetch) by **David Frank** (⚖ MIT)
 
   A light-weight module that brings window.fetch to node.js
+
+- [**`node-sass`**](https://github.com/sass/node-sass) by **[Andrew Nesbitt](http://andrew.github.com)** (⚖ MIT)
+
+  Wrapper around libsass
 
 - [**`prettier`**](https://prettier.io) by **James Long** (⚖ MIT)
 
@@ -209,13 +237,13 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Bundle third-party dependencies in node_modules
 
-- [**`rollup-plugin-sass-variables`**](https://github.com/gmfun/rollup-plugin-sass-variables) by **gmfun** (⚖ MIT)
-
-  load sass/scss variables as javascript object
-
 - [**`rollup-stream`**](https://github.com/permutatrix/rollup-stream#readme) by **[Permutator](mailto:permutatorem@gmail.com)** (⚖ MIT)
 
   a wrapper around Rollup that returns a stream instead of a Promise
+
+- [**`sass-extract`**](https://www.npmjs.com/package/jgranstrom/sass-extract) by **[John Granström](mailto:granstrom.john@gmail.com)** (⚖ MIT)
+
+  Extract structured variables from sass files. Fast and accurate.
 
 - [**`through2`**](https://github.com/rvagg/through2.git) by **[Rod Vagg](https://github.com/rvagg)** (⚖ MIT)
 

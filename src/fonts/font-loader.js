@@ -21,7 +21,7 @@
  */
 
 import { expandFontId, googFontStylesheetUrl } from '../../lib/fonts';
-import FontFaceObserver from '../../lib/fontfaceobserver';
+import { FontFaceObserver } from 'not-esm/fontfaceobserver';
 import loadPromise from '../events/load-promise';
 
 function loadFontStylesheet(doc, id) {
