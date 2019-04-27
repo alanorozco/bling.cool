@@ -20,13 +20,10 @@
  * SOFTWARE.
  */
 
-import {
-  all as allTextures,
-  textureFirstFrameUrl,
-  textureId,
-} from './lib/textures';
+import { all as allTextures } from './builder/textures';
 import { argv } from 'yargs';
 import { dirs, uglify as uglifyConfig } from './config';
+import { textureFirstFrameUrl, textureId } from './lib/textures';
 import { textures } from './builder/textures';
 import babel from 'rollup-plugin-babel';
 import buffer from 'vinyl-buffer';
