@@ -28,13 +28,10 @@ $marginUnit: 20px;
 $smallView: '(max-width: 600px)';
 
 // colors
-$blueR: 0;
-$blueG: 68;
-$blueB: 214;
+$blue: rgb(0, 68, 214);
+$lightBlue: lighten($blue, 20%);
 $grayish: rgb(147, 153, 160);
 $darkGrayish: darken($grayish, 20%);
-$blue: rgb($blueR, $blueG, $blueB);
-$lightBlue: lighten($blue, 20%);
 $purple: adjust-hue(
   $color: $blue,
   $degrees: 60,

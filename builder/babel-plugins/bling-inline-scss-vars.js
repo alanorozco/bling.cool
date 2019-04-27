@@ -35,6 +35,14 @@ function inlineLiteral(t, name) {
   if (type == 'SassNumber') {
     return t.numericLiteral(value);
   }
+  if (type == 'SassColor') {
+    return t.arrayExpression([
+      t.numericLiteral(value.r),
+      t.numericLiteral(value.g),
+      t.numericLiteral(value.b),
+      t.numericLiteral(value.a),
+    ]);
+  }
   return t.stringLiteral(value);
 }
 

@@ -26,7 +26,7 @@ import { splitLines } from './text';
 import loadImage from '../dom/load-image';
 import scssVar from '../app/scss-var';
 
-const BLUE = [scssVar('blueR'), scssVar('blueG'), scssVar('blueG')];
+const BLUE = scssVar('blue');
 const MARGIN = 2 * scssVar('marginUnit');
 
 const fontDef = (name, size) => `${size}px '${name}', sans-serif`;
@@ -86,7 +86,7 @@ export default class CanvasRenderer {
 
       ctx.globalCompositeOperation = 'destination-over';
 
-      ctx.fillStyle = rgba(...BLUE.concat([1]));
+      ctx.fillStyle = rgba(BLUE);
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
