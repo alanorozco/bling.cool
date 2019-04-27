@@ -61,7 +61,7 @@ const textureOptions = fetch(`/${dirs.textures.frames}/initial.json`).then(
   response => response.json()
 );
 
-const app = new App(
+const { ready } = new App(
   self,
   {
     textureSelector: { hoverUrl: textureUrl },
@@ -95,8 +95,11 @@ const app = new App(
   }
 );
 
-Promise.all([app.ready, textureOptions]).then(([{ state }, textureOptions]) => {
+ready.then(() => {
   document.body.classList.remove('not-ready');
-  state.set('textureOptions', { textureOptions });
   focusAtEnd(document.querySelector('#editable'));
+});
+
+Promise.all([ready, textureOptions]).then(([{ state }, textureOptions]) => {
+  state.set('textureOptions', { textureOptions });
 });
