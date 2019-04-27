@@ -20,12 +20,13 @@
  * SOFTWARE.
  */
 
-const { dirs } = require('../config');
-const { existsSync, readFile } = require('fs');
-const { expect } = require('chai');
-const { promisify } = require('util');
-const glob = require('fast-glob');
-const path = require('path');
+import { dirs } from '../config';
+
+import { existsSync, readFile } from 'fs';
+import { expect } from 'chai';
+import { promisify } from 'util';
+import glob from 'fast-glob';
+import path from 'path';
 
 const readFileAsync = promisify(readFile);
 
