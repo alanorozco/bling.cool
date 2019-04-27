@@ -374,6 +374,7 @@ $panelGradientWidth: 60px;
     > .panel-slider {
       overflow-y: hidden;
       overflow-x: scroll;
+      -webkit-overflow-scrolling: touch;
       white-space: nowrap;
       height: $panelContentHeight + 2 * $marginUnit +
         $panelMarginForScrollbarUgh;
