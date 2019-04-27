@@ -28,6 +28,7 @@ const { promisify } = require('util');
 const { textureId } = require('../lib/textures');
 const { writeFile } = require('fs');
 const glob = require('fast-glob');
+const memoize = require('lodash.memoize');
 
 const execAsync = promisify(exec);
 const writeFileAsync = promisify(writeFile);
@@ -49,9 +50,18 @@ const frameCount = async path =>
 const writeJson = (path, content) =>
   writeFileAsync(path, JSON.stringify(content));
 
+const unoptimize = memoize(async path => {
+  const output = `${dirs.dist.workspace}/${basename(path)}.u`;
+  const expandColors = `${dirs.dist.workspace}/${basename(path)}.e`;
+  await execAsync(`gifsicle --colors=255 ${path} > ${expandColors}`);
+  await execAsync(`gifsicle -U ${expandColors} > ${output}`);
+  return output;
+});
+
 async function extractFrame(path, frame) {
+  const unoptimized = await unoptimize(path);
   try {
-    const cmd = `gifsicle ${path} '#${frame}'`;
+    const cmd = `gifsicle ${unoptimized} '#${frame}'`;
     const { stdout } = await execAsync(cmd, { encoding: 'binary' });
     return Buffer.from(stdout, 'binary');
   } catch (_) {

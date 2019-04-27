@@ -201,6 +201,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   A JavaScript implementation of many web standards
 
+- [**`lodash.memoize`**](https://lodash.com/) by **[John-David Dalton](http://allyoucanleet.com/)** (⚖ MIT)
+
+  The lodash method `_.memoize` exported as a module.
+
 - [**`lodash.once`**](https://lodash.com/) by **[John-David Dalton](http://allyoucanleet.com/)** (⚖ MIT)
 
   The lodash method `_.once` exported as a module.
@@ -212,6 +216,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 - [**`node-fetch`**](https://github.com/bitinn/node-fetch) by **David Frank** (⚖ MIT)
 
   A light-weight module that brings window.fetch to node.js
+
+- [**`node-sass`**](https://github.com/sass/node-sass) by **[Andrew Nesbitt](http://andrew.github.com)** (⚖ MIT)
+
+  Wrapper around libsass
 
 - [**`prettier`**](https://prettier.io) by **James Long** (⚖ MIT)
 
@@ -229,13 +237,13 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Bundle third-party dependencies in node_modules
 
-- [**`rollup-plugin-sass-variables`**](https://github.com/gmfun/rollup-plugin-sass-variables) by **gmfun** (⚖ MIT)
-
-  load sass/scss variables as javascript object
-
 - [**`rollup-stream`**](https://github.com/permutatrix/rollup-stream#readme) by **[Permutator](mailto:permutatorem@gmail.com)** (⚖ MIT)
 
   a wrapper around Rollup that returns a stream instead of a Promise
+
+- [**`sass-extract`**](https://www.npmjs.com/package/jgranstrom/sass-extract) by **[John Granström](mailto:granstrom.john@gmail.com)** (⚖ MIT)
+
+  Extract structured variables from sass files. Fast and accurate.
 
 - [**`through2`**](https://github.com/rvagg/through2.git) by **[Rod Vagg](https://github.com/rvagg)** (⚖ MIT)
 
