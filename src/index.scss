@@ -383,6 +383,7 @@ $panelGradientWidth: 60px;
       box-sizing: border-box;
       padding: $marginUnit ($marginUnit / 2 + $panelGradientWidth)
         ($marginUnit + $panelMarginForScrollbarUgh);
+      position: relative;
 
       > div {
         display: inline-block;
@@ -463,15 +464,8 @@ $buttonRadius: 32px;
       fill: $purple;
     }
 
-    &.encode-button > svg {
-      height: 16px;
-
-      > g {
-        fill: $orange;
-        path[stroke] {
-          stroke: $orange;
-        }
-      }
+    &.encode-button > svg > g {
+      fill: $orange;
     }
   }
 

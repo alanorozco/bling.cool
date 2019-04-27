@@ -1,0 +1,11 @@
+{
+  "name": "postcss-bling-merge-media-queries",
+  "version": "0.0.0",
+  "description": "PostCSS plugin: Merges same media queries",
+  "author": "Alan Orozco <alan@orozco.xyz>",
+  "license": "MIT",
+  "dependencies": {
+    "postcss": "^7.0.6"
+  },
+  "devDependencies": {}
+}

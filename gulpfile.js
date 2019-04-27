@@ -38,6 +38,7 @@ const del = require('del');
 const htmlmin = require('gulp-html-minifier');
 const path = require('path');
 const postcss = require('gulp-postcss');
+const postCssMergeMediaQueries = require('postcss-bling-merge-media-queries');
 const rollup = require('rollup-stream');
 const rollupResolve = require('rollup-plugin-node-resolve');
 const sass = require('gulp-sass');
@@ -93,7 +94,13 @@ const js = parallel(jsDefault, jsAmp, jsEncoder, jsEncoderWorker);
 function css() {
   return src('./src/index.scss')
     .pipe(sass().on('error', sass.logError))
-    .pipe(postcss([cssnano(), cssDeclarationSorter({ order: 'smacss' })]))
+    .pipe(
+      postcss([
+        cssnano(),
+        cssDeclarationSorter({ order: 'smacss' }),
+        postCssMergeMediaQueries(),
+      ])
+    )
     .pipe(dest(dirs.dist.workspace));
 }
 
