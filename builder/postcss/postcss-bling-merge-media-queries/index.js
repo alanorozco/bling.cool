@@ -1,6 +1,6 @@
-const postcss = require('postcss');
+import postcss from 'postcss';
 
-module.exports = postcss.plugin('bling-merge-media-queries', (options = {}) => {
+export default postcss.plugin('bling-merge-media-queries', (options = {}) => {
   return root => {
     const atDecls = {};
     root.walkAtRules(decl => {

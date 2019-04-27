@@ -7,5 +7,11 @@
   "dependencies": {
     "postcss": "^7.0.6"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "esm": "^3.2.22"
+  },
+  "esm": {
+    "mode": "all",
+    "cjs": true
+  }
 }

@@ -20,9 +20,9 @@
  * SOFTWARE.
  */
 
-const { dirs } = require('../../config');
+import { dirs } from '../../config';
 
-module.exports = function({ types: t }) {
+export default function({ types: t }) {
   return {
     visitor: {
       MemberExpression(path) {
@@ -57,4 +57,4 @@ module.exports = function({ types: t }) {
       },
     },
   };
-};
+}

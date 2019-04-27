@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-const { Readable } = require('stream');
+import { Readable } from 'stream';
 
-module.exports = function toStream(str) {
+export default function toStream(str) {
   const s = new Readable();
   s.push(str);
   s.push(null);
   return s;
-};
+}

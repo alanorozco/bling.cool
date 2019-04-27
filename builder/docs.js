@@ -20,15 +20,16 @@
  * SOFTWARE.
  */
 
-const { blue, magenta } = require('colors');
-const { exec } = require('child_process');
-const { existsSync, lstatSync, readdir, readFile, writeFile } = require('fs');
-const { parallel, series } = require('gulp');
-const { promisify } = require('util');
-const glob = require('fast-glob');
-const fonts = require('../artifacts/fonts');
-const log = require('fancy-log');
-const path = require('path');
+import { blue, magenta } from 'colors';
+
+import { exec } from 'child_process';
+import { existsSync, lstatSync, readdir, readFile, writeFile } from 'fs';
+import { parallel, series } from 'gulp';
+import { promisify } from 'util';
+import glob from 'fast-glob';
+import fonts from '../artifacts/fonts';
+import log from 'fancy-log';
+import path from 'path';
 
 const execAsync = promisify(exec);
 const readdirAsync = promisify(readdir);
@@ -237,4 +238,4 @@ const docs = series(
   format
 );
 
-module.exports = docs;
+export default docs;

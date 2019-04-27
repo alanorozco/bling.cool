@@ -20,13 +20,13 @@
  * SOFTWARE.
  */
 
-const { blue, magenta } = require('colors');
-const log = require('fancy-log');
-const textures = require('../textures');
+import { all } from '../textures';
+import { blue, magenta } from 'colors';
+import log from 'fancy-log';
 
 const declaratorName = 'textureAssetsCountReplaceMe';
 
-module.exports = function({ types: t }) {
+export default function({ types: t }) {
   return {
     visitor: {
       VariableDeclarator({ node }) {
@@ -36,10 +36,10 @@ module.exports = function({ types: t }) {
         if (!t.isNumericLiteral(node.init)) {
           return;
         }
-        const { length } = textures.all();
+        const { length } = all();
         log(magenta('Textures:'), 'found', blue(length), 'texture files.');
         node.init = t.numericLiteral(length);
       },
     },
   };
-};
+}

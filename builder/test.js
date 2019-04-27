@@ -20,13 +20,14 @@
  * SOFTWARE.
  */
 
-const { argv } = require('yargs');
-const { exec } = require('child_process');
-const { magenta } = require('colors');
-const { promisify } = require('util');
-const glob = require('fast-glob');
-const log = require('fancy-log');
-const Mocha = require('mocha');
+import { argv } from 'yargs';
+
+import { exec } from 'child_process';
+import { magenta } from 'colors';
+import { promisify } from 'util';
+import glob from 'fast-glob';
+import log from 'fancy-log';
+import Mocha from 'mocha';
 
 const execAsync = promisify(exec);
 
@@ -35,7 +36,7 @@ const modifiedFilesGitCmd = 'git diff-tree --no-commit-id --name-only -r HEAD';
 const modifiedFiles = async () =>
   (await execAsync(modifiedFilesGitCmd)).stdout.trim().split('\n');
 
-module.exports = async function test() {
+export default async function test() {
   const reporter = argv.travis ? 'dot' : 'nyan';
 
   const mocha = new Mocha({ reporter });
@@ -58,4 +59,4 @@ module.exports = async function test() {
       resolve();
     });
   });
-};
+}

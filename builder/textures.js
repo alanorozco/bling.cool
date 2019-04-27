@@ -20,15 +20,16 @@
  * SOFTWARE.
  */
 
-const { basename, join: pathJoin } = require('path');
-const { Buffer } = require('buffer');
-const { dirs } = require('../config');
-const { exec } = require('child_process');
-const { promisify } = require('util');
-const { textureId } = require('../lib/textures');
-const { writeFile } = require('fs');
-const glob = require('fast-glob');
-const memoize = require('lodash.memoize');
+import { basename, join as pathJoin } from 'path';
+
+import { Buffer } from 'buffer';
+import { dirs } from '../config';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+import { textureId } from '../lib/textures';
+import { writeFile } from 'fs';
+import glob from 'fast-glob';
+import memoize from 'lodash.memoize';
 
 const execAsync = promisify(exec);
 const writeFileAsync = promisify(writeFile);
@@ -136,5 +137,4 @@ async function textures() {
   );
 }
 
-exports.all = all;
-exports.textures = textures;
+export { all, textures };

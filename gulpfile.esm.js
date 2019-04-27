@@ -20,35 +20,37 @@
  * SOFTWARE.
  */
 
-const { argv } = require('yargs');
-const { dest, parallel, series, src, watch: gulpWatch } = require('gulp');
-const { dirs, uglify: uglifyConfig } = require('./config');
-const { textures } = require('./builder/textures');
-const { textureFirstFrameUrl, textureId } = require('./lib/textures');
-const express = require('express');
-const babel = require('rollup-plugin-babel');
-const buffer = require('vinyl-buffer');
-const bundleIndex = require('./builder/bundle-index');
-const commonjs = require('rollup-plugin-commonjs');
-const concat = require('gulp-concat');
-const cssnano = require('cssnano');
-const cssDeclarationSorter = require('css-declaration-sorter');
-const docs = require('./builder/docs');
-const del = require('del');
-const htmlmin = require('gulp-html-minifier');
-const path = require('path');
-const postcss = require('gulp-postcss');
-const postCssMergeMediaQueries = require('postcss-bling-merge-media-queries');
-const rollup = require('rollup-stream');
-const rollupResolve = require('rollup-plugin-node-resolve');
-const sass = require('gulp-sass');
-const source = require('vinyl-source-stream');
-const test = require('./builder/test');
-const uglify = require('gulp-uglifyjs');
-
-const fonts = require('./artifacts/fonts');
-const fontsSubset = require('./builder/fonts-subset');
-const textureSet = require('./builder/textures');
+import {
+  all as allTextures,
+  textureFirstFrameUrl,
+  textureId,
+} from './lib/textures';
+import { argv } from 'yargs';
+import { dirs, uglify as uglifyConfig } from './config';
+import { textures } from './builder/textures';
+import babel from 'rollup-plugin-babel';
+import buffer from 'vinyl-buffer';
+import bundleIndex from './builder/bundle-index';
+import commonjs from 'rollup-plugin-commonjs';
+import concat from 'gulp-concat';
+import cssDeclarationSorter from 'css-declaration-sorter';
+import cssnano from 'cssnano';
+import del from 'del';
+import docs from './builder/docs';
+import express from 'express';
+import fonts from './artifacts/fonts';
+import fontsSubset from './builder/fonts-subset';
+import gulp from 'gulp';
+import htmlmin from 'gulp-html-minifier';
+import path from 'path';
+import postcss from 'gulp-postcss';
+import postCssMergeMediaQueries from 'postcss-bling-merge-media-queries';
+import rollup from 'rollup-stream';
+import rollupResolve from 'rollup-plugin-node-resolve';
+import sass from 'gulp-sass';
+import source from 'vinyl-source-stream';
+import test from './builder/test';
+import uglify from 'gulp-uglifyjs';
 
 function jsRollup(input) {
   return rollup({
@@ -60,39 +62,41 @@ function jsRollup(input) {
 }
 
 function jsDefault() {
-  return jsRollup('index.js').pipe(dest(dirs.dist.workspace));
+  return jsRollup('index.js').pipe(gulp.dest(dirs.dist.workspace));
 }
 
 function jsAmp(done) {
   if (!argv.amp) {
     return done();
   }
-  return jsRollup('index.amp.js').pipe(dest(dirs.dist.root));
+  return jsRollup('index.amp.js').pipe(gulp.dest(dirs.dist.root));
 }
 
 async function jsEncoder() {
   await new Promise(resolve => {
     jsRollup('encoder.js')
-      .pipe(dest(dirs.dist.workspace))
+      .pipe(gulp.dest(dirs.dist.workspace))
       .on('end', resolve);
   });
 
   await new Promise(resolve => {
-    src(['3p/gif.js/gif.js', path.join(dirs.dist.workspace, 'encoder.js')])
+    gulp
+      .src(['3p/gif.js/gif.js', path.join(dirs.dist.workspace, 'encoder.js')])
       .pipe(concat('encoder.js'))
-      .pipe(dest(dirs.dist.root))
+      .pipe(gulp.dest(dirs.dist.root))
       .on('end', resolve);
   });
 }
 
 function jsEncoderWorker() {
-  return src('3p/gif.js/gif.worker.js').pipe(dest(dirs.dist.root));
+  return gulp.src('3p/gif.js/gif.worker.js').pipe(gulp.dest(dirs.dist.root));
 }
 
-const js = parallel(jsDefault, jsAmp, jsEncoder, jsEncoderWorker);
+const js = gulp.parallel(jsDefault, jsAmp, jsEncoder, jsEncoderWorker);
 
 function css() {
-  return src('./src/index.scss')
+  return gulp
+    .src('./src/index.scss')
     .pipe(sass().on('error', sass.logError))
     .pipe(
       postcss([
@@ -101,7 +105,7 @@ function css() {
         postCssMergeMediaQueries(),
       ])
     )
-    .pipe(dest(dirs.dist.workspace));
+    .pipe(gulp.dest(dirs.dist.workspace));
 }
 
 function serve() {
@@ -124,7 +128,8 @@ function serve() {
 }
 
 function bundleDefault() {
-  return src('./src/index.html')
+  return gulp
+    .src('./src/index.html')
     .pipe(buffer())
     .pipe(
       bundleIndex({
@@ -133,7 +138,7 @@ function bundleDefault() {
         css: path.join(dirs.dist.workspace, 'index.css'),
       })
     )
-    .pipe(dest(dirs.dist.root));
+    .pipe(gulp.dest(dirs.dist.root));
 }
 
 function bundleAmp(done) {
@@ -145,9 +150,10 @@ function bundleAmp(done) {
   ];
 
   const textureSubsetSize = 15;
-  const textureSubset = textureSet.all().slice(0, textureSubsetSize);
+  const textureSubset = allTextures().slice(0, textureSubsetSize);
 
-  return src('./src/index.amp.html')
+  return gulp
+    .src('./src/index.amp.html')
     .pipe(buffer())
     .pipe(
       bundleIndex({
@@ -160,13 +166,14 @@ function bundleAmp(done) {
         ),
       })
     )
-    .pipe(dest(dirs.dist.root));
+    .pipe(gulp.dest(dirs.dist.root));
 }
 
-const bundle = parallel(bundleDefault, bundleAmp);
+const bundle = gulp.parallel(bundleDefault, bundleAmp);
 
 function minifyHtml() {
-  return src(path.join(dirs.dist.root, '*.html'))
+  return gulp
+    .src(path.join(dirs.dist.root, '*.html'))
     .pipe(
       htmlmin({
         collapseBooleanAttributes: true,
@@ -179,44 +186,49 @@ function minifyHtml() {
         sortClassName: true,
       })
     )
-    .pipe(dest(dirs.dist.root));
+    .pipe(gulp.dest(dirs.dist.root));
 }
 
 function uglifyJsItem(input) {
   return () =>
-    src(path.join(dirs.dist.root, input))
+    gulp
+      .src(path.join(dirs.dist.root, input))
       .pipe(uglify({ ...uglifyConfig }))
-      .pipe(dest(dirs.dist.root));
+      .pipe(gulp.dest(dirs.dist.root));
 }
 
 // We have to do this separately because otherwise `gulp-uglify` does some weird
 // shit.
-const uglifyJs = parallel(
+const uglifyJs = gulp.parallel(
   uglifyJsItem('encoder.js'),
   uglifyJsItem('index.amp.js')
 );
 
-const minify = parallel(minifyHtml, uglifyJs);
+const minify = gulp.parallel(minifyHtml, uglifyJs);
 
 function copyAssetFiles(from) {
-  return src([path.join(from, '*'), '!*.md']).pipe(
-    dest(path.join(dirs.dist.root, from))
-  );
+  return gulp
+    .src([path.join(from, '*'), '!*.md'])
+    .pipe(gulp.dest(path.join(dirs.dist.root, from)));
 }
 
-const barebones = series(parallel(js, css), bundle);
+const barebones = gulp.series(gulp.parallel(js, css), bundle);
 
 const copyAssets = () => copyAssetFiles('assets');
 const copyTextureFrames = () => copyAssetFiles(dirs.textures.frames);
 const copyTextureGifs = () => copyAssetFiles(dirs.textures.gif);
 
-const copyAllAssets = parallel(copyAssets, copyTextureGifs, copyTextureFrames);
+const copyAllAssets = gulp.parallel(
+  copyAssets,
+  copyTextureGifs,
+  copyTextureFrames
+);
 
-const dist = parallel(series(barebones, minify), copyAllAssets);
+const dist = gulp.parallel(gulp.series(barebones, minify), copyAllAssets);
 
 function watch() {
   serve();
-  gulpWatch(
+  gulp.watch(
     [
       '3p/*',
       'artifacts/*',
@@ -228,7 +240,7 @@ function watch() {
       path.join(dirs.textures.gif, '*'),
       path.join(dirs.textures.frames, '*'),
     ],
-    parallel(copyAllAssets, barebones)
+    gulp.parallel(copyAllAssets, barebones)
   );
 }
 
@@ -236,11 +248,8 @@ function clean() {
   return del([dirs.dist.root, dirs.dist.workspace]);
 }
 
-exports.barebones = barebones;
-exports.default = series(parallel(barebones, copyAllAssets), watch);
-exports.clean = clean;
-exports.dist = dist;
-exports.docs = docs;
-exports.integrate = series(dist, test);
-exports.test = test;
-exports.textures = textures;
+const integrate = gulp.series(dist, test);
+const def = gulp.series(gulp.parallel(barebones, copyAllAssets), watch);
+
+export { barebones, clean, dist, docs, test, textures, integrate };
+export default def;

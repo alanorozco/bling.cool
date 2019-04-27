@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-const sass = require('sass-extract');
-const once = require('lodash.once');
+import { sassExtract } from 'not-esm/sass-extract';
+import once from 'lodash.once';
 
 const file = 'src/index.scss';
-const getVars = once(() => sass.renderSync({ file }).vars);
+const getVars = once(() => sassExtract.renderSync({ file }).vars);
 
 function inlineLiteral(t, name) {
   const vars = getVars();
@@ -38,7 +38,7 @@ function inlineLiteral(t, name) {
   return t.stringLiteral(value);
 }
 
-module.exports = function({ types: t }) {
+export default function({ types: t }) {
   return {
     visitor: {
       CallExpression(path) {
@@ -61,4 +61,4 @@ module.exports = function({ types: t }) {
       },
     },
   };
-};
+}
