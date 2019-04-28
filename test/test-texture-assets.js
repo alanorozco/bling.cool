@@ -21,7 +21,6 @@
  */
 
 import { dirs } from '../config';
-
 import { existsSync, readFile } from 'fs';
 import { expect } from 'chai';
 import { promisify } from 'util';
