@@ -52,22 +52,28 @@ const [text, phraseConfig] = fillPhrase(pickRandom(phrases));
 
 const randomFont = () =>
   pickRandom(
-    Array.from(self.document.querySelectorAll('.font-option'))
+    Array.from(document.querySelectorAll('.font-option'))
   ).getAttribute('data-value');
 
-new App(
+const { document } = self;
+
+const textureOptions = fetch(`/${dirs.textures.frames}/initial.json`).then(
+  response => response.json()
+);
+
+const { ready } = new App(
   self,
   {
     textureSelector: { hoverUrl: textureUrl },
     editor: {
-      fontLoader: new FontLoader(self.document),
+      fontLoader: new FontLoader(document),
       editableValueProp: 'innerHTML',
       sentinelContentProp: 'innerHTML',
 
       resizer(editable, sentinels) {
         const fontSize =
           calculateFontSize(
-            self.document.querySelector('.editable-text-fitter'),
+            document.querySelector('.editable-text-fitter'),
             0.4 * self.innerHeight,
             self.innerWidth - 80,
             /* minFontSize */ 24,
@@ -87,13 +93,13 @@ new App(
     hue: phraseConfig.hue || Math.random(),
     texture: randomTill(textureAssetsCount),
   }
-).ready.then(app => {
-  self.document.body.classList.remove('not-ready');
-  focusAtEnd(self.document.querySelector('#editable'));
+);
 
-  fetch(`/${dirs.textures.frames}/initial.json`)
-    .then(response => response.json())
-    .then(textureOptions => {
-      app.state.set('textureOptions', { textureOptions });
-    });
+ready.then(() => {
+  document.body.classList.remove('not-ready');
+  focusAtEnd(document.querySelector('#editable'));
+});
+
+Promise.all([ready, textureOptions]).then(([{ state }, textureOptions]) => {
+  state.set('textureOptions', { textureOptions });
 });

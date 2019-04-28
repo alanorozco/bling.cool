@@ -38,7 +38,12 @@ async function bundleJs(doc, js) {
   if (!js) {
     return;
   }
-  doc.body.appendChild(await elementWithFileContents(doc, 'script', js));
+  const script = await elementWithFileContents(doc, 'script', js);
+  if (doc.lastElementChild.tagName == 'SCRIPT') {
+    doc.body.insertBefore(script, doc.lastElementChild);
+    return;
+  }
+  doc.body.appendChild(script);
 }
 
 async function bundleStyle(doc, css) {

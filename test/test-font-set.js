@@ -20,11 +20,10 @@
  * SOFTWARE.
  */
 
-const { expect } = require('chai');
-const { fontId, googFontStylesheetUrl } = require('../lib/fonts');
-const fetch = require('node-fetch');
-
-const fonts = require('../artifacts/fonts');
+import { expect } from 'chai';
+import { fontId, googFontStylesheetUrl } from '../lib/fonts';
+import fetch from 'node-fetch';
+import fonts from '../artifacts/fonts';
 
 describe('Hardcoded font set', () => {
   it('contains only fonts that point to valid stylesheets', async () => {
