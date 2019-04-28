@@ -23,6 +23,79 @@
 import { expandFontId } from '../../lib/fonts';
 import { isEl, tryFocus } from '../dom/dom';
 
+const maxLineLength = 50;
+const maxLines = 6;
+
+const blockLevel = [
+  'P',
+  'H1',
+  'H2',
+  'H3',
+  'H4',
+  'H5',
+  'H6',
+  'OL',
+  'UL',
+  'PRE',
+  'ADDRESS',
+  'BLOCKQUOTE',
+  'DL',
+  'DIV',
+  'FIELDSET',
+  'FORM',
+  'TABLE',
+];
+
+function renderHtml(doc, html) {
+  const el = doc.createElement('div');
+  el.innerHTML = html;
+  return el;
+}
+
+const isBlockLevel = ({ tagName }) => tagName && blockLevel.includes(tagName);
+
+const directTextNode = ({ childNodes }) =>
+  Array.from(childNodes).find(({ nodeType }) => nodeType == /* TEXT */ 3);
+
+export function htmlToLines(doc, raw) {
+  const holder = renderHtml(doc, raw.replace(/\n/g, ''));
+  for (let el of holder.querySelectorAll('head, script, style, noscript')) {
+    el.parentNode.removeChild(el);
+  }
+  const inlineLevel = `${blockLevel.map(t => `:not(${t})`).join('')}:not(br)`;
+  for (let el of holder.querySelectorAll(inlineLevel)) {
+    if (el.textContent) {
+      el.replaceWith(doc.createTextNode(el.textContent));
+    }
+  }
+  for (let el of holder.querySelectorAll('br')) {
+    el.replaceWith(doc.createTextNode('\n'));
+  }
+  for (let el of holder.querySelectorAll('*')) {
+    if (directTextNode(el)) {
+      if (el.tagName == 'P') {
+        el.parentNode.insertBefore(doc.createTextNode('\n'), el);
+      }
+      el.parentNode.insertBefore(doc.createTextNode('\n'), el);
+    }
+  }
+  return holder.textContent
+    .trim()
+    .split('\n')
+    .map(line => line.trim());
+}
+
+function wrap(lines, length = maxLineLength) {
+  return lines
+    .map(line => {
+      if (line.length < length) {
+        return line;
+      }
+      return Array.from(line.match(new RegExp(`.{1,${length}}(\s|$)`, 'g')));
+    })
+    .flat();
+}
+
 export default class Editor {
   constructor(
     win,
@@ -80,12 +153,51 @@ export default class Editor {
 
     // TODO: Pause animation while typing.
 
-    if (this.editableValueProp_ == 'innerHTML') {
-      editable.addEventListener(
-        'keypress',
-        this.onInnerHtmlKeyPress_.bind(this)
-      );
+    if (this.editableValueProp_ != 'innerHTML') {
+      return;
     }
+
+    editable.addEventListener('keypress', this.onInnerHtmlKeyPress_.bind(this));
+    editable.addEventListener('paste', this.onInnerHtmlPaste_.bind(this));
+  }
+
+  onInnerHtmlPaste_(e) {
+    e.stopPropagation();
+    e.preventDefault();
+
+    const pastedData = (e.clipboardData || this.win_.clipboardData).getData(
+      'text/html'
+    );
+
+    const selection = this.win_.getSelection();
+    const range = selection.getRangeAt(0);
+
+    const currentLineCount = (this.state_.get('text') || '').split('\n').length;
+
+    range.deleteContents();
+
+    let lines = wrap(htmlToLines(this.doc_, pastedData));
+
+    lines = lines.slice(0, Math.min(lines.length, maxLines - currentLineCount));
+
+    lines.forEach((line, i) => {
+      if (i > 0) {
+        range.insertNode(this.doc_.createElement('br'));
+      }
+      const el = this.doc_.createTextNode(line);
+      range.insertNode(el);
+      if (i == lines.length - 1) {
+        range.setStartAfter(el);
+        range.setEndAfter(el);
+      }
+    });
+
+    range.collapse(false);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    this.onInput_(e);
   }
 
   onInnerHtmlKeyPress_(e) {
@@ -96,6 +208,7 @@ export default class Editor {
     }
 
     e.preventDefault();
+    e.stopPropagation();
 
     this.insertLineBreak_();
     this.onInput_(e);
