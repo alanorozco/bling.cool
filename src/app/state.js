@@ -30,7 +30,7 @@ export default class State {
   }
 
   set(dispatcher, state) {
-    const towards = Array.from(
+    const to = Array.from(
       new Set(
         Object.keys(state)
           .map(signal =>
@@ -40,16 +40,7 @@ export default class State {
           .filter(v => !!v && v !== dispatcher)
       )
     ).sort();
-    info(
-      'dispatch state',
-      state,
-      'into state',
-      this.state_,
-      'from',
-      dispatcher,
-      'towards',
-      towards
-    );
+    info('dispatch', state, 'into', this.state_, 'from', dispatcher, 'to', to);
     this.state_ = Object.assign(this.state_, state);
     return this.fire_(dispatcher, state);
   }
