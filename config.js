@@ -32,7 +32,7 @@ exports.dirs = {
 };
 
 exports.uglify = {
-  compress: true,
+  compress: { unsafe_arrows: true },
   mangle: { toplevel: true, properties: { regex: /_$/ } },
   output: { comments: /^!/ },
 };
