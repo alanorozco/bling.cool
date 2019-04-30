@@ -88,7 +88,7 @@ const { ready } = new App(
   },
   {
     text,
-    font: phraseConfig.font ? fontId(phraseConfig.font) : randomFont(),
+    font: phraseConfig.font ? fontId([phraseConfig.font, 400]) : randomFont(),
     fontSize: defaultFontSize,
     hue: phraseConfig.hue || Math.random(),
     texture: randomTill(textureAssetsCount),
