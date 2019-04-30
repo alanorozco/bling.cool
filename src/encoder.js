@@ -34,6 +34,9 @@ class Encoder {
     {
       frames,
       text = 'Hola',
+      textShadow,
+      background,
+      margin,
       font = 'Helvetica',
       fontSize = 72,
       hue = 0,
@@ -43,7 +46,15 @@ class Encoder {
     onFrame
   ) {
     const { promise, resolve } = new Deferred();
-    this.renderer_.setOptions({ text, font, fontSize, hue });
+    this.renderer_.setOptions({
+      text,
+      textShadow,
+      font,
+      fontSize,
+      margin,
+      hue,
+      background,
+    });
     this.playFrame_(width, height, frames, onFrame, resolve);
     return promise;
   }

@@ -426,19 +426,6 @@ a {
   }
 }
 
-.editable-shadow {
-  // TODO: expose via ui
-  $threedfx: null;
-
-  @for $y from 1 through 4 {
-    $yPx: #{$y + 'px'};
-    $threedfx: $threedfx 0 $yPx 0 darken($blue, $y * 4%) #{','};
-  }
-
-  text-shadow: $threedfx $shadowX $shadowY $shadowBlur
-    rgba($blue, $shadowOpacity); // hued
-}
-
 $buttonRadius: 32px;
 
 .toolbar {
@@ -748,4 +735,10 @@ option {
 
 [hidden] {
   display: none;
+}
+
+.fx-toggles {
+  > label {
+    margin: 0 0.5 * $marginUnit;
+  }
 }

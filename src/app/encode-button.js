@@ -20,11 +20,13 @@
  * SOFTWARE.
  */
 
+/* global scssVar */
+
+import { decomposeTextShadow } from '../css-util/css-util';
 import { getLengthNumeral } from '../../lib/css';
 import { textureFramesUrl } from '../../lib/textures';
 import loadImage from '../dom/load-image';
 import once from 'lodash.once';
-import scssVar from './scss-var';
 
 const fetchFrames = textureId =>
   fetch(textureFramesUrl(textureId)).then(response => response.json());
@@ -60,12 +62,21 @@ export default class EncodeButton {
     const EncoderPromise = this.modules_.get('Encoder');
 
     const text = this.state_.get('text');
+    const textShadow = decomposeTextShadow(
+      getComputedStyle(this.doc_.querySelector('.editable-shadow'))[
+        'text-shadow'
+      ]
+    );
 
     this.state_.set(this, { encoding: true });
 
-    const { width, height } = this.doc_
+    const { width: outerWidth, height: outerHeight } = this.doc_
       .querySelector('.editable-sentinel')
       .getBoundingClientRect();
+
+    const margin = scssVar('marginUnit');
+    const width = outerWidth - margin;
+    const height = outerHeight - margin;
 
     Promise.all([framesPromise, EncoderPromise])
       .then(([frames, Encoder]) =>
@@ -74,6 +85,9 @@ export default class EncodeButton {
           width,
           height,
           text,
+          textShadow,
+          background: [255, 255, 255],
+          margin,
           hue: this.state_.get('hue'),
           font: this.state_.get('font'),
           fontSize: getLengthNumeral(

@@ -20,22 +20,56 @@
  * SOFTWARE.
  */
 
-export default class FxPanel {
-  constructor(win, state) {
-    const doc = win.document;
+function bidirectionalInput(
+  caller,
+  state,
+  stateKey,
+  el,
+  events,
+  { setAs = value => value, inputKey = 'value' }
+) {
+  const wrapped = e =>
+    state.set(caller, { [stateKey]: setAs(e.target[inputKey]) });
+  events.forEach(event => {
+    el.addEventListener(event, wrapped);
+  });
+  state.on(caller, stateKey, value => {
+    el[inputKey] = value;
+  });
+  return el;
+}
 
-    this.hueSlider_ = doc.querySelector('#hue');
+const bidirectionalSlider = (caller, state, key, el) =>
+  bidirectionalInput(caller, state, key, el, ['change', 'input'], {
+    setAs: parseFloat,
+  });
 
-    const setHueOnSlide = ({ target }) => {
-      state.set(this, { hue: parseFloat(target.value) });
-    };
+const bidirectionalToggle = (caller, state, key, el) =>
+  bidirectionalInput(caller, state, key, el, ['change'], {
+    inputKey: 'checked',
+  });
 
-    ['change', 'input'].forEach(e => {
-      this.hueSlider_.addEventListener(e, setHueOnSlide);
-    });
+function Toggle3d(el, state) {
+  return bidirectionalToggle(this, state, 'is3d', el);
+}
 
-    state.on(this, 'hue', value => {
-      this.hueSlider_.value = value;
-    });
-  }
+function ToggleFlatShadow(el, state) {
+  return bidirectionalToggle(this, state, 'shadowIsFlat', el);
+}
+
+function SlideShadowDirection(el, state) {
+  return bidirectionalSlider(this, state, 'shadowDirection', el);
+}
+
+function SlideHue(el, state) {
+  return bidirectionalSlider(this, state, 'hue', el);
+}
+
+export default function FxPanel(win, state) {
+  const { document } = win;
+
+  new SlideHue(document.querySelector('#hue'), state);
+  new SlideShadowDirection(document.querySelector('#shadow-direction'), state);
+  new ToggleFlatShadow(document.querySelector('#shadow-is-flat'), state);
+  new Toggle3d(document.querySelector('#is-3d'), state);
 }

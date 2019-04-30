@@ -24,10 +24,9 @@ import { expandFontId } from '../../lib/fonts';
 import { hueRotate } from './colors';
 import { splitLines } from './text';
 import loadImage from '../dom/load-image';
-import scssVar from '../app/scss-var';
+import memoize from 'lodash.memoize';
 
-const BLUE = scssVar('blue');
-const MARGIN = 2 * scssVar('marginUnit');
+const hueRotateMemoized = memoize(hueRotate, (...args) => args.join(','));
 
 const fontDef = (name, size) => `${size}px '${name}', sans-serif`;
 const rgba = (...parts) => `rgba(${parts.join(',')})`;
@@ -39,7 +38,16 @@ function createCanvas(doc, width, height) {
   return { canvas, ctx: canvas.getContext('2d') };
 }
 
-function fillText(canvas, ctx, fontSize, fontName, lines, margin) {
+function fillText(
+  canvas,
+  ctx,
+  fontSize,
+  fontName,
+  lines,
+  margin,
+  offsetX = 0,
+  offsetY = 0
+) {
   const lineHeight = Math.floor((canvas.height - margin * 2) / lines.length);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -47,12 +55,85 @@ function fillText(canvas, ctx, fontSize, fontName, lines, margin) {
   lines.forEach((text, i) => {
     ctx.fillText(
       text,
-      canvas.width / 2,
-      margin + lineHeight / 2 + i * lineHeight,
+      canvas.width / 2 + offsetX,
+      margin + lineHeight / 2 + i * lineHeight + offsetY,
       canvas.width - margin * 2
     );
   });
 }
+
+function drawTextShadow(
+  canvas,
+  ctx,
+  fontSize,
+  fontName,
+  lines,
+  margin,
+  textShadow,
+  background
+) {
+  textShadow.forEach(([x, y, spread, color]) => {
+    ctx.save();
+    ctx.beginPath();
+    ctx.globalCompositeOperation = 'destination-over';
+
+    const [r, g, b, a = 1] = color;
+
+    if (spread == 0) {
+      ctx.fillStyle = rgba(r, g, b, a);
+      fillText(canvas, ctx, fontSize, fontName, lines, margin, x, y);
+    } else {
+      // Hack to remove separate layer text jaggies.
+      ctx.fillStyle = rgba(...background.concat(a));
+      ctx.shadowColor = rgba(r, g, b, 1);
+      ctx.shadowOffsetX = x;
+      ctx.shadowOffsetY = y;
+      ctx.shadowBlur = spread;
+      fillText(canvas, ctx, fontSize, fontName, lines, margin);
+    }
+
+    ctx.restore();
+  });
+}
+
+function drawTexturedText(
+  canvas,
+  ctx,
+  fontSize,
+  fontName,
+  lines,
+  margin,
+  texture
+) {
+  ctx.save();
+  ctx.beginPath();
+  fillText(canvas, ctx, fontSize, fontName, lines, margin);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.globalCompositeOperation = 'source-in';
+  ctx.drawImage(texture, 0, 0);
+  ctx.restore();
+}
+
+const renderTexture = memoize(
+  (doc, texture, width, height) => {
+    const { canvas, ctx } = createCanvas(document, width, height);
+    return loadImage(doc, texture).then(img => {
+      const { naturalWidth, naturalHeight } = img;
+      const imgsPerRow = Math.ceil(width / naturalWidth);
+      const imgsPerColumn = Math.ceil(height / naturalHeight);
+
+      for (let x = 0; x < imgsPerRow; x++) {
+        for (let y = 0; y < imgsPerColumn; y++) {
+          ctx.drawImage(img, x * naturalWidth, y * naturalHeight);
+        }
+      }
+
+      return canvas;
+    });
+  },
+  (_unusedDoc, ...rest) => rest.join(',')
+);
 
 export default class CanvasRenderer {
   constructor(win) {
@@ -67,49 +148,22 @@ export default class CanvasRenderer {
   }
 
   setTexture(texture) {
-    this.img_ = loadImage(this.win_.document, texture);
+    this.texture_ = texture;
   }
 
   renderTexture_(width, height) {
-    const { canvas, ctx } = createCanvas(this.win_.document, width, height);
-
-    return this.img_.then(img => {
-      const { naturalWidth, naturalHeight } = img;
-      const imgsPerRow = Math.ceil(canvas.width / naturalWidth);
-      const imgsPerColumn = Math.ceil(canvas.height / naturalHeight);
-
-      for (let x = 0; x < imgsPerRow; x++) {
-        for (let y = 0; y < imgsPerColumn; y++) {
-          ctx.drawImage(img, x * naturalWidth, y * naturalHeight);
-        }
-      }
-
-      ctx.globalCompositeOperation = 'destination-over';
-
-      ctx.fillStyle = rgba(BLUE);
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-      const { data } = imgData;
-
-      for (let i = 0; i < data.length; i += 4) {
-        const [r, g, b] = hueRotate(data.slice(i, i + 3), this.options_.hue);
-
-        data[i + 0] = r;
-        data[i + 1] = g;
-        data[i + 2] = b;
-        data[i + 3] = 255;
-      }
-
-      ctx.putImageData(imgData, 0, 0);
-
-      return canvas;
-    });
+    return renderTexture(this.win_.document, this.texture_, width, height);
   }
 
   render(width, height) {
-    const { font, fontSize, text, hue } = this.options_;
+    const {
+      font,
+      fontSize,
+      text,
+      textShadow,
+      margin,
+      background,
+    } = this.options_;
     const [fontName] = expandFontId(font);
 
     const { canvas, ctx } = createCanvas(
@@ -119,39 +173,59 @@ export default class CanvasRenderer {
     );
 
     ctx.font = fontDef(fontName, fontSize);
-    const lines = splitLines(ctx, text, canvas.width, MARGIN);
+    const lines = splitLines(ctx, text, canvas.width, margin);
 
     return this.renderTexture_(width, height).then(texture => {
-      // clipped text.
-      ctx.save();
-      ctx.beginPath();
-      fillText(canvas, ctx, fontSize, fontName, lines, MARGIN);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.globalCompositeOperation = 'source-in';
-      ctx.drawImage(texture, 0, 0);
-      ctx.restore();
+      drawTexturedText(canvas, ctx, fontSize, fontName, lines, margin, texture);
+      drawTextShadow(
+        canvas,
+        ctx,
+        fontSize,
+        fontName,
+        lines,
+        margin,
+        textShadow,
+        background
+      );
 
-      ctx.save();
-      ctx.beginPath();
-      ctx.globalCompositeOperation = 'destination-over';
-
-      // Hack to remove separate layer text jaggies.
-      ctx.fillStyle = rgba(1, 1, 1, scssVar('shadowOpacity'));
-      ctx.shadowColor = rgba(...hueRotate(BLUE, hue).concat([1]));
-
-      ctx.shadowOffsetX = scssVar('shadowX');
-      ctx.shadowOffsetY = scssVar('shadowY');
-      ctx.shadowBlur = scssVar('shadowBlur');
-      fillText(canvas, ctx, fontSize, fontName, lines, MARGIN);
-      ctx.restore();
-
-      // white background
-      ctx.globalCompositeOperation = 'destination-over';
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      this.hueRotatePixels_(canvas, ctx);
+      this.renderBackground_(canvas, ctx);
 
       return canvas;
     });
+  }
+
+  renderBackground_(canvas, ctx) {
+    ctx.globalCompositeOperation = 'destination-over';
+    ctx.fillStyle = rgba(...this.options_.background.concat(1));
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
+  hueRotatePixels_(canvas, ctx) {
+    const { hue } = this.options_;
+
+    if (hue == 0 || hue == 1) {
+      return;
+    }
+
+    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const { data } = imgData;
+
+    for (let i = 0; i < data.length; i += 4) {
+      const a = data[i + 3];
+
+      if (a == 0) {
+        continue;
+      }
+
+      const [r, g, b] = hueRotateMemoized(data.slice(i, i + 3), hue);
+
+      data[i + 0] = r;
+      data[i + 1] = g;
+      data[i + 2] = b;
+      data[i + 3] = a;
+    }
+
+    ctx.putImageData(imgData, 0, 0);
   }
 }

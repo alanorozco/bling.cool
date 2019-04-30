@@ -59,6 +59,27 @@
     hue
     <input id="hue" type="range" min="0" max="1" step="0.05" value="0" />
   </label>
+  <label for="shadow-direction">
+    shadow
+    <input
+      id="shadow-direction"
+      type="range"
+      min="-1"
+      max="1"
+      step="0.05"
+      value="0.5"
+    />
+  </label>
+  <div class="fl-r fx-toggles">
+    <label for="shadow-is-flat">
+      flat shadow
+      <input id="shadow-is-flat" type="checkbox" />
+    </label>
+    <label for="is-3d">
+      3D
+      <input id="is-3d" type="checkbox" checked />
+    </label>
+  </div>
 </div>
 <div class="panel sliding panel-font" hidden>
   <div class="panel-slider font-options hued">

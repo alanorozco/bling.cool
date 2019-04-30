@@ -92,6 +92,9 @@ const { ready } = new App(
     fontSize: defaultFontSize,
     hue: phraseConfig.hue || Math.random(),
     texture: randomTill(textureAssetsCount),
+    shadowDirection: 0.5,
+    shadowIsFlat: false,
+    is3d: true,
   }
 );
 
