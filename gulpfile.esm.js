@@ -29,7 +29,6 @@ import babel from 'rollup-plugin-babel';
 import buffer from 'vinyl-buffer';
 import bundleIndex from './builder/bundle-index';
 import commonjs from 'rollup-plugin-commonjs';
-import concat from 'gulp-concat';
 import cssDeclarationSorter from 'css-declaration-sorter';
 import cssnano from 'cssnano';
 import del from 'del';
@@ -69,27 +68,15 @@ function jsAmp(done) {
   return jsRollup('index.amp.js').pipe(gulp.dest(dirs.dist.root));
 }
 
-async function jsEncoder() {
-  await new Promise(resolve => {
-    jsRollup('encoder.js')
-      .pipe(gulp.dest(dirs.dist.workspace))
-      .on('end', resolve);
-  });
-
-  await new Promise(resolve => {
-    gulp
-      .src(['3p/gif.js/gif.js', path.join(dirs.dist.workspace, 'encoder.js')])
-      .pipe(concat('encoder.js'))
-      .pipe(gulp.dest(dirs.dist.root))
-      .on('end', resolve);
-  });
+function jsEncoder() {
+  return jsRollup('encoder.js').pipe(gulp.dest(dirs.dist.root));
 }
 
-function jsEncoderWorker() {
+function jsGifWorker() {
   return gulp.src('3p/gif.js/gif.worker.js').pipe(gulp.dest(dirs.dist.root));
 }
 
-const js = gulp.parallel(jsDefault, jsAmp, jsEncoder, jsEncoderWorker);
+const js = gulp.parallel(jsDefault, jsAmp, jsEncoder, jsGifWorker);
 
 function css() {
   return gulp
@@ -221,7 +208,10 @@ const copyAllAssets = gulp.parallel(
   copyTextureFrames
 );
 
-const dist = gulp.parallel(gulp.series(barebones, minify), copyAllAssets);
+const dist = gulp.series(
+  clean,
+  gulp.parallel(gulp.series(barebones, minify), copyAllAssets)
+);
 
 function watch() {
   serve();

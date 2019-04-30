@@ -24,10 +24,9 @@ import { expandFontId } from '../../lib/fonts';
 import { hueRotate } from './colors';
 import { splitLines } from './text';
 import loadImage from '../dom/load-image';
-import scssVar from '../app/scss-var';
+import memoize from 'lodash.memoize';
 
-const BLUE = scssVar('blue');
-const MARGIN = 2 * scssVar('marginUnit');
+const hueRotateMemoized = memoize(hueRotate, (...args) => args.join(','));
 
 const fontDef = (name, size) => `${size}px '${name}', sans-serif`;
 const rgba = (...parts) => `rgba(${parts.join(',')})`;
@@ -39,7 +38,16 @@ function createCanvas(doc, width, height) {
   return { canvas, ctx: canvas.getContext('2d') };
 }
 
-function fillText(canvas, ctx, fontSize, fontName, lines, margin) {
+function fillText(
+  canvas,
+  ctx,
+  fontSize,
+  fontName,
+  lines,
+  margin,
+  offsetX = 0,
+  offsetY = 0
+) {
   const lineHeight = Math.floor((canvas.height - margin * 2) / lines.length);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
@@ -47,36 +55,73 @@ function fillText(canvas, ctx, fontSize, fontName, lines, margin) {
   lines.forEach((text, i) => {
     ctx.fillText(
       text,
-      canvas.width / 2,
-      margin + lineHeight / 2 + i * lineHeight,
+      canvas.width / 2 + offsetX,
+      margin + lineHeight / 2 + i * lineHeight + offsetY,
       canvas.width - margin * 2
     );
   });
 }
 
-export default class CanvasRenderer {
-  constructor(win) {
-    this.win_ = win;
+function drawTextShadow(
+  canvas,
+  ctx,
+  fontSize,
+  fontName,
+  lines,
+  margin,
+  textShadow,
+  background
+) {
+  textShadow.forEach(([x, y, spread, color]) => {
+    ctx.save();
+    ctx.beginPath();
+    ctx.globalCompositeOperation = 'destination-over';
 
-    this.options_ = null;
-    this.img_ = null;
-  }
+    const [r, g, b, a = 1] = color;
 
-  setOptions(options) {
-    this.options_ = options;
-  }
+    if (spread == 0) {
+      ctx.fillStyle = rgba(r, g, b, a);
+      fillText(canvas, ctx, fontSize, fontName, lines, margin, x, y);
+    } else {
+      // Hack to remove separate layer text jaggies.
+      ctx.fillStyle = rgba(...background.concat(a));
+      ctx.shadowColor = rgba(r, g, b, 1);
+      ctx.shadowOffsetX = x;
+      ctx.shadowOffsetY = y;
+      ctx.shadowBlur = spread;
+      fillText(canvas, ctx, fontSize, fontName, lines, margin);
+    }
 
-  setTexture(texture) {
-    this.img_ = loadImage(this.win_.document, texture);
-  }
+    ctx.restore();
+  });
+}
 
-  renderTexture_(width, height) {
-    const { canvas, ctx } = createCanvas(this.win_.document, width, height);
+function drawTexturedText(
+  canvas,
+  ctx,
+  fontSize,
+  fontName,
+  lines,
+  margin,
+  texture
+) {
+  ctx.save();
+  ctx.beginPath();
+  fillText(canvas, ctx, fontSize, fontName, lines, margin);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.globalCompositeOperation = 'source-in';
+  ctx.drawImage(texture, 0, 0);
+  ctx.restore();
+}
 
-    return this.img_.then(img => {
+const renderTexture = memoize(
+  (doc, texture, width, height) => {
+    const { canvas, ctx } = createCanvas(doc, width, height);
+    return loadImage(doc, texture).then(img => {
       const { naturalWidth, naturalHeight } = img;
-      const imgsPerRow = Math.ceil(canvas.width / naturalWidth);
-      const imgsPerColumn = Math.ceil(canvas.height / naturalHeight);
+      const imgsPerRow = Math.ceil(width / naturalWidth);
+      const imgsPerColumn = Math.ceil(height / naturalHeight);
 
       for (let x = 0; x < imgsPerRow; x++) {
         for (let y = 0; y < imgsPerColumn; y++) {
@@ -84,74 +129,83 @@ export default class CanvasRenderer {
         }
       }
 
-      ctx.globalCompositeOperation = 'destination-over';
-
-      ctx.fillStyle = rgba(BLUE);
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-      const { data } = imgData;
-
-      for (let i = 0; i < data.length; i += 4) {
-        const [r, g, b] = hueRotate(data.slice(i, i + 3), this.options_.hue);
-
-        data[i + 0] = r;
-        data[i + 1] = g;
-        data[i + 2] = b;
-        data[i + 3] = 255;
-      }
-
-      ctx.putImageData(imgData, 0, 0);
-
       return canvas;
     });
+  },
+  (_unusedDoc, ...rest) => rest.join(',')
+);
+
+function hueRotatePixels(canvas, ctx, turns) {
+  if (turns == 0 || turns == 1) {
+    return;
   }
 
-  render(width, height) {
-    const { font, fontSize, text, hue } = this.options_;
-    const [fontName] = expandFontId(font);
+  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const { data } = imgData;
 
-    const { canvas, ctx } = createCanvas(
-      this.win_.document,
-      Math.ceil(width),
-      Math.ceil(height)
+  for (let i = 0; i < data.length; i += 4) {
+    const a = data[i + 3];
+
+    if (a == 0) {
+      continue;
+    }
+
+    const [r, g, b] = hueRotateMemoized(data.slice(i, i + 3), turns);
+
+    data[i + 0] = r;
+    data[i + 1] = g;
+    data[i + 2] = b;
+    data[i + 3] = a;
+  }
+
+  ctx.putImageData(imgData, 0, 0);
+}
+
+function renderSolidBackground(canvas, ctx, color) {
+  ctx.globalCompositeOperation = 'destination-over';
+  ctx.fillStyle = rgba(...color);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+export default function renderOnCanvas(doc, width, height, options) {
+  const {
+    background,
+    font,
+    fontSize,
+    hue,
+    margin,
+    text,
+    textShadow,
+    texture,
+  } = options;
+
+  const [fontName] = expandFontId(font);
+
+  const { canvas, ctx } = createCanvas(
+    doc,
+    Math.ceil(width),
+    Math.ceil(height)
+  );
+
+  ctx.font = fontDef(fontName, fontSize);
+  const lines = splitLines(ctx, text, canvas.width, margin);
+
+  return renderTexture(doc, texture, width, height).then(texture => {
+    drawTexturedText(canvas, ctx, fontSize, fontName, lines, margin, texture);
+    drawTextShadow(
+      canvas,
+      ctx,
+      fontSize,
+      fontName,
+      lines,
+      margin,
+      textShadow,
+      background
     );
 
-    ctx.font = fontDef(fontName, fontSize);
-    const lines = splitLines(ctx, text, canvas.width, MARGIN);
+    hueRotatePixels(canvas, ctx, hue);
+    renderSolidBackground(canvas, ctx, background.concat(1));
 
-    return this.renderTexture_(width, height).then(texture => {
-      // clipped text.
-      ctx.save();
-      ctx.beginPath();
-      fillText(canvas, ctx, fontSize, fontName, lines, MARGIN);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.globalCompositeOperation = 'source-in';
-      ctx.drawImage(texture, 0, 0);
-      ctx.restore();
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.globalCompositeOperation = 'destination-over';
-
-      // Hack to remove separate layer text jaggies.
-      ctx.fillStyle = rgba(1, 1, 1, scssVar('shadowOpacity'));
-      ctx.shadowColor = rgba(...hueRotate(BLUE, hue).concat([1]));
-
-      ctx.shadowOffsetX = scssVar('shadowX');
-      ctx.shadowOffsetY = scssVar('shadowY');
-      ctx.shadowBlur = scssVar('shadowBlur');
-      fillText(canvas, ctx, fontSize, fontName, lines, MARGIN);
-      ctx.restore();
-
-      // white background
-      ctx.globalCompositeOperation = 'destination-over';
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      return canvas;
-    });
-  }
+    return canvas;
+  });
 }

@@ -157,6 +157,10 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   A sort-imports rule that properly distinguishes between ES6 import types.
 
+- [**`esm`**](https://www.npmjs.com/package/standard-things/esm) by **[John-David Dalton](mailto:john.david.dalton@gmail.com)** (⚖ MIT)
+
+  Tomorrow's ECMAScript modules today!
+
 - [**`express`**](http://expressjs.com/) by **[TJ Holowaychuk](mailto:tj@vision-media.ca)** (⚖ MIT)
 
   Fast, unopinionated, minimalist web framework
@@ -176,10 +180,6 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 - [**`gulp`**](http://gulpjs.com) by **[Gulp Team](http://gulpjs.com/)** (⚖ MIT)
 
   The streaming build system.
-
-- [**`gulp-concat`**](https://www.npmjs.com/package/contra/gulp-concat) by **[Contra](http://contra.io/)** (⚖ MIT)
-
-  Concatenates files
 
 - [**`gulp-html-minifier`**](https://github.com/origin1tech/gulp-html-minifier) by **[Origin1 Technologies](https://github.com/origin1tech)** (⚖ MIT)
 

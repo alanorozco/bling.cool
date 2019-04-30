@@ -20,19 +20,31 @@
  * SOFTWARE.
  */
 
+import { composeTextShadow } from '../css-util/css-util';
 import { textureUrl } from '../../lib/textures';
+
+const definedOr = (value, fallback) => (value === undefined ? fallback : value);
 
 export default class Texturables {
   constructor(win, state) {
     const doc = win.document;
 
+    this.state_ = state;
+
     this.textured_ = Array.from(doc.querySelectorAll('.textured'));
     this.hued_ = this.textured_.concat(
       Array.from(doc.querySelectorAll('.hued'))
     );
+    this.shaded_ = doc.querySelector('.editable-shadow');
 
     state.on(this, 'texture', this.setTexture_.bind(this));
     state.on(this, 'hue', this.setHueRotate_.bind(this));
+
+    state.on(this, 'shadowDirection', direction =>
+      this.setTextShadow_({ direction })
+    );
+    state.on(this, 'shadowIsFlat', isFlat => this.setTextShadow_({ isFlat }));
+    state.on(this, 'is3d', is3d => this.setTextShadow_({ is3d }));
   }
 
   setTexture_(indexOrData) {
@@ -50,5 +62,15 @@ export default class Texturables {
     this.hued_.forEach(({ style }) => {
       style.filter = hueRotate;
     });
+  }
+
+  setTextShadow_({ direction, isFlat, is3d }) {
+    const state = this.state_;
+
+    this.shaded_.style.textShadow = composeTextShadow(
+      definedOr(direction, state.get('shadowDirection')),
+      definedOr(isFlat, state.get('shadowIsFlat')),
+      definedOr(is3d, state.get('is3d'))
+    );
   }
 }

@@ -20,11 +20,13 @@
  * SOFTWARE.
  */
 
+/* global scssVar */
+
+import { decomposeTextShadow } from '../css-util/css-util';
 import { getLengthNumeral } from '../../lib/css';
 import { textureFramesUrl } from '../../lib/textures';
 import loadImage from '../dom/load-image';
 import once from 'lodash.once';
-import scssVar from './scss-var';
 
 const fetchFrames = textureId =>
   fetch(textureFramesUrl(textureId)).then(response => response.json());
@@ -57,28 +59,41 @@ export default class EncodeButton {
 
   onClick_() {
     const framesPromise = fetchFrames(this.state_.get('texture'));
-    const EncoderPromise = this.modules_.get('Encoder');
+    const encodeAsGifPromise = this.modules_.get('encodeAsGif');
 
-    const text = this.state_.get('text');
+    const computedShadowStyle = getComputedStyle(
+      this.doc_.querySelector('.editable-shadow')
+    );
 
-    this.state_.set(this, { encoding: true });
+    const background = [255, 255, 255];
 
-    const { width, height } = this.doc_
+    const { width: outerWidth, height: outerHeight } = this.doc_
       .querySelector('.editable-sentinel')
       .getBoundingClientRect();
 
-    Promise.all([framesPromise, EncoderPromise])
-      .then(([frames, Encoder]) =>
-        new Encoder(this.win_).asGif({
-          frames,
-          width,
-          height,
+    const margin = scssVar('marginUnit');
+    const width = outerWidth - margin;
+    const height = outerHeight - margin;
+
+    const textShadow = decomposeTextShadow(computedShadowStyle['text-shadow']);
+    const fontSize = getLengthNumeral(computedShadowStyle['font-size']);
+
+    const text = this.state_.get('text');
+    const font = this.state_.get('font');
+    const hue = this.state_.get('hue');
+
+    this.state_.set(this, { encoding: true });
+
+    Promise.all([framesPromise, encodeAsGifPromise])
+      .then(([frames, encodeAsGif]) =>
+        encodeAsGif(this.win_, width, height, frames, {
           text,
-          hue: this.state_.get('hue'),
-          font: this.state_.get('font'),
-          fontSize: getLengthNumeral(
-            this.doc_.querySelector('#editable').style.fontSize
-          ),
+          textShadow,
+          background,
+          margin,
+          hue,
+          font,
+          fontSize,
         })
       )
       .then(url => this.openLightbox_(url, toFilename(text)))

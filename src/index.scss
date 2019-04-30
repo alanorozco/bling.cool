@@ -426,11 +426,6 @@ a {
   }
 }
 
-.editable-shadow {
-  // TODO: expose via ui
-  text-shadow: $shadowX $shadowY $shadowBlur rgba($blue, $shadowOpacity);
-}
-
 $buttonRadius: 32px;
 
 .toolbar {
@@ -740,4 +735,10 @@ option {
 
 [hidden] {
   display: none;
+}
+
+.fx-toggles {
+  > label {
+    margin: 0 0.5 * $marginUnit;
+  }
 }

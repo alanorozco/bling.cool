@@ -20,14 +20,13 @@
  * SOFTWARE.
  */
 
-import { sassExtract } from 'not-esm/sass-extract';
+import { getVars } from '../../lib/scss';
 import once from 'lodash.once';
 
-const file = 'src/index.scss';
-const getVars = once(() => sassExtract.renderSync({ file }).vars);
+const getVarsOnce = once(getVars);
 
 function inlineLiteral(t, name) {
-  const vars = getVars();
+  const vars = getVarsOnce();
   if (!name in vars) {
     throw new Error(`Unknown SCSS var "${name}".`);
   }
