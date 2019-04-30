@@ -117,7 +117,7 @@ function drawTexturedText(
 
 const renderTexture = memoize(
   (doc, texture, width, height) => {
-    const { canvas, ctx } = createCanvas(document, width, height);
+    const { canvas, ctx } = createCanvas(doc, width, height);
     return loadImage(doc, texture).then(img => {
       const { naturalWidth, naturalHeight } = img;
       const imgsPerRow = Math.ceil(width / naturalWidth);
@@ -135,97 +135,77 @@ const renderTexture = memoize(
   (_unusedDoc, ...rest) => rest.join(',')
 );
 
-export default class CanvasRenderer {
-  constructor(win) {
-    this.win_ = win;
-
-    this.options_ = null;
-    this.img_ = null;
+function hueRotatePixels(canvas, ctx, turns) {
+  if (turns == 0 || turns == 1) {
+    return;
   }
 
-  setOptions(options) {
-    this.options_ = options;
+  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const { data } = imgData;
+
+  for (let i = 0; i < data.length; i += 4) {
+    const a = data[i + 3];
+
+    if (a == 0) {
+      continue;
+    }
+
+    const [r, g, b] = hueRotateMemoized(data.slice(i, i + 3), turns);
+
+    data[i + 0] = r;
+    data[i + 1] = g;
+    data[i + 2] = b;
+    data[i + 3] = a;
   }
 
-  setTexture(texture) {
-    this.texture_ = texture;
-  }
+  ctx.putImageData(imgData, 0, 0);
+}
 
-  renderTexture_(width, height) {
-    return renderTexture(this.win_.document, this.texture_, width, height);
-  }
+function renderSolidBackground(canvas, ctx, color) {
+  ctx.globalCompositeOperation = 'destination-over';
+  ctx.fillStyle = rgba(...color);
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
 
-  render(width, height) {
-    const {
-      font,
+export default function renderOnCanvas(doc, width, height, options) {
+  const {
+    background,
+    font,
+    fontSize,
+    hue,
+    margin,
+    text,
+    textShadow,
+    texture,
+  } = options;
+
+  const [fontName] = expandFontId(font);
+
+  const { canvas, ctx } = createCanvas(
+    doc,
+    Math.ceil(width),
+    Math.ceil(height)
+  );
+
+  ctx.font = fontDef(fontName, fontSize);
+  const lines = splitLines(ctx, text, canvas.width, margin);
+
+  return renderTexture(doc, texture, width, height).then(texture => {
+    drawTexturedText(canvas, ctx, fontSize, fontName, lines, margin, texture);
+    drawTextShadow(
+      canvas,
+      ctx,
       fontSize,
-      text,
-      textShadow,
+      fontName,
+      lines,
       margin,
-      background,
-    } = this.options_;
-    const [fontName] = expandFontId(font);
-
-    const { canvas, ctx } = createCanvas(
-      this.win_.document,
-      Math.ceil(width),
-      Math.ceil(height)
+      textShadow,
+      background
     );
 
-    ctx.font = fontDef(fontName, fontSize);
-    const lines = splitLines(ctx, text, canvas.width, margin);
+    hueRotatePixels(canvas, ctx, hue);
+    renderSolidBackground(canvas, ctx, background.concat(1));
 
-    return this.renderTexture_(width, height).then(texture => {
-      drawTexturedText(canvas, ctx, fontSize, fontName, lines, margin, texture);
-      drawTextShadow(
-        canvas,
-        ctx,
-        fontSize,
-        fontName,
-        lines,
-        margin,
-        textShadow,
-        background
-      );
-
-      this.hueRotatePixels_(canvas, ctx);
-      this.renderBackground_(canvas, ctx);
-
-      return canvas;
-    });
-  }
-
-  renderBackground_(canvas, ctx) {
-    ctx.globalCompositeOperation = 'destination-over';
-    ctx.fillStyle = rgba(...this.options_.background.concat(1));
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }
-
-  hueRotatePixels_(canvas, ctx) {
-    const { hue } = this.options_;
-
-    if (hue == 0 || hue == 1) {
-      return;
-    }
-
-    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const { data } = imgData;
-
-    for (let i = 0; i < data.length; i += 4) {
-      const a = data[i + 3];
-
-      if (a == 0) {
-        continue;
-      }
-
-      const [r, g, b] = hueRotateMemoized(data.slice(i, i + 3), hue);
-
-      data[i + 0] = r;
-      data[i + 1] = g;
-      data[i + 2] = b;
-      data[i + 3] = a;
-    }
-
-    ctx.putImageData(imgData, 0, 0);
-  }
+    return canvas;
+  });
 }

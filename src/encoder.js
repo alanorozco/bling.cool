@@ -20,86 +20,54 @@
  * SOFTWARE.
  */
 
-import CanvasRenderer from './canvas-renderer/renderer';
 import Deferred from './promise/deferred';
+import GIF from '../3p/gif.js/gif';
 import pushAsync from './async-modules/push-async';
+import renderOnCanvas from './canvas-renderer/renderer';
 
-class Encoder {
-  constructor(win) {
-    this.win_ = win;
-    this.renderer_ = new CanvasRenderer(win);
-  }
-
-  playback_(
-    {
-      frames,
-      text = 'Hola',
-      textShadow,
-      background,
-      margin,
-      font = 'Helvetica',
-      fontSize = 72,
-      hue = 0,
-      width,
-      height,
-    },
-    onFrame
-  ) {
-    const { promise, resolve } = new Deferred();
-    this.renderer_.setOptions({
-      text,
-      textShadow,
-      font,
-      fontSize,
-      margin,
-      hue,
-      background,
-    });
-    this.playFrame_(width, height, frames, onFrame, resolve);
-    return promise;
-  }
-
-  playFrame_(width, height, frames, onFrame, done) {
-    const [delay, texture] = frames.shift();
-
-    this.renderer_.setTexture(texture);
-
-    this.renderer_
-      .render(width, height)
-      .then(canvas => onFrame(delay, canvas))
-      .then(() => {
-        if (frames.length == 0) {
-          done();
-          return;
-        }
-
-        this.win_.requestAnimationFrame(() => {
-          this.playFrame_(width, height, frames, onFrame, done);
-        });
-      });
-  }
-
-  asGif(options) {
-    const { promise, resolve } = new Deferred();
-    const { GIF } = this.win_;
-
-    const gif = new GIF({
-      workers: 2,
-      quality: 10,
-    });
-
-    gif.on('finished', blob => {
-      resolve(this.win_.URL.createObjectURL(blob));
-    });
-
-    this.playback_(options, (delay, canvas) => {
-      gif.addFrame(canvas, { delay });
-    }).then(() => {
-      gif.render();
-    });
-
-    return promise;
-  }
+function playback(win, width, height, frames, rendererOptions, onFrame) {
+  const { promise, resolve } = new Deferred();
+  playFrame(win, width, height, frames, rendererOptions, onFrame, resolve);
+  return promise;
 }
 
-pushAsync(self, { Encoder });
+function playFrame(win, width, height, frames, rendererOptions, onFrame, done) {
+  const [delay, texture] = frames.shift();
+  const cookedRendererOptions = Object.assign({ texture }, rendererOptions);
+
+  renderOnCanvas(win.document, width, height, cookedRendererOptions)
+    .then(canvas => onFrame(delay, canvas))
+    .then(() => {
+      if (frames.length == 0) {
+        done();
+        return;
+      }
+
+      win.requestAnimationFrame(() => {
+        playFrame(win, width, height, frames, rendererOptions, onFrame, done);
+      });
+    });
+}
+
+function encodeAsGif(win, width, height, frames, rendererOptions) {
+  const { promise, resolve } = new Deferred();
+
+  const gif = new GIF({
+    workers: 2,
+    quality: 10,
+  });
+
+  gif.on('finished', blob => {
+    resolve(win.URL.createObjectURL(blob));
+  });
+
+  playback(win, width, height, frames, rendererOptions, (delay, canvas) => {
+    gif.addFrame(canvas, { delay });
+  }).then(() => {
+    gif.render();
+  });
+
+  return promise;
+}
+
+pushAsync(self, { encodeAsGif });

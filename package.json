@@ -54,7 +54,6 @@
   },
   "dependencies": {
     "fontfaceobserver": "^2.1.0",
-    "gulp-concat": "^2.6.1",
     "lodash.once": "^4.1.1",
     "postcss-bling-merge-media-queries": "file:./builder/postcss/postcss-bling-merge-media-queries"
   }

@@ -59,16 +59,13 @@ export default class EncodeButton {
 
   onClick_() {
     const framesPromise = fetchFrames(this.state_.get('texture'));
-    const EncoderPromise = this.modules_.get('Encoder');
+    const encodeAsGifPromise = this.modules_.get('encodeAsGif');
 
-    const text = this.state_.get('text');
-    const textShadow = decomposeTextShadow(
-      getComputedStyle(this.doc_.querySelector('.editable-shadow'))[
-        'text-shadow'
-      ]
+    const computedShadowStyle = getComputedStyle(
+      this.doc_.querySelector('.editable-shadow')
     );
 
-    this.state_.set(this, { encoding: true });
+    const background = [255, 255, 255];
 
     const { width: outerWidth, height: outerHeight } = this.doc_
       .querySelector('.editable-sentinel')
@@ -78,21 +75,25 @@ export default class EncodeButton {
     const width = outerWidth - margin;
     const height = outerHeight - margin;
 
-    Promise.all([framesPromise, EncoderPromise])
-      .then(([frames, Encoder]) =>
-        new Encoder(this.win_).asGif({
-          frames,
-          width,
-          height,
+    const textShadow = decomposeTextShadow(computedShadowStyle['text-shadow']);
+    const fontSize = getLengthNumeral(computedShadowStyle['font-size']);
+
+    const text = this.state_.get('text');
+    const font = this.state_.get('font');
+    const hue = this.state_.get('hue');
+
+    this.state_.set(this, { encoding: true });
+
+    Promise.all([framesPromise, encodeAsGifPromise])
+      .then(([frames, encodeAsGif]) =>
+        encodeAsGif(this.win_, width, height, frames, {
           text,
           textShadow,
-          background: [255, 255, 255],
+          background,
           margin,
-          hue: this.state_.get('hue'),
-          font: this.state_.get('font'),
-          fontSize: getLengthNumeral(
-            this.doc_.querySelector('#editable').style.fontSize
-          ),
+          hue,
+          font,
+          fontSize,
         })
       )
       .then(url => this.openLightbox_(url, toFilename(text)))
