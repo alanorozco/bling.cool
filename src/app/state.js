@@ -20,6 +20,8 @@
  * SOFTWARE.
  */
 
+import { info } from '../log/log';
+
 export default class State {
   constructor() {
     this.state_ = {};
@@ -28,6 +30,17 @@ export default class State {
   }
 
   set(dispatcher, state) {
+    const to = Array.from(
+      new Set(
+        Object.keys(state)
+          .map(signal =>
+            this.observersForSignal_(signal).map(({ listener }) => listener)
+          )
+          .flat()
+          .filter(v => !!v && v !== dispatcher)
+      )
+    ).sort();
+    info('dispatch', state, 'into', this.state_, 'from', dispatcher, 'to', to);
     this.state_ = Object.assign(this.state_, state);
     return this.fire_(dispatcher, state);
   }
@@ -48,23 +61,22 @@ export default class State {
     delete this.observers_[signal][id];
   }
 
+  observersForSignal_(signal) {
+    return Object.values(this.observers_[signal] || {});
+  }
+
   fire_(dispatcher, state) {
     return Promise.all(
-      Object.keys(state).map(signal => {
-        if (!(signal in this.observers_)) {
-          return;
-        }
-        return Promise.all(
-          Object.values(this.observers_[signal]).map(
-            ({ listener, handler }) => {
-              if (listener == dispatcher) {
-                return;
-              }
-              return handler(state[signal]);
+      Object.keys(state)
+        .map(signal =>
+          this.observersForSignal_(signal).map(({ listener, handler }) => {
+            if (listener == dispatcher) {
+              return;
             }
-          )
-        );
-      })
+            return handler(state[signal]);
+          })
+        )
+        .flat()
     );
   }
 }

@@ -23,7 +23,6 @@ This directory holds 3rd party code that is not available via package management
 or were patched somehow, **including:**
 
 <!-- gen:3p -->
-
 - [**`gif.js`**](http://jnordberg.github.io/gif.js/) by **[Johan Nordberg](mailto:code@johan-nordberg.com)** (⚖ MIT)
 
   JavaScript GIF encoding library
@@ -45,7 +44,6 @@ in this directory since they're available via a CDN or package management.
 Fonts are provided by [Google Fonts](http://fonts.google.com), **including:**
 
 <!-- gen:fonts -->
-
 - [**Abril Fatface**](https://fonts.google.com/specimen/Abril+Fatface)
 - [**Alfa Slab One**](https://fonts.google.com/specimen/Alfa+Slab+One)
 - [**Baloo**](https://fonts.google.com/specimen/Baloo)
@@ -92,7 +90,7 @@ Fonts are provided by [Google Fonts](http://fonts.google.com), **including:**
 - [**Vampiro One**](https://fonts.google.com/specimen/Vampiro+One)
 - [**Vast Shadow**](https://fonts.google.com/specimen/Vast+Shadow)
 - [**ZCOOL KuaiLe**](https://fonts.google.com/specimen/ZCOOL+KuaiLe)
-  <!-- /gen:fonts -->
+<!-- /gen:fonts -->
 
 ### Javascript magic ✨
 
@@ -100,12 +98,11 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 [`yarn`](https://yarnpkg.com), **including:**
 
 <!-- gen:packages -->
-
 - [**`@babel/core`**](https://babeljs.io/) by **[Sebastian McKenzie](mailto:sebmck@gmail.com)** (⚖ MIT)
 
   Babel compiler core.
 
-- [**`@babel/plugin-transform-classes`**](https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-classes) by (⚖ MIT)
+- [**`@babel/plugin-transform-classes`**](https://github.com/babel/babel/tree/master/packages/babel-plugin-transform-classes) by  (⚖ MIT)
 
   Compile ES2015 classes to ES5
 
@@ -193,9 +190,9 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Gulp plugin for sass
 
-- [**`gulp-uglifyjs`**](https://github.com/craigjennings11/gulp-uglifyjs.git) by **[Craig Jennings](mailto:craig.jennings@gmail.com)** (⚖ MIT)
+- [**`gulp-terser`**](https://github.com/duan602728596/gulp-terser) by **[段昊辰](https://github.com/duan602728596)** (⚖ MIT)
 
-  Minify multiple files with UglifyJS.
+  gulp plugin, compressed es6+ code.
 
 - [**`jsdom`**](https://www.npmjs.com/package/jsdom/jsdom) by **[Elijah Insua](http://tmpvar.com)**, **[Domenic Denicola](https://domenic.me/)**, **[Sebastian Mayr](https://blog.smayr.name/)**, **[Joris van der Wel](mailto:joris@jorisvanderwel.com)**, **[Timothy Gu](https://timothygu.me/)**, **[Zirro](mailto:code@zirro.se)** (⚖ MIT)
 
