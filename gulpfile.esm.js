@@ -208,9 +208,12 @@ const copyAllAssets = gulp.parallel(
   copyTextureFrames
 );
 
+const cleanWorkspace = () => del(dirs.dist.workspace);
+
 const dist = gulp.series(
   clean,
-  gulp.parallel(gulp.series(barebones, minify), copyAllAssets)
+  gulp.parallel(gulp.series(barebones, minify), copyAllAssets),
+  cleanWorkspace
 );
 
 function watch() {
