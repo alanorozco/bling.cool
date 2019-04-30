@@ -33,6 +33,7 @@ exports.dirs = {
 
 exports.uglify = {
   compress: true,
-  toplevel: true,
   mangleProperties: { regex: /_$/ },
+  passes: 2,
+  toplevel: true,
 };
