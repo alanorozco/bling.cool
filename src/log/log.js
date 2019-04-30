@@ -20,19 +20,17 @@
  * SOFTWARE.
  */
 
-exports.dirs = {
-  textures: {
-    gif: 'textures/gif',
-    frames: 'textures/frames',
-  },
-  dist: {
-    root: 'dist',
-    workspace: 'dist/.workspace',
-  },
-};
+// prettier-ignore
+export function info(...args) {
+  /*#__PURE__*/console.info(...args);
+}
 
-exports.uglify = {
-  compress: true,
-  mangle: { toplevel: true, properties: { regex: /_$/ } },
-  output: { comments: /^!/ },
-};
+// prettier-ignore
+export function error(...args) {
+  /*#__PURE__*/console.error(...args);
+}
+
+// prettier-ignore
+export function warn(...args) {
+  /*#__PURE__*/console.warn(...args);
+}

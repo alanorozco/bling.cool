@@ -45,8 +45,8 @@ import rollup from 'rollup-stream';
 import rollupResolve from 'rollup-plugin-node-resolve';
 import sass from 'gulp-sass';
 import source from 'vinyl-source-stream';
+import terser from 'gulp-terser';
 import test from './builder/test';
-import uglify from 'gulp-uglifyjs';
 
 function jsRollup(input) {
   return rollup({
@@ -54,22 +54,24 @@ function jsRollup(input) {
     format: 'iife',
     name: 'bling',
     plugins: [rollupResolve(), commonjs(), babel()],
-  }).pipe(source(input));
+  })
+    .pipe(source(input))
+    .pipe(gulp.dest(dirs.dist.root));
 }
 
 function jsDefault() {
-  return jsRollup('index.js').pipe(gulp.dest(dirs.dist.workspace));
+  return jsRollup('index.js');
 }
 
 function jsAmp(done) {
   if (!argv.amp) {
     return done();
   }
-  return jsRollup('index.amp.js').pipe(gulp.dest(dirs.dist.root));
+  return jsRollup('index.amp.js');
 }
 
 function jsEncoder() {
-  return jsRollup('encoder.js').pipe(gulp.dest(dirs.dist.root));
+  return jsRollup('encoder.js');
 }
 
 function jsGifWorker() {
@@ -118,7 +120,7 @@ function bundleDefault() {
     .pipe(
       bundleIndex({
         fonts,
-        js: path.join(dirs.dist.workspace, 'index.js'),
+        js: path.join(dirs.dist.root, 'index.js'),
         css: path.join(dirs.dist.workspace, 'index.css'),
       })
     )
@@ -163,7 +165,6 @@ function minifyHtml() {
         collapseBooleanAttributes: true,
         collapseWhitespace: true,
         minifyCSS: true,
-        minifyJS: { ...uglifyConfig },
         removeAttributeQuotes: true,
         removeComments: true,
         sortAttributes: true,
@@ -177,7 +178,7 @@ function uglifyJsItem(input) {
   return () =>
     gulp
       .src(path.join(dirs.dist.root, input))
-      .pipe(uglify({ ...uglifyConfig }))
+      .pipe(terser({ ...uglifyConfig }))
       .pipe(gulp.dest(dirs.dist.root));
 }
 
@@ -185,10 +186,9 @@ function uglifyJsItem(input) {
 // shit.
 const uglifyJs = gulp.parallel(
   uglifyJsItem('encoder.js'),
-  uglifyJsItem('index.amp.js')
+  uglifyJsItem('index.amp.js'),
+  uglifyJsItem('index.js')
 );
-
-const minify = gulp.parallel(minifyHtml, uglifyJs);
 
 function copyAssetFiles(from) {
   return gulp
@@ -208,11 +208,16 @@ const copyAllAssets = gulp.parallel(
   copyTextureFrames
 );
 
-const cleanWorkspace = () => del(dirs.dist.workspace);
+async function cleanWorkspace() {
+  await del(dirs.dist.workspace);
+  await del(path.join(dirs.dist.root, 'index.js'));
+}
 
 const dist = gulp.series(
   clean,
-  gulp.parallel(gulp.series(barebones, minify), copyAllAssets),
+  gulp.parallel(gulp.series(barebones, uglifyJs), copyAllAssets),
+  bundleDefault,
+  minifyHtml,
   cleanWorkspace
 );
 

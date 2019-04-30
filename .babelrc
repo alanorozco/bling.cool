@@ -10,6 +10,7 @@
     [
       "@babel/preset-env",
       {
+        "exclude": ["@babel/plugin-transform-arrow-functions"],
         "forceAllTransforms": true,
         "targets": {
           "browsers": "last 2 years and > 1%"
