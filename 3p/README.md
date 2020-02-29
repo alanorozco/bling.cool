@@ -6,17 +6,6 @@ This project uses a variety of 3rd party resources:
 - [Fonts](#fonts)
 - [Javascript magic ✨](#javascript-magic-)
 
-Additionally, an ⚡`amp-script`-powered demo can be built from this repo,
-**which uses**:
-
-- [**`ampproject/amphtml`**](https://github.com/ampproject/amphtml) by the **[AMP Project](https://amp.dev)** (⚖ Apache 2.0)
-
-  The AMP web component library.
-
-- [**`ampproject/worker-dom`**](https://github.com/ampproject/worker-dom) by **[Kristofer Baxter](https://github.com/kristoferbaxter)** (⚖ Apache 2.0)<br>
-
-  The same DOM API and Frameworks you know, but in a Web Worker.
-
 ## In this directory
 
 This directory holds 3rd party code that is not available via package management
