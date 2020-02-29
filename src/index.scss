@@ -79,20 +79,11 @@ body {
   overflow: hidden;
   min-height: 100vh;
 
-  [amp] & {
-    padding: 0;
-  }
-
   @media #{$smallView} {
     font-size: 16px;
   }
 }
 
-amp-script {
-  padding: $marginUnit;
-}
-
-amp-script,
 body {
   @media #{$smallView} {
     padding-left: 0;
@@ -260,36 +251,6 @@ main {
 
   > .editable-sentinel {
     position: absolute;
-  }
-
-  [amp] & {
-    display: block;
-
-    > div,
-    > textarea {
-      // no display: flex since we're using a textarea and not a
-      // [contenteditable]
-      text-align: center;
-
-      // default for AMP (static)
-      font-size: 72px;
-
-      // they have to be fixed size :(
-      position: absolute;
-      overflow: hidden;
-      width: calc(100% - #{6 * $marginUnit});
-      height: 30vh;
-      padding: 0;
-      margin-top: 20vh;
-
-      // like textareas:
-      word-wrap: break-word;
-
-      @media #{$smallView} {
-        font-size: 32px;
-        width: calc(100% - #{4 * $marginUnit});
-      }
-    }
   }
 }
 
@@ -627,12 +588,6 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
       margin-left: -($toggleButtonArrowWidth + 3px);
       margin-top: -6px;
     }
-  }
-}
-
-.encode-button {
-  amp-script & {
-    display: none;
   }
 }
 
