@@ -20,10 +20,7 @@
  * SOFTWARE.
  */
 
-import { all as allTextures } from './builder/textures';
-import { argv } from 'yargs';
 import { dirs, uglify as uglifyConfig } from './config';
-import { textureFirstFrameUrl, textureId } from './lib/textures';
 import { textures } from './builder/textures';
 import babel from 'rollup-plugin-babel';
 import buffer from 'vinyl-buffer';
@@ -35,7 +32,6 @@ import del from 'del';
 import docs from './builder/docs';
 import express from 'express';
 import fonts from './artifacts/fonts';
-import fontsSubset from './builder/fonts-subset';
 import gulp from 'gulp';
 import htmlmin from 'gulp-html-minifier';
 import path from 'path';
@@ -59,26 +55,17 @@ function jsRollup(input) {
     .pipe(gulp.dest(dirs.dist.root));
 }
 
-function jsDefault() {
-  return jsRollup('index.js');
-}
-
-function jsAmp(done) {
-  if (!argv.amp) {
-    return done();
+const js = gulp.parallel(
+  function jsDefault() {
+    return jsRollup('index.js');
+  },
+  function jsEncoder() {
+    return jsRollup('encoder.js');
+  },
+  function jsGifWorker() {
+    return gulp.src('3p/gif.js/gif.worker.js').pipe(gulp.dest(dirs.dist.root));
   }
-  return jsRollup('index.amp.js');
-}
-
-function jsEncoder() {
-  return jsRollup('encoder.js');
-}
-
-function jsGifWorker() {
-  return gulp.src('3p/gif.js/gif.worker.js').pipe(gulp.dest(dirs.dist.root));
-}
-
-const js = gulp.parallel(jsDefault, jsAmp, jsEncoder, jsGifWorker);
+);
 
 function css() {
   return gulp
@@ -97,23 +84,11 @@ function css() {
 function serve() {
   const port = 8000;
   const app = express();
-  app.use(
-    express.static(dirs.dist.root, {
-      setHeaders(res, _) {
-        if (!argv.amp) {
-          return;
-        }
-        res.setHeader(
-          'AMP-Access-Control-Allow-Source-Origin',
-          `http://localhost:${port}`
-        );
-      },
-    })
-  );
+  app.use(express.static(dirs.dist.root));
   app.listen(port);
 }
 
-function bundleDefault() {
+function bundle() {
   return gulp
     .src('./src/index.html')
     .pipe(buffer())
@@ -126,36 +101,6 @@ function bundleDefault() {
     )
     .pipe(gulp.dest(dirs.dist.root));
 }
-
-function bundleAmp(done) {
-  if (!argv.amp) {
-    return done();
-  }
-  const [selectedFont] = fontsSubset[
-    Math.floor(fontsSubset.length * Math.random())
-  ];
-
-  const textureSubsetSize = 15;
-  const textureSubset = allTextures().slice(0, textureSubsetSize);
-
-  return gulp
-    .src('./src/index.amp.html')
-    .pipe(buffer())
-    .pipe(
-      bundleIndex({
-        css: path.join(dirs.dist.workspace, 'index.css'),
-        fonts: fontsSubset,
-        selectedFont,
-        selectedTexture: Math.floor(textureSubsetSize * Math.random()),
-        textureOptions: textureSubset.map(path =>
-          textureFirstFrameUrl(textureId(path))
-        ),
-      })
-    )
-    .pipe(gulp.dest(dirs.dist.root));
-}
-
-const bundle = gulp.parallel(bundleDefault, bundleAmp);
 
 function minifyHtml() {
   return gulp
@@ -186,7 +131,6 @@ function uglifyJsItem(input) {
 // shit.
 const uglifyJs = gulp.parallel(
   uglifyJsItem('encoder.js'),
-  uglifyJsItem('index.amp.js'),
   uglifyJsItem('index.js')
 );
 
@@ -216,7 +160,7 @@ async function cleanWorkspace() {
 const dist = gulp.series(
   clean,
   gulp.parallel(gulp.series(barebones, uglifyJs), copyAllAssets),
-  bundleDefault,
+  bundle,
   minifyHtml,
   cleanWorkspace
 );

@@ -155,7 +155,7 @@ export default function bundleIndex({
   fonts,
   selectedFont,
   selectedTexture,
-  textureOptions,
+  textureOptions, // unused
 }) {
   return pipedJsdom(async doc => {
     const { name, description, repository, author } = JSON.parse(
