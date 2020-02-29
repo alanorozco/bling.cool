@@ -42,13 +42,22 @@ const randomTill = n => Math.floor(n * Math.random());
 const pickRandom = arr => arr[randomTill(arr.length)];
 
 function fillPhrase(phrase) {
-  if (phrase.length == 1) {
+  if (phrase.length === 1) {
     phrase.push({});
   }
   return phrase;
 }
 
-const [text, phraseConfig] = fillPhrase(pickRandom(phrases));
+function getPhrase() {
+  const phraseFromPathname = decodeURI(
+    window.location.pathname.replace(/^\//, '').trim()
+  );
+  return fillPhrase(
+    phraseFromPathname.length > 0 ? [phraseFromPathname] : pickRandom(phrases)
+  );
+}
+
+const [text, phraseConfig] = getPhrase();
 
 const randomFont = () =>
   pickRandom(
