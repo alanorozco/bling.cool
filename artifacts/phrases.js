@@ -1,11 +1,9 @@
-/* eslint-plugin-disable notice */
-
 const pinkish = 0.2;
 const sometimesYellow = 0.53; // TODO: normalize texture colors
 const green = 0.6;
 const red = 0.45;
 
-module.exports = [
+export default [
   ['ばか !!!'],
   ['absolutely quixotic'],
   ['ayy lmao'],

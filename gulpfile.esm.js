@@ -223,19 +223,14 @@ const dist = gulp.series(
 
 function watch() {
   serve();
+  gulp.watch(['3p/*', 'artifacts/*', 'src/*', 'lib/*'], barebones);
   gulp.watch(
     [
-      '3p/*',
-      'artifacts/*',
       'assets/*',
-      'src/*',
-      'src/**/*',
-      'lib/*',
-      'lib/**/*',
       path.join(dirs.textures.gif, '*'),
       path.join(dirs.textures.frames, '*'),
     ],
-    gulp.parallel(copyAllAssets, barebones)
+    copyAllAssets
   );
 }
 

@@ -20,22 +20,30 @@
  * SOFTWARE.
  */
 
-import postcss from 'postcss';
+import { CLIEngine } from 'eslint';
+import { expect } from 'chai';
+import glob from 'fast-glob';
 
-export default postcss.plugin('bling-merge-media-queries', unusedOptions => {
-  return root => {
-    const atDecls = {};
-    root.walkAtRules(decl => {
-      const { params, nodes } = decl;
-      if (!(params in atDecls)) {
-        atDecls[params] = decl;
-      } else {
-        atDecls[params].nodes = atDecls[params].nodes.concat(nodes);
-        root.removeChild(decl);
+const toplevel = ['artifacts', 'builder', 'lib', 'src', 'test'];
+
+const formatOrFilterMessage = ({ line, column, message, ruleId, severity }) =>
+  severity < 2
+    ? null
+    : `ERROR at ${line}:${column} ${message.slice(0, -1)} - ${ruleId}\n`;
+
+describe('eslint', () => {
+  const { results } = new CLIEngine({ useEslintrc: true }).executeOnFiles(
+    glob.sync(toplevel.map(dir => `${dir}/**/*.js`), {
+      ignore: ['**/node_modules/**/*'],
+    })
+  );
+  for (const { filePath, messages } of results) {
+    it(`validates ${filePath}`, () => {
+      const filtered = messages.map(formatOrFilterMessage).filter(m => !!m);
+
+      if (filtered.length > 0) {
+        expect.fail(`\n${filtered.join('\n')}`);
       }
     });
-    for (const decl of Object.values(atDecls)) {
-      root.append(decl);
-    }
-  };
+  }
 });

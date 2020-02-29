@@ -20,8 +20,6 @@
  * SOFTWARE.
  */
 
-/* global scssVar */
-
 import { decomposeTextShadow } from '../css-util/css-util';
 import { getLengthNumeral } from '../../lib/css';
 import { textureFramesUrl } from '../../lib/textures';
@@ -84,17 +82,26 @@ export default class EncodeButton {
 
     this.state_.set(this, { encoding: true });
 
+    const scale = this.win_.devicePixelRatio;
+
     Promise.all([framesPromise, encodeAsGifPromise])
       .then(([frames, encodeAsGif]) =>
-        encodeAsGif(this.win_, width, height, frames, {
-          text,
-          textShadow,
-          background,
-          margin,
-          hue,
-          font,
-          fontSize,
-        })
+        encodeAsGif(
+          this.win_,
+          width,
+          height,
+          frames,
+          {
+            text,
+            textShadow,
+            background,
+            margin,
+            hue,
+            font,
+            fontSize,
+          },
+          scale
+        )
       )
       .then(url => this.openLightbox_(url, toFilename(text)))
       .then(() => {

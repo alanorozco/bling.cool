@@ -45,6 +45,15 @@ export default class State {
     return this.fire_(dispatcher, state);
   }
 
+  delete(dispatcher, key) {
+    if (!(key in this.state_)) {
+      return;
+    }
+    info(`deleted "${key}"`, 'from', this.state_, 'by', dispatcher);
+    delete this.state_[key];
+    return this.fire_(dispatcher, { key: null });
+  }
+
   get(field) {
     return this.state_[field];
   }

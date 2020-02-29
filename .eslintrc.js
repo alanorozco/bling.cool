@@ -8,9 +8,17 @@ module.exports = {
     node: true,
   },
   extends: ['plugin:prettier/recommended'],
-  plugins: ['disable', 'notice', 'sort-imports-es6-autofix'],
+  plugins: ['disable', 'notice', 'sort-imports-es6-autofix', 'import'],
   rules: {
-    'no-undef': 1,
+    'import/first': 'error',
+    'import/newline-after-import': 'error',
+    'import/no-commonjs': 'error',
+    'import/no-duplicates': 'error',
+    'import/no-restricted-paths': [
+      'error',
+      { zones: [{ target: './src', from: './builder' }] },
+    ],
+    'no-undef': 'error',
     'sort-imports-es6-autofix/sort-imports-es6': [
       'error',
       { ignoreCase: true },

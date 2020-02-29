@@ -1,6 +1,6 @@
 module.exports = {
-  env: { browser: true },
-  parserOptions: {
-    sourceType: 'module',
+  env: { browser: true, node: false },
+  globals: {
+    scssVar: 'readonly',
   },
 };

@@ -20,8 +20,6 @@
  * SOFTWARE.
  */
 
-/* global scssVar */
-
 import { getLengthNumeral } from '../../lib/css';
 
 const shadowAxisMax = 12;

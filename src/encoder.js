@@ -49,7 +49,14 @@ function playFrame(win, width, height, frames, rendererOptions, onFrame, done) {
     });
 }
 
-function encodeAsGif(win, width, height, frames, rendererOptions) {
+function encodeAsGif(
+  win,
+  width,
+  height,
+  frames,
+  rendererOptions,
+  unusedScale = 1
+) {
   const { promise, resolve } = new Deferred();
 
   const gif = new GIF({

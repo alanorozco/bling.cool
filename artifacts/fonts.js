@@ -1,6 +1,4 @@
-/* eslint-plugin-disable notice */
-
-module.exports = [
+export default [
   ['Abril Fatface'],
   ['Alfa Slab One'],
   ['Baloo'],
