@@ -217,6 +217,7 @@ async function task(task, ...args) {
 const default_ = build;
 
 const name = process.argv[2];
-(name in tasks ? task(tasks[name]) : task(default_)).catch(({ stack }) =>
-  console.error(stack)
-);
+(name in tasks ? task(tasks[name]) : task(default_)).catch(({ stack }) => {
+  console.error(stack);
+  process.exit(1);
+});
