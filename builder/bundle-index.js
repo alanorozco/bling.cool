@@ -170,7 +170,7 @@ export default async function bundleIndex(
     textureOptions, // unused
   }
 ) {
-  const dom = new JSDOM(readFileSync(file));
+  const dom = new JSDOM(readFileSync(file).toString());
 
   const { document: doc } = dom.window;
 
