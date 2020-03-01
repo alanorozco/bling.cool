@@ -30,7 +30,6 @@ import { JSDOM } from 'jsdom';
 import { promisify } from 'util';
 import { readFile, readFileSync } from 'fs-extra';
 import { textureUrl } from '../lib/textures';
-import emojiStrip from 'emoji-strip';
 
 export function elementWithContents(doc, tagName, contents) {
   const element = doc.createElement(tagName);
@@ -178,22 +177,6 @@ export default async function bundleIndex(
     (await readFileAsync('./package.json')).toString()
   );
 
-  let match;
-  const partialsRe = /<!-- partial:([^\s]+) -->/;
-  do {
-    match = partialsRe.exec(doc.documentElement.innerHTML);
-    if (match) {
-      const [fullMatch, id] = match;
-      const content = (await readFileAsync(
-        `src/partials/${id}.html`
-      )).toString();
-      doc.documentElement.innerHTML = doc.documentElement.innerHTML.replace(
-        fullMatch,
-        content
-      );
-    }
-  } while (match);
-
   setTitle(doc, name);
   setDescription(doc, description);
 
@@ -207,12 +190,6 @@ export default async function bundleIndex(
 
   await bundleStyle(doc, css);
   await bundleJs(doc, js);
-
-  const h1 = doc.querySelector('h1');
-  h1.textContent = h1.textContent.replace(
-    '[package.description]',
-    emojiStrip(description).trim()
-  );
 
   const authorLink = doc.querySelector('a#meta-author');
   if (authorLink) {

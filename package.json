@@ -22,7 +22,6 @@
     "colors": "^1.3.3",
     "cssnano": "^4.1.10",
     "del": "^4.1.0",
-    "emoji-strip": "^1.0.1",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-disable": "^1.0.4",
