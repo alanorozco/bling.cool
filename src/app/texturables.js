@@ -21,13 +21,16 @@
  */
 
 import { composeTextShadow } from '../css-util/css-util';
-import { textureUrl } from '../../lib/textures';
+import { textureFirstFrameUrl, textureUrl } from '../../lib/textures';
 
 const definedOr = (value, fallback) => (value === undefined ? fallback : value);
+
+const cssUrl = url => `url(${url})`;
 
 export default class Texturables {
   constructor(win, state) {
     const doc = win.document;
+    this.doc_ = doc;
 
     this.state_ = state;
 
@@ -47,17 +50,15 @@ export default class Texturables {
     state.on(this, 'is3d', is3d => this.setTextShadow_({ is3d }));
   }
 
-  setTexture_(indexOrData) {
-    const url = indexOrData.toString().startsWith('data')
-      ? indexOrData
-      : textureUrl(indexOrData);
-    const backgroundImage = `url(${url})`;
-    this.textured_.forEach(({ style }) => {
-      style.backgroundImage = backgroundImage;
-    });
+  setTexture_(index) {
+    if (isNaN(index)) throw new Error();
+    const { style } = this.doc_.body;
+    style.setProperty('--texture-animated', cssUrl(textureUrl(index)));
+    style.setProperty('--texture-static', cssUrl(textureFirstFrameUrl(index)));
   }
 
   setHueRotate_(turns) {
+    // filter won't work when setting CSS custom prop, so we set directly.
     const hueRotate = `hue-rotate(${360 * turns}deg)`;
     this.hued_.forEach(({ style }) => {
       style.filter = hueRotate;

@@ -49,27 +49,22 @@ const bidirectionalToggle = (caller, state, key, el) =>
     inputKey: 'checked',
   });
 
-function Toggle3d(el, state) {
+export function Toggle3d({ document }, state) {
+  const el = document.querySelector('#is-3d');
   return bidirectionalToggle(this, state, 'is3d', el);
 }
 
-function ToggleFlatShadow(el, state) {
+export function ToggleFlatShadow({ document }, state) {
+  const el = document.querySelector('#shadow-is-flat');
   return bidirectionalToggle(this, state, 'shadowIsFlat', el);
 }
 
-function SlideShadowDirection(el, state) {
+export function SlideShadowDirection({ document }, state) {
+  const el = document.querySelector('#shadow-direction');
   return bidirectionalSlider(this, state, 'shadowDirection', el);
 }
 
-function SlideHue(el, state) {
+export function SlideHue({ document }, state) {
+  const el = document.querySelector('#hue');
   return bidirectionalSlider(this, state, 'hue', el);
-}
-
-export default function FxPanel(win, state) {
-  const { document } = win;
-
-  new SlideHue(document.querySelector('#hue'), state);
-  new SlideShadowDirection(document.querySelector('#shadow-direction'), state);
-  new ToggleFlatShadow(document.querySelector('#shadow-is-flat'), state);
-  new Toggle3d(document.querySelector('#is-3d'), state);
 }
