@@ -93,7 +93,7 @@ body {
 
   @media #{$smallView} {
     &.safari.focus {
-      height: calc(100vh - $fuSafariOffset);
+      height: calc(100vh - #{$fuSafariOffset});
     }
   }
 }
@@ -135,9 +135,8 @@ body {
   z-index: 2;
 
   @media #{$smallView} {
-    // no borders on left/right
-    left: 0;
-    right: 0;
+    top: auto;
+    bottom: $bodyBorder + $marginUnit * 3;
   }
 
   &.active {
