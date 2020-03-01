@@ -22,10 +22,15 @@
 
 import adoptAsync from '../async-modules/adopt-async';
 
+import {
+  SlideHue,
+  SlideShadowDirection,
+  Toggle3d,
+  ToggleFlatShadow,
+} from './fx-panel';
 import Editor from './editor';
 import EncodeButton from './encode-button';
 import FontSelector from './font-selector';
-import FxPanel from './fx-panel';
 import Loader from './loader';
 import State from './state';
 import Texturables from './texturables';
@@ -39,7 +44,6 @@ export default class App {
       editor,
       encodeButton = {},
       fontSelector = {},
-      fxPanel = {},
       texturables = {},
       textureSelector = {},
       toolbar = {},
@@ -57,7 +61,10 @@ export default class App {
     new TextureSelector(win, state, textureSelector);
     new Loader(win, state);
     new FontSelector(win, state, fontSelector);
-    new FxPanel(win, state, fxPanel);
+    new Toggle3d(win, state);
+    new ToggleFlatShadow(win, state);
+    new SlideShadowDirection(win, state);
+    new SlideHue(win, state);
     new EncodeButton(
       win,
       state,

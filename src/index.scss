@@ -23,15 +23,19 @@
 // defaults
 $lineHeight: 1.5;
 $toolbarHeight: 48px;
-$bodyBorder: 30px;
+$bodyBorder: 24px;
 $marginUnit: 18px;
-$smallView: '(max-width: 600px)';
+$smallView: '(max-width: 700px)';
 
 // colors
 $blue: rgb(0, 68, 214);
 $lightBlue: lighten($blue, 20%);
-$grayish: rgb(147, 153, 160);
+$verylightBlue: lighten($blue, 40%);
+
+$grayish: rgb(180, 186, 194);
+$lightGrayish: lighten($grayish, 15%);
 $darkGrayish: darken($grayish, 20%);
+
 $purple: adjust-hue(
   $color: $blue,
   $degrees: 60,
@@ -65,10 +69,15 @@ $shadowOpacity: 0.48;
 $lightboxAnimationDuration: 300ms;
 
 // overrides: 3p/style-range-inputs/style-range-inputs
-$track-color: $grayish;
+$track-color: $lightGrayish;
 $thumb-color: $grayish;
+$thumb-height: 24px;
 
 @import '../3p/style-range-inputs/style-range-inputs';
+
+[type='range'] {
+  margin: $thumb-height / 2 $thumb-height / 4;
+}
 
 body {
   margin: 0;
@@ -121,8 +130,8 @@ body {
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  top: 3 * $marginUnit + $toolbarHeight;
-  height: 32px + $marginUnit;
+  top: 4 * $marginUnit + $toolbarHeight;
+  height: $toolbarHeight;
   left: $bodyBorder;
   right: $bodyBorder;
   z-index: 2;
@@ -141,13 +150,14 @@ body {
 }
 
 footer {
-  margin: 0.5 * $marginUnit 0;
+  margin: $marginUnit 0;
   text-align: center;
   text-transform: lowercase;
 }
 
 .fl-r,
 .fl-c,
+.fl-cx,
 main,
 .editable-wrap,
 button {
@@ -162,9 +172,14 @@ button {
 }
 
 .fl-c,
+.fl-cx,
 main,
 .editable-wrap {
   flex-direction: column;
+}
+
+.fl-cx {
+  justify-content: start;
 }
 
 footer {
@@ -189,9 +204,10 @@ main {
   box-sizing: border-box;
   width: calc(100vw - #{2 * $bodyBorder});
   height: calc(100vh - #{2 * $bodyBorder});
-  padding: 0.5 * $marginUnit 0;
+  border-radius: 0.5 * $marginUnit;
 
   @media #{$smallView} {
+    border-radius: 0;
     width: 100vw;
   }
 }
@@ -244,6 +260,14 @@ main {
   background-color: $blue;
 }
 
+.textured {
+  background-image: var(--texture-animated);
+}
+
+.textured-static {
+  background-image: var(--texture-static);
+}
+
 $panelContentHeight: 90px;
 
 .texture-option {
@@ -280,16 +304,27 @@ $panelContentHeight: 90px;
 $panelMarginForScrollbarUgh: 18px;
 $panelGradientWidth: 60px;
 
+$fontPreviewHeight: 32px;
+$fontPreviewSize: 20px;
+
+$fontOptionWidth: 160px;
+$fontOptionHeight: $fontPreviewHeight + 20px;
+
+$fontOptionMargin: 0.5 * $marginUnit;
+
+$panelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 * $marginUnit;
+
 .panel {
   width: 100%;
   position: relative;
-  border-top: 2px solid $grayish;
   padding: $marginUnit;
+  margin: -$marginUnit 0 0;
   box-sizing: border-box;
+  height: $panelHeight;
 
   &.sliding {
     overflow: hidden;
-    height: $panelContentHeight + $marginUnit * 2;
+    height: $panelHeight;
     padding: 0;
 
     &:after,
@@ -299,7 +334,7 @@ $panelGradientWidth: 60px;
       position: absolute;
       top: 0;
       width: $panelGradientWidth;
-      height: $panelContentHeight + $marginUnit * 2;
+      height: $panelHeight;
       pointer-events: none;
       z-index: 10000;
     }
@@ -318,8 +353,7 @@ $panelGradientWidth: 60px;
       overflow-x: scroll;
       -webkit-overflow-scrolling: touch;
       white-space: nowrap;
-      height: $panelContentHeight + 2 * $marginUnit +
-        $panelMarginForScrollbarUgh;
+      height: $panelHeight + $marginUnit * 2 + $panelMarginForScrollbarUgh;
       box-sizing: border-box;
       padding: $marginUnit ($marginUnit / 2 + $panelGradientWidth)
         ($marginUnit + $panelMarginForScrollbarUgh);
@@ -368,50 +402,16 @@ a {
   }
 }
 
-$buttonRadius: 32px;
+$buttonRadius: 64px;
+$toolbarLineHeight: 32px;
 
 .toolbar {
-  margin: $marginUnit 0;
-  font-size: 14px;
+  margin: $marginUnit * 1.5 0;
+  font-size: 16px;
   color: $darkGrayish;
-  line-height: $toolbarHeight;
+  height: $toolbarLineHeight + $marginUnit;
+  line-height: $toolbarLineHeight;
   position: relative;
-
-  > svg {
-    height: 20px;
-    margin: 0 0.5 * $marginUnit;
-
-    > use {
-      stroke: $blue; // hued
-    }
-  }
-
-  > label {
-    margin: 0 ($marginUnit / 4);
-
-    @media #{$smallView} {
-      margin: 0;
-    }
-  }
-
-  button {
-    > svg {
-      height: 18px;
-      margin: 0 6px 0 0;
-    }
-
-    &.toggle-textures > svg {
-      fill: $lightBlue;
-    }
-
-    &.toggle-fx > svg {
-      fill: $purple;
-    }
-
-    &.encode-button > svg > g {
-      fill: $orange;
-    }
-  }
 
   input,
   select,
@@ -419,89 +419,75 @@ $buttonRadius: 32px;
     font: inherit;
     color: inherit;
   }
+
   button,
   select {
+    height: 100%;
     outline: none;
     background: transparent;
-    border: 2px solid $grayish;
+    border: 2px solid $lightGrayish;
     border-radius: $buttonRadius;
     text-align: center;
     text-align-last: center;
-    line-height: $lineHeight;
-  }
+    line-height: $toolbarLineHeight;
+    padding: 2px $marginUnit;
+    margin: 0 ($marginUnit / 4);
 
-  @media #{$smallView} {
-    button,
-    select {
-      border-radius: 0;
-      margin-left: -2px;
+    > svg {
+      height: 24px;
     }
-  }
+    > svg,
+    > svg > g,
+    > svg > path {
+      fill: $blue;
+    }
 
-  > label:first-child {
-    button,
-    select {
+    > label {
+      margin-left: $marginUnit / 2;
+    }
+
+    @media #{$smallView} {
+      border-radius: 0;
+      margin: 0 0 0 -2px; // negative same as border width
+    }
+
+    &:first-child {
       @media #{$smallView} {
         margin-left: 0;
         border-top-left-radius: $buttonRadius;
         border-bottom-left-radius: $buttonRadius;
       }
     }
-  }
 
-  > label:last-child {
-    button,
-    select {
+    &:last-child {
       @media #{$smallView} {
         border-top-right-radius: $buttonRadius;
         border-bottom-right-radius: $buttonRadius;
       }
     }
   }
-
-  button {
-    padding: ($marginUnit / 4) $marginUnit;
-
-    @media #{$smallView} {
-      padding: ($marginUnit / 4) ($marginUnit / 1.5);
-    }
-  }
-
-  select {
-    padding: ($marginUnit / 4) ($marginUnit / 2);
-    -webkit-appearance: none;
-  }
 }
 
-$toggleButtonArrowWidth: 6px;
-
-$fontPreviewHeight: 32px;
-$fontPreviewSize: 20px;
-
-$fontOptionWidth: 160px;
-$fontOptionHeight: $fontPreviewHeight + 20px;
-
-$fontOptionMargin: 0.5 * $marginUnit;
-
-$effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
-  $marginUnit;
-
 .panel-font.sliding {
-  height: $effectiveFontPanelHeight;
+  height: $panelHeight;
 
   &:before,
   &:after {
-    height: $effectiveFontPanelHeight;
+    height: $panelHeight;
   }
 
   > .panel-slider {
-    height: $effectiveFontPanelHeight + $panelMarginForScrollbarUgh;
+    height: $panelHeight + $panelMarginForScrollbarUgh;
   }
 }
 
 .selected-font {
-  width: $fontOptionWidth;
+  width: $fontOptionWidth - $marginUnit * 2;
+  margin: 0 0.5 * $marginUnit;
   text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .font-option {
@@ -546,38 +532,26 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
 .panel-toggle {
   position: relative;
 
+  &.selected,
+  &:active {
+    color: white;
+    z-index: 2;
+
+    > svg,
+    > svg > g,
+    > svg > path {
+      fill: white;
+    }
+  }
+
+  &:active {
+    background: $verylightBlue;
+    border-color: $verylightBlue;
+  }
+
   &.selected {
-    &:after,
-    &:before {
-      pointer-events: none;
-      top: calc(#{2px + 0.5 * $marginUnit} + 100%);
-      left: 50%;
-      border: solid transparent;
-      content: ' ';
-      height: 0;
-      width: 0;
-      position: absolute;
-      pointer-events: none;
-      z-index: 4;
-    }
-
-    &:after {
-      border-color: transparent;
-      border-bottom-color: #fff;
-      border-width: $toggleButtonArrowWidth;
-      margin-left: -$toggleButtonArrowWidth;
-
-      // hack hack hack
-      transform-origin: center top;
-      transform: scale(1.1);
-    }
-    &:before {
-      border-color: transparent;
-      border-bottom-color: $grayish;
-      border-width: $toggleButtonArrowWidth + 3px;
-      margin-left: -($toggleButtonArrowWidth + 3px);
-      margin-top: -6px;
-    }
+    background: $lightBlue;
+    border-color: $lightBlue;
   }
 }
 
@@ -682,8 +656,49 @@ option {
   display: none;
 }
 
-.fx-toggles {
-  > label {
-    margin: 0 0.5 * $marginUnit;
+.label-range,
+.label-toggle {
+  margin: 0 $marginUnit / 2 $marginUnit;
+  display: flex;
+  align-items: flex-end;
+  > span {
+    display: block;
+  }
+}
+
+.label-toggle {
+  > span {
+    margin: -2px $marginUnit / 2;
+  }
+}
+
+.label-range {
+  padding: 0 $marginUnit;
+  > [type='range'] {
+    width: auto;
+    flex: 1;
+  }
+  > span {
+    font-weight: bold;
+    text-align: right;
+    width: 64px; // hardcode for now
+    margin: 2px $marginUnit / 2;
+  }
+}
+
+.hued [type='range'] {
+  // These have to be separated by pseudo-selector, they
+  // won't work when properties are shared across selectors.
+  &::-webkit-slider-thumb {
+    background: $lightBlue;
+  }
+  &::-moz-range-thumb {
+    background: $lightBlue;
+  }
+  &::-webkit-slider-runnable-track {
+    background: $verylightBlue;
+  }
+  &::-moz-range-track {
+    background: $verylightBlue;
   }
 }
