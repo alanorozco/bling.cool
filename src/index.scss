@@ -83,17 +83,16 @@ $fuSafariOffset: 320px;
 
 body {
   margin: 0;
-  padding: $bodyBorder;
   font-family: 'Chalkboard', 'Comic Sans MS', sans-serif;
   font-size: 16px;
   line-height: $lineHeight;
   overflow: hidden;
   min-height: 100vh;
-  // position: relative;
+  position: relative;
 
   @media #{$smallView} {
     &.safari.focus {
-      height: calc(100vh - #{$fuSafariOffset});
+      min-height: calc(100vh - #{$fuSafariOffset});
     }
   }
 }
@@ -151,7 +150,7 @@ footer {
   text-align: center;
   text-transform: lowercase;
 
-  body.focus & {
+  body.focus.safari & {
     display: none;
   }
 }
@@ -213,9 +212,8 @@ main {
 
   @media #{$smallView} {
     border-radius: 0;
-    top: $marginUnit;
     right: 0;
-    bottom: $marginUnit;
+    bottom: 0;
     left: 0;
 
     body.safari.focus & {
