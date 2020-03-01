@@ -153,7 +153,7 @@ function assets() {
     function copy(dirs) {
       return dirs.map(copyContents);
     },
-    ['public', 'assets', dirs.textures.gif, dirs.textures.frames]
+    ['assets', dirs.textures.gif, dirs.textures.frames]
   );
 }
 
