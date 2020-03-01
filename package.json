@@ -11,7 +11,8 @@
     "url": "https://alanoroz.co"
   },
   "scripts": {
-    "start": "node -r esm index.js"
+    "start": "node -r esm index.js",
+    "watch": "yarn start && yarn start serve & fswatch -0 src lib | xargs -0 -n 1 -I {} yarn start bare"
   },
   "license": "MIT",
   "devDependencies": {
