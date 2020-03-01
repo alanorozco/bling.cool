@@ -97,7 +97,7 @@ function serve() {
   log(blue(serve.name), cyan(`http://localhost:8000`));
 }
 
-async function compileHtml() {
+async function html() {
   const file = './src/index.html';
   const code = await bundleIndex(file, {
     fonts,
@@ -142,10 +142,10 @@ async function copyContents(from) {
   }
 }
 
-async function barebones() {
+async function bare() {
   const jsfiles = task(js);
   await Promise.all([jsfiles, task(css)]);
-  await task(compileHtml);
+  await task(html);
   return jsfiles;
 }
 
@@ -166,10 +166,10 @@ async function postCleanup() {
 async function dist() {
   await task(clean);
   await Promise.all([
-    task(barebones).then(files => task(terser, files)),
+    task(bare).then(files => task(terser, files)),
     task(assets),
   ]);
-  await task(compileHtml);
+  await task(html);
   await task(minifyHtml);
   await postCleanup();
 }
@@ -183,23 +183,21 @@ async function integrate() {
   await task(test);
 }
 
-async function default_() {
-  await Promise.all([task(barebones), task(assets)]);
-  serve();
-  // TODO: watch
+function build() {
+  return Promise.all([task(bare), task(assets)]);
 }
 
 const tasks = {
-  default_,
   assets,
-  barebones,
+  bare,
+  build,
   clean,
   dist,
   docs,
   integrate,
+  serve,
   test,
   textures,
-  serve,
 };
 
 async function task(task, ...args) {
@@ -216,6 +214,8 @@ async function task(task, ...args) {
     throw error;
   }
 }
+
+const default_ = build;
 
 const name = process.argv[2];
 (name in tasks ? task(tasks[name]) : task(default_)).catch(({ stack }) =>
