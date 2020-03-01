@@ -21,15 +21,10 @@
  */
 
 import { fontId, googFontStylesheetUrl } from '../lib/fonts';
-import {
-  fontOption,
-  selectElementOption,
-  textureOption,
-} from '../lib/renderers';
+import { fontOption } from '../lib/renderers';
 import { JSDOM } from 'jsdom';
 import { promisify } from 'util';
 import { readFile, readFileSync } from 'fs-extra';
-import { textureUrl } from '../lib/textures';
 
 export function elementWithContents(doc, tagName, contents) {
   const element = doc.createElement(tagName);
@@ -69,33 +64,35 @@ async function bundleStyle(doc, css) {
   }
 }
 
-function setTitle(doc, name) {
-  const title = doc.querySelector('title');
-  title.textContent = title.textContent.replace('[package.name]', name);
+function replacePkgAccess(doc, pkg) {
+  for (const node of getTextNodes(doc)) {
+    node.textContent = replacePkgProp(node.textContent, pkg);
+  }
+
+  replacePkgAccessAttr(doc, pkg, 'meta', 'content');
+  replacePkgAccessAttr(doc, pkg, 'a', 'href');
 }
 
-function setDescription(doc, description) {
-  const metaDesc = doc.querySelector('meta[name=description]');
-  metaDesc.setAttribute(
-    'content',
-    metaDesc
-      .getAttribute('content')
-      .replace('[package.description]', description)
-  );
-}
-
-function setDefaultText(doc, text) {
-  for (const container of doc.querySelectorAll(
-    '#editable, .editable-sentinel'
-  )) {
-    container.textContent = container.textContent.replace(
-      '[default.text]',
-      text
-    );
+function replacePkgAccessAttr(doc, pkg, tagName, attr) {
+  for (const element of doc.querySelectorAll(`${tagName}[${attr}]`)) {
+    element.setAttribute(attr, replacePkgProp(element.getAttribute(attr), pkg));
   }
 }
 
-function setFonts(doc, fonts, selectedFont) {
+const replacePkgProp = (str, pkg) =>
+  str.replace(/\[package\.(.+)\]/g, (full, access) => {
+    let val = pkg;
+    const props = access.split('.');
+    while (props.length) {
+      val = val[props.shift()];
+    }
+    if (typeof val !== 'string') {
+      return full;
+    }
+    return val;
+  });
+
+function setFonts(doc, fonts) {
   const container = doc.querySelector('.font-options');
   if (!container) {
     return;
@@ -111,17 +108,8 @@ function setFonts(doc, fonts, selectedFont) {
       name,
       weight
     );
-    if (name == selectedFont) {
-      selectElementOption(option);
-    }
     container.appendChild(option);
   });
-  for (const { style } of doc.querySelectorAll('.default-font')) {
-    style.fontFamily = `'${selectedFont}', sans-serif`;
-  }
-  if (selectedFont) {
-    doc.querySelector('.selected-font').textContent = selectedFont;
-  }
 }
 
 function setFontPreload(linkRel, fonts) {
@@ -132,78 +120,32 @@ function setFontPreload(linkRel, fonts) {
   linkRel.removeAttribute('class');
 }
 
-function setTexture(doc, selected) {
-  if (selected === undefined) {
-    return;
+function getTextNodes(node) {
+  let all = [];
+  for (node = node.firstChild; node; node = node.nextSibling) {
+    if (node.nodeType === 3) {
+      all.push(node);
+    } else {
+      all = all.concat(getTextNodes(node));
+    }
   }
-  for (const { style } of doc.querySelectorAll('.textured')) {
-    style.backgroundImage = `url(${textureUrl(selected)})`;
-  }
+  return all;
 }
 
-function setTextureOptions(doc, options, selected) {
-  if (!options) {
-    return;
-  }
-  const container = doc.querySelector('.texture-options');
-  if (!container) {
-    return;
-  }
-  options
-    .map((url, index) =>
-      textureOption(container.ownerDocument, url, selected === index)
-    )
-    .forEach(el => {
-      container.appendChild(el);
-    });
-}
-
-export default async function bundleIndex(
-  file,
-  {
-    css,
-    js,
-    fonts,
-    selectedFont,
-    selectedTexture,
-    textureOptions, // unused
-  }
-) {
+export default async function bundleHtml(file, { css, js, fonts }) {
   const dom = new JSDOM(readFileSync(file).toString());
 
-  const { document: doc } = dom.window;
+  const { document } = dom.window;
 
-  const { name, description, repository, author } = JSON.parse(
-    (await readFileAsync('./package.json')).toString()
-  );
+  const pkg = JSON.parse((await readFileAsync('./package.json')).toString());
 
-  setTitle(doc, name);
-  setDescription(doc, description);
+  replacePkgAccess(document, pkg);
 
-  setFonts(doc, fonts, selectedFont);
-  setFontPreload(doc.querySelector('link.font-preload'), fonts);
+  setFonts(document, fonts);
+  setFontPreload(document.querySelector('link.font-preload'), fonts);
 
-  setDefaultText(doc, 'Hello World!');
-
-  setTexture(doc, selectedTexture);
-  setTextureOptions(doc, textureOptions, selectedTexture);
-
-  await bundleStyle(doc, css);
-  await bundleJs(doc, js);
-
-  const authorLink = doc.querySelector('a#meta-author');
-  if (authorLink) {
-    authorLink.setAttribute('href', author.url);
-    authorLink.textContent = authorLink.textContent.replace(
-      '[package.author.name]',
-      author.name
-    );
-  }
-
-  const repoLink = doc.querySelector('a#meta-repository');
-  if (repoLink) {
-    repoLink.setAttribute('href', repository);
-  }
+  await bundleStyle(document, css);
+  await bundleJs(document, js);
 
   return dom.serialize();
 }

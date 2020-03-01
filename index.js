@@ -28,7 +28,7 @@ import { rollup } from 'rollup';
 import { renderSync as sass } from 'sass';
 import { textures } from './builder/textures';
 import babel from 'rollup-plugin-babel';
-import bundleIndex from './builder/bundle-index';
+import bundleHtml from './builder/bundle-html';
 import commonjs from 'rollup-plugin-commonjs';
 import cssDeclarationSorter from 'css-declaration-sorter';
 import cssnano from 'cssnano';
@@ -93,12 +93,12 @@ function serve() {
   const app = express();
   app.use(express.static(dirs.dist.root));
   app.listen(port);
-  log(blue(serve.name), cyan(`http://localhost:8000`));
+  log(cyan(`http://localhost:8000`));
 }
 
 async function html() {
   const file = './src/index.html';
-  const code = await bundleIndex(file, {
+  const code = await bundleHtml(file, {
     fonts,
     js: path.join(dirs.dist.root, 'index.js'),
     css: path.join(dirs.dist.workspace, 'index.css'),
