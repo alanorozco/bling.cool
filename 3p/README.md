@@ -163,25 +163,13 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Detect if web fonts are available
 
-- [**`gulp`**](http://gulpjs.com) by **[Gulp Team](http://gulpjs.com/)** (⚖ MIT)
+- [**`fs-extra`**](https://github.com/jprichardson/node-fs-extra) by **[JP Richardson](mailto:jprichardson@gmail.com)** (⚖ MIT)
 
-  The streaming build system.
+  fs-extra contains methods that aren't included in the vanilla Node.js fs package. Such as mkdir -p, cp -r, and rm -rf.
 
-- [**`gulp-html-minifier`**](https://github.com/origin1tech/gulp-html-minifier) by **[Origin1 Technologies](https://github.com/origin1tech)** (⚖ MIT)
+- [**`html-minifier`**](https://kangax.github.io/html-minifier/) by **Juriy "kangax" Zaytsev** (⚖ MIT)
 
-  Minify HTML with html-minifier.
-
-- [**`gulp-postcss`**](https://github.com/postcss/gulp-postcss) by **[Andrey Kuzmin](mailto:unsoundscapes@gmail.com)** (⚖ MIT)
-
-  PostCSS gulp plugin
-
-- [**`gulp-sass`**](https://github.com/dlmanning/gulp-sass) by **David Manning** (⚖ MIT)
-
-  Gulp plugin for sass
-
-- [**`gulp-terser`**](https://github.com/duan602728596/gulp-terser) by **[段昊辰](https://github.com/duan602728596)** (⚖ MIT)
-
-  gulp plugin, compressed es6+ code.
+  Highly configurable, well-tested, JavaScript-based HTML minifier.
 
 - [**`jsdom`**](https://www.npmjs.com/package/jsdom/jsdom) by **[Elijah Insua](http://tmpvar.com)**, **[Domenic Denicola](https://domenic.me/)**, **[Sebastian Mayr](https://blog.smayr.name/)**, **[Joris van der Wel](mailto:joris@jorisvanderwel.com)**, **[Timothy Gu](https://timothygu.me/)**, **[Zirro](mailto:code@zirro.se)** (⚖ MIT)
 
@@ -207,9 +195,17 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Wrapper around libsass
 
+- [**`postcss`**](https://postcss.org/) by **[Andrey Sitnik](mailto:andrey@sitnik.ru)** (⚖ MIT)
+
+  Tool for transforming styles with JS plugins
+
 - [**`prettier`**](https://prettier.io) by **James Long** (⚖ MIT)
 
   Prettier is an opinionated code formatter
+
+- [**`rollup`**](https://github.com/rollup/rollup) by **Rich Harris** (⚖ MIT)
+
+  Next-generation ES module bundler
 
 - [**`rollup-plugin-babel`**](https://github.com/rollup/rollup-plugin-babel) by **Rich Harris** (⚖ MIT)
 
@@ -223,25 +219,17 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   Bundle third-party dependencies in node_modules
 
-- [**`rollup-stream`**](https://github.com/permutatrix/rollup-stream#readme) by **[Permutator](mailto:permutatorem@gmail.com)** (⚖ MIT)
+- [**`sass`**](https://github.com/sass/dart-sass) by **[Natalie Weizenbaum](https://github.com/nex3)** (⚖ MIT)
 
-  a wrapper around Rollup that returns a stream instead of a Promise
+  A pure JavaScript implementation of Sass.
 
 - [**`sass-extract`**](https://www.npmjs.com/package/jgranstrom/sass-extract) by **[John Granström](mailto:granstrom.john@gmail.com)** (⚖ MIT)
 
   Extract structured variables from sass files. Fast and accurate.
 
-- [**`through2`**](https://github.com/rvagg/through2.git) by **[Rod Vagg](https://github.com/rvagg)** (⚖ MIT)
+- [**`terser`**](https://terser.org) by **[Mihai Bazon](http://lisperator.net/)** (⚖ BSD-2-Clause)
 
-  A tiny wrapper around Node.js streams.Transform (Streams2/3) to avoid explicit subclassing noise
-
-- [**`vinyl-buffer`**](https://github.com/hughsk/vinyl-buffer) by **[Hugh Kennedy](http://hughsk.io/)** (⚖ MIT)
-
-  Convert streaming vinyl files to use buffers
-
-- [**`vinyl-source-stream`**](https://github.com/hughsk/vinyl-source-stream) by **[Hugh Kennedy](http://hughsk.io/)** (⚖ MIT)
-
-  Use conventional text streams at the start of your gulp or vinyl pipelines
+  JavaScript parser, mangler/compressor and beautifier toolkit for ES6+
 
 - [**`yargs`**](https://yargs.js.org/) by **[Yargs Contributors](https://github.com/yargs/yargs/graphs/contributors)** (⚖ MIT)
 

@@ -20,17 +20,27 @@
  * SOFTWARE.
  */
 
-import { elementWithFileContents, pipedJsdom } from './jsdom-util';
 import { fontId, googFontStylesheetUrl } from '../lib/fonts';
 import {
   fontOption,
   selectElementOption,
   textureOption,
 } from '../lib/renderers';
+import { JSDOM } from 'jsdom';
 import { promisify } from 'util';
-import { readFile } from 'fs';
+import { readFile, readFileSync } from 'fs-extra';
 import { textureUrl } from '../lib/textures';
 import emojiStrip from 'emoji-strip';
+
+export function elementWithContents(doc, tagName, contents) {
+  const element = doc.createElement(tagName);
+  element.innerHTML = contents;
+  return element;
+}
+
+export async function elementWithFileContents(doc, tagName, path) {
+  return elementWithContents(doc, tagName, readFileSync(path).toString());
+}
 
 const readFileAsync = promisify(readFile);
 
@@ -149,67 +159,74 @@ function setTextureOptions(doc, options, selected) {
     });
 }
 
-export default function bundleIndex({
-  css,
-  js,
-  fonts,
-  selectedFont,
-  selectedTexture,
-  textureOptions, // unused
-}) {
-  return pipedJsdom(async doc => {
-    const { name, description, repository, author } = JSON.parse(
-      (await readFileAsync('./package.json')).toString()
-    );
+export default async function bundleIndex(
+  file,
+  {
+    css,
+    js,
+    fonts,
+    selectedFont,
+    selectedTexture,
+    textureOptions, // unused
+  }
+) {
+  const dom = new JSDOM(readFileSync(file));
 
-    let match;
-    const partialsRe = /<!-- partial:([^\s]+) -->/;
-    do {
-      match = partialsRe.exec(doc.documentElement.innerHTML);
-      if (match) {
-        const [fullMatch, id] = match;
-        const content = (await readFileAsync(
-          `src/partials/${id}.html`
-        )).toString();
-        doc.documentElement.innerHTML = doc.documentElement.innerHTML.replace(
-          fullMatch,
-          content
-        );
-      }
-    } while (match);
+  const { document: doc } = dom.window;
 
-    setTitle(doc, name);
-    setDescription(doc, description);
+  const { name, description, repository, author } = JSON.parse(
+    (await readFileAsync('./package.json')).toString()
+  );
 
-    setFonts(doc, fonts, selectedFont);
-    setFontPreload(doc.querySelector('link.font-preload'), fonts);
-
-    setDefaultText(doc, 'Hello World!');
-
-    setTexture(doc, selectedTexture);
-    setTextureOptions(doc, textureOptions, selectedTexture);
-
-    await bundleStyle(doc, css);
-    await bundleJs(doc, js);
-
-    const h1 = doc.querySelector('h1');
-    h1.textContent = h1.textContent.replace(
-      '[package.description]',
-      emojiStrip(description).trim()
-    );
-
-    const authorLink = doc.querySelector('a#meta-author');
-    if (authorLink) {
-      authorLink.setAttribute('href', author.url);
-      authorLink.textContent = authorLink.textContent.replace(
-        '[package.author.name]',
-        author.name
+  let match;
+  const partialsRe = /<!-- partial:([^\s]+) -->/;
+  do {
+    match = partialsRe.exec(doc.documentElement.innerHTML);
+    if (match) {
+      const [fullMatch, id] = match;
+      const content = (await readFileAsync(
+        `src/partials/${id}.html`
+      )).toString();
+      doc.documentElement.innerHTML = doc.documentElement.innerHTML.replace(
+        fullMatch,
+        content
       );
     }
+  } while (match);
 
-    const repoLink = doc.querySelector('a#meta-repository');
-    if (repoLink) {
-      repoLink.setAttribute('href', repository);
-    }
-  });
+  setTitle(doc, name);
+  setDescription(doc, description);
+
+  setFonts(doc, fonts, selectedFont);
+  setFontPreload(doc.querySelector('link.font-preload'), fonts);
+
+  setDefaultText(doc, 'Hello World!');
+
+  setTexture(doc, selectedTexture);
+  setTextureOptions(doc, textureOptions, selectedTexture);
+
+  await bundleStyle(doc, css);
+  await bundleJs(doc, js);
+
+  const h1 = doc.querySelector('h1');
+  h1.textContent = h1.textContent.replace(
+    '[package.description]',
+    emojiStrip(description).trim()
+  );
+
+  const authorLink = doc.querySelector('a#meta-author');
+  if (authorLink) {
+    authorLink.setAttribute('href', author.url);
+    authorLink.textContent = authorLink.textContent.replace(
+      '[package.author.name]',
+      author.name
+    );
+  }
+
+  const repoLink = doc.querySelector('a#meta-repository');
+  if (repoLink) {
+    repoLink.setAttribute('href', repository);
+  }
+
+  return dom.serialize();
 }
