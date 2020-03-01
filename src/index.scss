@@ -86,14 +86,14 @@ body {
   font-size: 18px;
   line-height: $lineHeight;
   overflow: hidden;
-  position: relative;
-  height: 100vh;
+  min-height: 100vh;
+  // position: relative;
 
   @media #{$smallView} {
     font-size: 16px;
     .safari.focus {
       // rly honestly yea fu sfrai
-      height: calc(100vh - 270px);
+      min-height: calc(100vh - 270px);
       // like 270px are u kidding me
     }
   }
@@ -201,20 +201,20 @@ p {
 main {
   background: white;
   box-sizing: border-box;
-  position: absolute;
-  top: $bodyBorder;
-  right: $bodyBorder;
-  bottom: $bodyBorder;
-  left: $bodyBorder;
-  // width: calc(100vw - #{2 * $bodyBorder});
-  // height: calc(100vh - #{2 * $bodyBorder});
+  // position: absolute;
+  // top: $bodyBorder;
+  // right: $bodyBorder;
+  // bottom: $bodyBorder;
+  // left: $bodyBorder;
+  width: calc(100vw - #{2 * $bodyBorder});
+  height: calc(100vh - #{2 * $bodyBorder});
   border-radius: 0.5 * $marginUnit;
 
   @media #{$smallView} {
     border-radius: 0;
-    // width: 100vw;
-    left: 0;
-    right: 0;
+    width: 100vw;
+    // left: 0;
+    // right: 0;
   }
 }
 
