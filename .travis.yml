@@ -1,4 +1,4 @@
 language: node_js
 node_js: lts/*
 before_script: mkdir dist
-script: yarn start integrate --travis
+script: yarn start integrate

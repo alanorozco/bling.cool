@@ -49,8 +49,7 @@
     "rollup-plugin-node-resolve": "^4.0.1",
     "sass": "1.26.2",
     "sass-extract": "^2.1.0",
-    "terser": "4.6.4",
-    "yargs": "^13.2.2"
+    "terser": "4.6.4"
   },
   "dependencies": {
     "fontfaceobserver": "^2.1.0",

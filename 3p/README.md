@@ -231,8 +231,4 @@ Javascript packages included via [`npm`](http://npmjs.com) and facilitated by
 
   JavaScript parser, mangler/compressor and beautifier toolkit for ES6+
 
-- [**`yargs`**](https://yargs.js.org/) by **[Yargs Contributors](https://github.com/yargs/yargs/graphs/contributors)** (⚖ MIT)
-
-  yargs the modern, pirate-themed, successor to optimist.
-
 <!-- /gen:packages -->
