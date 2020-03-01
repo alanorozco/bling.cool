@@ -22,7 +22,7 @@
 
 import { closestByClassName } from '../dom/dom';
 
-const getPanel = (doc, id) => doc.querySelector(`.panel-${id}`);
+const getPanel = (doc, id) => doc.querySelector(`[data-panel="${id}"]`);
 const getPanelToggleButton = (doc, id) =>
   doc.querySelector(`.panel-toggle[data-toggle=${id}]`);
 
@@ -60,7 +60,7 @@ export default class Toolbar {
     this.state_ = state;
     this.element_ = win.document.querySelector('.toolbar');
 
-    this.element_.addEventListener('click', this.maybeTogglePanel_.bind(this));
+    this.element_.addEventListener('click', e => this.togglePanelFromClick_(e));
 
     state.on(this, 'text', this.closePanel_.bind(this));
     state.on(this, 'encoding', isEncoding => {
@@ -68,37 +68,60 @@ export default class Toolbar {
         this.closePanel_();
       }
     });
+
+    state.on(this, 'panel', panel => this.togglePanelFromState_(panel));
   }
 
-  maybeTogglePanel_(e) {
+  togglePanelFromClick_(e) {
     const { target } = e;
     const button = closestByClassName(target, 'panel-toggle');
     if (!button) {
       return;
     }
-    const panelId = button.getAttribute('data-toggle');
-    const panel = getPanel(this.doc_, panelId);
+    const panel = button.getAttribute('data-toggle');
     if (!panel) {
       return;
     }
     e.preventDefault();
-    if (panelId === this.state_.get('panel')) {
+    if (this.state_.get('panel') === panel) {
       this.closePanel_();
+    } else {
+      this.openPanel_(panel);
+    }
+  }
+
+  togglePanelFromState_(panel) {
+    if (panel === null) {
+      this.closePanel_();
+    } else {
+      this.openPanel_(panel);
+    }
+  }
+
+  openPanel_(panel) {
+    const element = getPanel(this.doc_, panel);
+    if (!element) {
       return;
     }
-    this.closePanel_();
-    openPanel(panel, button);
-    this.state_.set(this, { panel: panelId });
+    const open = this.doc_.querySelector('.panel:not([hidden])');
+    if (open && open !== element) {
+      this.closePanel_();
+    }
+    if (open === element) {
+      return;
+    }
+    openPanel(element, getPanelToggleButton(this.doc_, panel));
+    this.state_.set(this, { panel });
   }
 
   closePanel_() {
-    const openPanel = this.state_.get('panel');
-    if (!openPanel) {
+    const element = this.doc_.querySelector('.panel:not([hidden])');
+    if (!element) {
       return;
     }
     closePanel(
-      getPanel(this.doc_, openPanel),
-      getPanelToggleButton(this.doc_, openPanel)
+      element,
+      getPanelToggleButton(this.doc_, element.getAttribute('data-panel'))
     );
     this.state_.set(this, { panel: null });
   }

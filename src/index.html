@@ -81,16 +81,16 @@
           <label>gif</label>
         </button>
       </div>
-      <div class="panel sliding panel-textures hued" hidden>
+      <div class="panel sliding hued" data-panel="textures" hidden>
         <div class="panel-slider texture-options"></div>
       </div>
-      <div class="panel panel-hue fl-cx" hidden>
+      <div class="panel fl-cx" data-panel="hue" hidden>
         <label class="label-range hued" for="hue">
           <span>hue</span>
           <input id="hue" type="range" min="0" max="1" step="0.05" value="0" />
         </label>
       </div>
-      <div class="panel panel-fx fl-cx" hidden>
+      <div class="panel fl-cx" data-panel="fx" hidden>
         <label class="label-range" for="shadow-direction">
           <span>shadow</span>
           <input
@@ -113,7 +113,7 @@
           </label>
         </div>
       </div>
-      <div class="panel sliding panel-font" hidden>
+      <div class="panel sliding" data-panel="font" hidden>
         <div class="panel-slider font-options hued">
           <template>
             <div class="font-option">

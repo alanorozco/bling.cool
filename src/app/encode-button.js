@@ -72,8 +72,8 @@ export default class EncodeButton {
       .getBoundingClientRect();
 
     const margin = scssVar('marginUnit');
-    const width = outerWidth - margin;
-    const height = outerHeight - margin;
+    const width = outerWidth - margin * 2;
+    const height = outerHeight + margin * 2;
 
     const textShadow = decomposeTextShadow(computedShadowStyle['text-shadow']);
     const fontSize = getLengthNumeral(computedShadowStyle['font-size']);

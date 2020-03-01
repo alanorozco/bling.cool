@@ -92,9 +92,13 @@ body {
 
   @media #{$smallView} {
     min-height: 95vh; // lol
+    &.safari {
+      // position: fixed;
+    }
     &.safari.focus {
       min-height: calc(100vh - #{$fuSafariOffset});
       max-height: calc(100vh - #{$fuSafariOffset});
+      height: calc(100vh - #{$fuSafariOffset});
     }
   }
 }
@@ -228,7 +232,6 @@ main {
   flex: 1;
   cursor: text;
   box-sizing: border-box;
-  padding: 0 40px;
   width: 100%;
   overflow: hidden;
 
@@ -253,7 +256,7 @@ main {
     -webkit-text-fill-color: transparent;
 
     // Some padding is needed so text is not clipped.
-    padding: 40px;
+    padding: 0 $marginUnit * 2;
 
     // And for dynamic resizing:
     box-sizing: border-box;
@@ -429,6 +432,10 @@ $toolbarLineHeight: 32px;
   line-height: $toolbarLineHeight;
   position: relative;
 
+  @media #{$smallView} {
+    margin: $marginUnit 0;
+  }
+
   input,
   select,
   button {
@@ -481,19 +488,6 @@ $toolbarLineHeight: 32px;
         border-bottom-right-radius: $buttonRadius;
       }
     }
-  }
-}
-
-.panel-font.sliding {
-  height: $panelHeight;
-
-  &:before,
-  &:after {
-    height: $panelHeight;
-  }
-
-  > .panel-slider {
-    height: $panelHeight + $panelMarginForScrollbarUgh;
   }
 }
 
