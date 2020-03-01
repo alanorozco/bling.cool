@@ -21,8 +21,6 @@
  */
 
 import { all } from '../textures';
-import { blue, magenta } from 'colors';
-import log from 'fancy-log';
 
 const declaratorName = 'textureAssetsCountReplaceMe';
 
@@ -37,7 +35,6 @@ export default function({ types: t }) {
           return;
         }
         const { length } = all();
-        log(magenta('Textures:'), 'found', blue(length), 'texture files.');
         node.init = t.numericLiteral(length);
       },
     },

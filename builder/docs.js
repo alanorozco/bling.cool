@@ -24,10 +24,9 @@ import { blue, magenta } from 'colors';
 
 import { exec } from 'child_process';
 import { existsSync, lstatSync, readdir, readFile, writeFile } from 'fs';
-import { parallel, series } from 'gulp';
 import { promisify } from 'util';
-import glob from 'fast-glob';
 import fonts from '../artifacts/fonts';
+import glob from 'fast-glob';
 import log from 'fancy-log';
 import path from 'path';
 
@@ -233,9 +232,9 @@ async function format() {
   await prettier('*.md */*.md **/*.md');
 }
 
-const docs = series(
-  parallel(threepAttribution, writeFirstLevelReadmes),
-  format
-);
+async function docs() {
+  await Promise.all([threepAttribution(), writeFirstLevelReadmes()]);
+  await format();
+}
 
 export default docs;

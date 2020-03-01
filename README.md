@@ -39,10 +39,10 @@ this project's dependencies through:
 yarn
 ```
 
-Make sure you've [installed `gulp-cli` globally.](https://gulpjs.com/docs/en/getting-started/quick-start) After that, you can build with:
+Then you can build with:
 
 ```sh
-gulp dist
+yarn start dist
 ```
 
 This will output a `dist/index.html` entry file and a `dist/textures/`
@@ -55,7 +55,7 @@ Additionally, a `dist/.workspace/` directory contains intermediate build artifac
 To build, watch and serve on port `:8000`, run:
 
 ```sh
-gulp
+yarn start
 ```
 
 ## Tools
@@ -74,7 +74,7 @@ brew install gifsicle exiftool
 Once installed, textures can be rebuilt via:
 
 ```sh
-gulp textures
+yarn start textures
 ```
 
 ### Documentation generator
@@ -82,7 +82,7 @@ gulp textures
 A documentation generator is bundled as part of the build system, runnable via:
 
 ```sh
-gulp docs
+yarn start docs
 ```
 
 This generates the attributions on [`3p/README.md`](./3p/README.md) and an
