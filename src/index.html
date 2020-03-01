@@ -38,8 +38,149 @@
   <body class="not-ready">
     <div class="border textured"></div>
     <main>
-      <!-- partial:header -->
-      <!-- partial:chrome -->
+      <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+        <defs>
+          <symbol id="sparkle">
+            <g fill="none" fill-rule="evenodd" stroke-width="3">
+              <path
+                d="M22.2,8.83571363 C22.2,16.1828436 17.2,22.2264506 10.9,22.2264506"
+              />
+              <path
+                d="M33.6,22.2264506 C27.4,22.2264506 22.3,16.3013457 22.3,8.83571363"
+              />
+              <path
+                d="M22.3,35.6171875 C22.3,28.2700575 27.3,22.2264506 33.6,22.2264506"
+              />
+              <path
+                d="M11,22.2264506 C17.2,22.2264506 22.3,28.1515554 22.3,35.6171875"
+              />
+              <path
+                d="M7.79428148,0.622255592 C7.79428148,5.00683317 4.79428148,8.68039817 0.994281482,8.68039817"
+              />
+              <path
+                d="M14.5942815,8.68039817 C10.8942815,8.68039817 7.79428148,5.12533527 7.79428148,0.622255592"
+              />
+              <path
+                d="M7.79428148,17.0491717 C7.79428148,12.6645941 10.7942815,8.99102909 14.5942815,8.99102909"
+              />
+              <path
+                d="M0.994281482,8.99102909 C4.69428148,8.99102909 7.79428148,12.546092 7.79428148,17.0491717"
+              />
+            </g>
+          </symbol>
+        </defs>
+      </svg>
+      <div class="loader"></div>
+      <div class="toolbar fl-r">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 37 39"
+          class="hued"
+        >
+          <use href="#sparkle"></use>
+        </svg>
+        <label>
+          <button class="panel-toggle toggle-textures" data-toggle="textures">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="hide-on-small"
+              viewBox="0 0 100 100"
+            >
+              <path
+                d="M2 40a4 4 0 0 0 1 1l44 52a4 4 0 0 0 1 0l1 1a4 4 0 0 0 3 0v-1a4 4 0 0 0 1 0l44-52a4 4 0 0 0 1-1 4 4 0 0 0 0-2 4 4 0 0 0 0-1 3 3 0 0 0 0-1L82 8a4 4 0 0 0-4-2H22a4 4 0 0 0-3 2L3 36a3 3 0 0 0-1 0 3 3 0 0 0 0 1 4 4 0 0 0 0 1 4 4 0 0 0 0 2zm29 2l9 31-25-31zm54 0L60 73l9-31zM50 76L39 42h22zm37-42H69l-6-20h13zM55 14l6 20H39l6-20zm-31 0h13l-6 20H13z"
+              />
+            </svg>
+            texture
+          </button>
+        </label>
+        <label>
+          <button
+            class="panel-toggle selected-font"
+            data-toggle="font"
+          ></button>
+        </label>
+        <label>
+          <button class="panel-toggle toggle-fx" data-toggle="fx">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="hide-on-small"
+              viewBox="0 0 100 100"
+            >
+              <path
+                d="M57 54L46 43 4 85l12 11zm-8 0l-3 3-3-3 3-3zm-10 4l3 3-27 26-2-2zm9-18l12 12 13-14-11-11zm12 3l-3-3 5-5 2 3zM52 4h6v19h-6zm25 38h19v6H77zm-9-15l14-13 4 4-13 14zm-43 4h19v6H25zm38 25h6v19h-6z"
+              />
+            </svg>
+            fx
+          </button>
+        </label>
+        <label>
+          <button class="encode-button">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="hide-on-small"
+              viewBox="0 0 27 19"
+            >
+              <g fill="#000" fill-rule="evenodd">
+                <path
+                  d="M1.5 7.32h6a.7.7 0 0 0 0-1.4h-6a.7.7 0 0 0 0 1.4zM11.2 9.37a.7.7 0 0 0-.7-.7h-9a.7.7 0 0 0 0 1.4h9a.7.7 0 0 0 .7-.7z"
+                />
+                <path
+                  d="M24.43 4.2a1.8 1.8 0 0 0-1.61-1h-2.88l.15-.9A1.8 1.8 0 0 0 18.32.2H5.85a1.8 1.8 0 0 0-1.78 1.5l-.36 2.17a.8.8 0 0 0 1.58.26l.36-2.16c.02-.1 12.82-.17 12.82-.17l-.93 6.07a.8.8 0 0 0 1.58.26l.56-3.33L23 4.79l2.02 4.24-.83 5.17h-1a3.3 3.3 0 0 0-6.38 0h-6.12a3.3 3.3 0 0 0-6.38 0h-.86l.34-2.07a.8.8 0 0 0-1.58-.26l-.3 1.83a1.8 1.8 0 0 0 1.77 2.1h.63a3.3 3.3 0 0 0 6.38 0h6.12a3.3 3.3 0 0 0 6.38 0h.8a1.8 1.8 0 0 0 1.77-1.5l.83-5c.07-.38.01-.76-.16-1.1l-2-4zM7.5 16.9a1.9 1.9 0 1 1 0-3.8 1.9 1.9 0 0 1 0 3.8zm12.5-.03a1.87 1.87 0 1 1 0-3.74 1.87 1.87 0 0 1 0 3.74z"
+                />
+              </g>
+            </svg>
+            GIF
+          </button>
+        </label>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 37 39"
+          class="hued"
+        >
+          <use href="#sparkle"></use>
+        </svg>
+      </div>
+      <div class="panel sliding panel-textures hued" hidden>
+        <div class="panel-slider texture-options"></div>
+      </div>
+      <div class="panel panel-fx fl-c" hidden>
+        <label for="hue">
+          hue
+          <input id="hue" type="range" min="0" max="1" step="0.05" value="0" />
+        </label>
+        <label for="shadow-direction">
+          shadow
+          <input
+            id="shadow-direction"
+            type="range"
+            min="-1"
+            max="1"
+            step="0.05"
+            value="0.5"
+          />
+        </label>
+        <div class="fl-r fx-toggles">
+          <label for="shadow-is-flat">
+            flat shadow
+            <input id="shadow-is-flat" type="checkbox" />
+          </label>
+          <label for="is-3d">
+            3D
+            <input id="is-3d" type="checkbox" checked />
+          </label>
+        </div>
+      </div>
+      <div class="panel sliding panel-font" hidden>
+        <div class="panel-slider font-options hued">
+          <template>
+            <div class="font-option">
+              <div class="font-preview"></div>
+              <div class="font-name"></div>
+            </div>
+          </template>
+        </div>
+      </div>
+
       <label for="editable" class="editable-wrap">
         <div class="editable-sentinel editable-text-fitter"></div>
         <div class="editable-sentinel editable-shadow hued"></div>

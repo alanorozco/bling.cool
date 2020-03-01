@@ -23,8 +23,8 @@
 // defaults
 $lineHeight: 1.5;
 $toolbarHeight: 48px;
-$bodyBorder: 20px;
-$marginUnit: 20px;
+$bodyBorder: 30px;
+$marginUnit: 18px;
 $smallView: '(max-width: 600px)';
 
 // colors
@@ -72,7 +72,7 @@ $thumb-color: $grayish;
 
 body {
   margin: 0;
-  padding: $marginUnit;
+  padding: $bodyBorder;
   font-family: 'Chalkboard', 'Comic Sans MS', sans-serif;
   font-size: 18px;
   line-height: $lineHeight;
@@ -121,10 +121,10 @@ body {
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  top: 2.5 * $marginUnit + 0.5 * $toolbarHeight;
-  height: $toolbarHeight * 2;
-  left: $marginUnit;
-  right: $marginUnit;
+  top: 3 * $marginUnit + $toolbarHeight;
+  height: 32px + $marginUnit;
+  left: $bodyBorder;
+  right: $bodyBorder;
   z-index: 2;
 
   @media #{$smallView} {
@@ -140,7 +140,6 @@ body {
   }
 }
 
-header,
 footer {
   margin: 0.5 * $marginUnit 0;
   text-align: center;
@@ -166,24 +165,6 @@ button {
 main,
 .editable-wrap {
   flex-direction: column;
-}
-
-header {
-  color: $blue; // hued
-
-  h1 {
-    display: inline;
-    font: inherit;
-  }
-
-  > svg {
-    height: 20px;
-    margin: 0 0.5 * $marginUnit;
-
-    > use {
-      stroke: $blue; // hued
-    }
-  }
 }
 
 footer {
@@ -390,11 +371,20 @@ a {
 $buttonRadius: 32px;
 
 .toolbar {
-  margin: 0 0 $marginUnit;
+  margin: $marginUnit 0;
   font-size: 14px;
   color: $darkGrayish;
   line-height: $toolbarHeight;
   position: relative;
+
+  > svg {
+    height: 20px;
+    margin: 0 0.5 * $marginUnit;
+
+    > use {
+      stroke: $blue; // hued
+    }
+  }
 
   > label {
     margin: 0 ($marginUnit / 4);
@@ -593,10 +583,10 @@ $effectiveFontPanelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 *
 
 .encoded-lightbox {
   position: absolute;
-  left: $marginUnit;
-  top: $marginUnit;
-  right: $marginUnit;
-  bottom: $marginUnit;
+  left: $bodyBorder;
+  top: $bodyBorder;
+  right: $bodyBorder;
+  bottom: $bodyBorder;
   z-index: 10000 + 1;
   box-sizing: border-box;
   padding: $marginUnit * 2;
