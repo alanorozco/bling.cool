@@ -22,6 +22,7 @@
 
 import { expandFontId } from '../../lib/fonts';
 import { isEl, tryFocus } from '../dom/dom';
+import debounce from 'lodash.debounce';
 
 const maxLineLength = 50;
 const maxLines = 6;
@@ -130,6 +131,10 @@ export default class Editor {
     state.on(this, 'text', this.setText_.bind(this));
 
     this.attachListeners_();
+
+    this.scheduleResumeTexture_ = debounce(() => {
+      this.toggleStaticTexture_(false);
+    }, 500);
   }
 
   onInput_({ target }) {
@@ -149,25 +154,25 @@ export default class Editor {
     editable.parentNode.addEventListener('click', () => tryFocus(editable));
     editable.addEventListener('input', this.onInput_.bind(this));
 
-    // TODO: Pause animation while typing.
-
     if (this.editableValueProp_ != 'innerHTML') {
       return;
     }
 
     editable.addEventListener('keypress', this.onInnerHtmlKeyPress_.bind(this));
     editable.addEventListener('paste', this.onInnerHtmlPaste_.bind(this));
-    //
-    // editable.addEventListener('focus', () => {
-    //   if (this.doc_.body.scrollTop > 0) {
-    //     this.toggleWithKeyboard_(true);
-    //   }
-    // });
-    // editable.addEventListener('blur', () => this.toggleWithKeyboard_(false));
-    // }
-    //
-    // toggleWithKeyboard_(isWithKeyboard) {
-    //   this.doc_.body.classList.toggle('editable-with-keyboard', isWithKeyboard);
+
+    editable.addEventListener('focus', () => {
+      setTimeout(() => {
+        if (this.doc_.body.scrollTop > 0) {
+          this.toggleWithKeyboard_(true);
+        }
+      }, 500);
+    });
+    editable.addEventListener('blur', () => this.toggleWithKeyboard_(false));
+  }
+
+  toggleWithKeyboard_(isWithKeyboard) {
+    this.doc_.body.classList.toggle('editable-with-keyboard', isWithKeyboard);
   }
 
   onInnerHtmlPaste_(e) {
@@ -210,9 +215,12 @@ export default class Editor {
   }
 
   onInnerHtmlKeyPress_(e) {
+    this.toggleStaticTexture_(true);
+    this.scheduleResumeTexture_();
+
     this.forceLineBreakAtEnd_(e.target);
 
-    if (e.which != /* ENTER */ 13) {
+    if (e.which !== /* ENTER */ 13) {
       return true;
     }
 
@@ -294,5 +302,9 @@ export default class Editor {
 
   resize_() {
     this.resizer_(this.editable_, this.sentinels_);
+  }
+
+  toggleStaticTexture_(isStatic) {
+    this.editable_.classList.toggle('textured-static', isStatic);
   }
 }
