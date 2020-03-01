@@ -19,35 +19,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-import { argv } from 'yargs';
-
-import { exec } from 'child_process';
-import { magenta } from 'colors';
-import { promisify } from 'util';
 import glob from 'fast-glob';
-import log from 'fancy-log';
 import Mocha from 'mocha';
 
-const execAsync = promisify(exec);
-
-const modifiedFilesGitCmd = 'git diff-tree --no-commit-id --name-only -r HEAD';
-
-const modifiedFiles = async () =>
-  (await execAsync(modifiedFilesGitCmd)).stdout.trim().split('\n');
-
 export default async function test() {
-  const reporter = argv.travis ? 'dot' : 'nyan';
-
-  const mocha = new Mocha({ reporter });
-
-  if (argv.travis) {
-    if (!(await modifiedFiles()).find(f => /\.(js|json|gif)$/.test(f))) {
-      log(magenta('No affecting files modified.'));
-      log('Skipping tests.');
-      return;
-    }
-  }
+  const mocha = new Mocha({ reporter: 'dot' });
 
   for (const file of await glob('./test/test-*.js')) {
     mocha.addFile(file);
