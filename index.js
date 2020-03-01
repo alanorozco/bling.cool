@@ -202,17 +202,13 @@ const tasks = {
   serve,
 };
 
-const running = new Set();
-
 async function task(task, ...args) {
   const { name } = task;
   const step = (name, ...msg) =>
     args[0] !== undefined ? log(name, args[0], ...msg) : log(name, ...msg);
   step(magenta(name), '...');
   try {
-    running.add(name);
     const result = await task.apply(null, args);
-    running.delete(name);
     step(blue(name), '✓');
     return result;
   } catch (error) {
