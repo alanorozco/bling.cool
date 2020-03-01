@@ -152,6 +152,10 @@ footer {
   margin: $marginUnit 0;
   text-align: center;
   text-transform: lowercase;
+
+  body.focus & {
+    display: none;
+  }
 }
 
 .fl-r,
@@ -203,20 +207,20 @@ main {
   box-sizing: border-box;
   position: absolute;
   top: $bodyBorder;
-  // right: $bodyBorder;
+  right: $bodyBorder;
   bottom: $bodyBorder;
-  // left: $bodyBorder;
-  width: calc(100vw - #{2 * $bodyBorder});
+  left: $bodyBorder;
   // height: calc(100vh - #{2 * $bodyBorder});
   border-radius: 0.5 * $marginUnit;
 
   @media #{$smallView} {
     border-radius: 0;
-    width: 100vw;
+    left: 0;
+    right: 0;
 
     .safari.focus & {
       // safari 270px aklfjds
-      height: calc(100vh - #{2 * $bodyBorder + 270px});
+      bottom: $bodyBorder + 270px;
     }
   }
 }

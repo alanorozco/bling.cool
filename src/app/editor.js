@@ -140,7 +140,7 @@ export default class Editor {
     // lol i hate doing this
     const { navigator, document } = win;
     const ua = navigator.userAgent.toLowerCase();
-    if (ua.indexOf('safari') != -1 && ua.indexOf('chrome') < 0) {
+    if (ua.indexOf('safari') > -1 && ua.indexOf('chrome') < 0) {
       document.body.classList.add('safari');
     }
   }
@@ -171,6 +171,7 @@ export default class Editor {
 
     editable.addEventListener('focus', () => {
       setTimeout(() => {
+        // lol i hate doing this
         this.doc_.body.scrollTop = 0;
         this.toggleFocusClass_(true);
       }, 500);
