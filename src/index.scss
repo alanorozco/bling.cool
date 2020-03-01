@@ -213,7 +213,9 @@ main {
 
   @media #{$smallView} {
     border-radius: 0;
-    width: 100vw;
+    // width: 100vw;
+    left: 0;
+    right: 0;
   }
 }
 
