@@ -34,6 +34,24 @@ function closePanel(panel, button) {
 function openPanel(panel, button) {
   panel.removeAttribute('hidden');
   button.classList.add('selected');
+  scrollSliderToSelected(panel);
+}
+
+function scrollSliderToSelected(panel) {
+  const slider = panel.querySelector('.panel-slider');
+  if (!slider) return;
+
+  const selected = slider.querySelector('.selected');
+  if (!selected) return;
+
+  const { offsetWidth } = selected;
+  const { left } = selected.getBoundingClientRect();
+  const { offsetWidth: outerWidth } = slider;
+
+  slider.scrollLeft = Math.max(
+    0,
+    slider.scrollLeft + left - outerWidth / 2 + offsetWidth / 2
+  );
 }
 
 export default class Toolbar {
