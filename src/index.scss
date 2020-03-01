@@ -79,22 +79,21 @@ $thumb-height: 24px;
   margin: $thumb-height / 2 $thumb-height / 4;
 }
 
+$fuSafariOffset: 320px;
+
 body {
   margin: 0;
   padding: $bodyBorder;
   font-family: 'Chalkboard', 'Comic Sans MS', sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   line-height: $lineHeight;
   overflow: hidden;
   min-height: 100vh;
   // position: relative;
 
   @media #{$smallView} {
-    font-size: 16px;
     &.safari.focus {
-      // rly honestly yea fu sfrai
-      min-height: calc(100vh - 270px);
-      // like 270px are u kidding me
+      height: calc(100vh - $fuSafariOffset);
     }
   }
 }
@@ -215,12 +214,13 @@ main {
 
   @media #{$smallView} {
     border-radius: 0;
-    left: 0;
+    top: $marginUnit;
     right: 0;
+    bottom: $marginUnit;
+    left: 0;
 
-    .safari.focus & {
-      // safari 270px aklfjds
-      bottom: $bodyBorder + 270px;
+    body.safari.focus & {
+      // bottom: $marginUnit + $fuSafariOffset;
     }
   }
 }
@@ -425,7 +425,6 @@ $toolbarLineHeight: 32px;
 
 .toolbar {
   margin: $marginUnit * 1.5 0;
-  font-size: 16px;
   color: $darkGrayish;
   height: $toolbarLineHeight + $marginUnit;
   line-height: $toolbarLineHeight;
