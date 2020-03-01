@@ -50,7 +50,11 @@ function fillPhrase(phrase) {
 
 function getPhrase() {
   const phraseFromPathname = decodeURI(
-    window.location.pathname.replace(/^\//, '').trim()
+    window.location.pathname
+      .replace(/^\//, '')
+      // + are always spaces, idc
+      .replace(/\+/, ' ')
+      .trim()
   );
   return fillPhrase(
     phraseFromPathname.length > 0 ? [phraseFromPathname] : pickRandom(phrases)

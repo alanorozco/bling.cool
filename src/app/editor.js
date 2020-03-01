@@ -157,17 +157,17 @@ export default class Editor {
 
     editable.addEventListener('keypress', this.onInnerHtmlKeyPress_.bind(this));
     editable.addEventListener('paste', this.onInnerHtmlPaste_.bind(this));
-
-    editable.addEventListener('focus', () => {
-      if (this.doc_.body.scrollTop > 0) {
-        this.toggleWithKeyboard_(true);
-      }
-    });
-    editable.addEventListener('blur', () => this.toggleWithKeyboard_(false));
-  }
-
-  toggleWithKeyboard_(isWithKeyboard) {
-    this.doc_.body.classList.toggle('editable-with-keyboard', isWithKeyboard);
+    //
+    // editable.addEventListener('focus', () => {
+    //   if (this.doc_.body.scrollTop > 0) {
+    //     this.toggleWithKeyboard_(true);
+    //   }
+    // });
+    // editable.addEventListener('blur', () => this.toggleWithKeyboard_(false));
+    // }
+    //
+    // toggleWithKeyboard_(isWithKeyboard) {
+    //   this.doc_.body.classList.toggle('editable-with-keyboard', isWithKeyboard);
   }
 
   onInnerHtmlPaste_(e) {
