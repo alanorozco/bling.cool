@@ -79,6 +79,11 @@ $thumb-height: 24px;
   margin: $thumb-height / 2 $thumb-height / 4;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   margin: 0;
   padding: $bodyBorder;
@@ -86,17 +91,10 @@ body {
   font-size: 18px;
   line-height: $lineHeight;
   overflow: hidden;
-  min-height: 100vh;
+  position: relative;
 
   @media #{$smallView} {
     font-size: 16px;
-  }
-}
-
-body {
-  @media #{$smallView} {
-    padding-left: 0;
-    padding-right: 0;
   }
 }
 
