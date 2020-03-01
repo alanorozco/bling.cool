@@ -23,4 +23,4 @@ Two types of files exist in this subdir:
 
 - each of **`f[0-9]+.json`** holds a flat array representing the sequence of frames for a specific texture.
 
-This file set can be rebuilt by running `gulp textures`. For prerequisites, [see the top-level `README`](../README.md#texture-toolkit).
+This file set can be rebuilt by running `yarn textures`. For prerequisites, [see the top-level `README`](../README.md#texture-toolkit).
