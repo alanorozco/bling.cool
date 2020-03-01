@@ -227,7 +227,8 @@ main {
   width: 100%;
   overflow: hidden;
 
-  .editable-with-keyboard & {
+  @media #{$smallView} {
+    // fu sfari
     justify-content: start;
   }
 
