@@ -29,7 +29,6 @@ import { renderSync as sass } from 'sass';
 import { textures } from './builder/textures';
 import babel from 'rollup-plugin-babel';
 import bundleIndex from './builder/bundle-index';
-import chokidar from 'chokidar';
 import commonjs from 'rollup-plugin-commonjs';
 import cssDeclarationSorter from 'css-declaration-sorter';
 import cssnano from 'cssnano';
