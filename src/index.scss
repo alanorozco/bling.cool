@@ -79,11 +79,6 @@ $thumb-height: 24px;
   margin: $thumb-height / 2 $thumb-height / 4;
 }
 
-html,
-body {
-  height: 100%;
-}
-
 body {
   margin: 0;
   padding: $bodyBorder;
@@ -92,9 +87,15 @@ body {
   line-height: $lineHeight;
   overflow: hidden;
   position: relative;
+  height: 100vh;
 
   @media #{$smallView} {
     font-size: 16px;
+    .safari.focus {
+      // rly honestly yea fu sfrai
+      height: calc(100vh - 270px);
+      // like 270px are u kidding me
+    }
   }
 }
 

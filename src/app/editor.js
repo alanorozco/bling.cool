@@ -136,6 +136,13 @@ export default class Editor {
     this.scheduleResumeTexture_ = debounce(() => {
       this.toggleStaticTexture_(false);
     }, 500);
+
+    // lol i hate doing this
+    const { navigator, document } = win;
+    const ua = navigator.userAgent.toLowerCase();
+    if (ua.indexOf('safari') != -1 && ua.indexOf('chrome') < 0) {
+      document.body.classList.add('safari');
+    }
   }
 
   onInput_({ target }) {
@@ -162,18 +169,17 @@ export default class Editor {
     editable.addEventListener('keypress', this.onInnerHtmlKeyPress_.bind(this));
     editable.addEventListener('paste', this.onInnerHtmlPaste_.bind(this));
 
-    //   editable.addEventListener('focus', () => {
-    //     setTimeout(() => {
-    //       if (this.doc_.body.scrollTop > 0) {
-    //         this.toggleWithKeyboard_(true);
-    //       }
-    //     }, 500);
-    //   });
-    //   editable.addEventListener('blur', () => this.toggleWithKeyboard_(false));
-    // }
+    editable.addEventListener('focus', () => {
+      setTimeout(() => {
+        this.doc_.body.scrollTop = 0;
+        this.toggleFocusClass_(true);
+      }, 500);
+    });
+    editable.addEventListener('blur', () => this.toggleFocusClass_(false));
+  }
 
-    // toggleWithKeyboard_(isWithKeyboard) {
-    //   this.doc_.body.classList.toggle('editable-with-keyboard', isWithKeyboard);
+  toggleFocusClass_(isFocused) {
+    this.doc_.body.classList.toggle('focus', isFocused);
   }
 
   onInnerHtmlPaste_(e) {
