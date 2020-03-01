@@ -94,6 +94,7 @@ body {
     min-height: 95vh; // lol
     &.safari.focus {
       min-height: calc(100vh - #{$fuSafariOffset});
+      max-height: calc(100vh - #{$fuSafariOffset});
     }
   }
 }
@@ -136,7 +137,7 @@ body {
 
   @media #{$smallView} {
     top: auto;
-    bottom: $bodyBorder + $marginUnit * 3;
+    bottom: $marginUnit * 2;
   }
 
   &.active {
@@ -580,6 +581,11 @@ $toolbarLineHeight: 32px;
   box-sizing: border-box;
   padding: $marginUnit * 2;
   background: white;
+
+  @media #{$smallView} {
+    left: 0;
+    right: 0;
+  }
 
   &:not([hidden]) {
     opacity: 0;
