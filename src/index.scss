@@ -220,6 +220,10 @@ main {
   width: 100%;
   overflow: hidden;
 
+  .editable-with-keyboard & {
+    justify-content: start;
+  }
+
   > div,
   > textarea {
     outline: none;
