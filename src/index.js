@@ -70,8 +70,8 @@ const randomFont = () =>
 
 const { document } = self;
 
-const textureOptions = fetch(`/${dirs.textures.frames}/initial.json`).then(
-  response => response.json()
+const textureOptions = fetch(`/${dirs.textures}/initial.json`).then(response =>
+  response.json()
 );
 
 const { ready } = new App(

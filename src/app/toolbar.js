@@ -78,6 +78,10 @@ export default class Toolbar {
     if (!button) {
       return;
     }
+    if (button.hasAttribute('data-toggle-async')) {
+      // It toggles itself after an async event.
+      return;
+    }
     const panel = button.getAttribute('data-toggle');
     if (!panel) {
       return;

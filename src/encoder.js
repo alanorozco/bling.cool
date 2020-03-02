@@ -61,13 +61,16 @@ function encodeAsGif(win, width, height, frames, rendererOptions) {
     resolve(win.URL.createObjectURL(blob));
   });
 
+  // Copy to modify
+  frames = [].concat(frames);
+
   playback(win, width, height, frames, rendererOptions, (delay, canvas) => {
     gif.addFrame(canvas, { delay });
   }).then(() => {
     gif.render();
   });
 
-  return promise;
+  return [promise, () => gif.abort()];
 }
 
 pushAsync(self, { encodeAsGif });

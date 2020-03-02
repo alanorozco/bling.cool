@@ -23,13 +23,11 @@
 /* global scssVar */
 
 import { decomposeTextShadow } from '../css-util/css-util';
+import { fetchFrames } from '../../lib/textures';
 import { getLengthNumeral } from '../../lib/css';
-import { textureFramesUrl } from '../../lib/textures';
+import debounce from 'lodash.debounce';
 import loadImage from '../dom/load-image';
 import once from 'lodash.once';
-
-const fetchFrames = textureId =>
-  fetch(textureFramesUrl(textureId)).then(response => response.json());
 
 const asciiNormal = text =>
   text.normalize
@@ -47,18 +45,59 @@ export default class EncodeButton {
     this.doc_ = win.document;
     this.state_ = state;
     this.modules_ = modules;
+    this.cancelHandler_ = null;
 
-    this.attachLightboxEvents_ = once(lightbox => {
-      const closeButton = lightbox.querySelector('.close-button');
-      closeButton.addEventListener('click', this.closeLightbox_.bind(this));
+    this.attachPanelEvents_ = once(element => {
+      const closeButton = element.querySelector('.close-button');
+      closeButton.addEventListener('click', this.closePanel_.bind(this));
     });
 
     const button = win.document.querySelector('.encode-button');
     button.addEventListener('click', this.onClick_.bind(this));
+
+    this.encodeDebounced_ = debounce(() => {
+      this.encode_();
+    }, 500);
+
+    // TODO: Maybe this is nested somehow.
+    // It's a bit naive to have a table of these state changes.
+    this.state_.on(this, 'text', () => this.eagerEncode_());
+    this.state_.on(this, 'hue', () => this.eagerEncode_());
+    this.state_.on(this, 'font', () => this.eagerEncode_());
+    this.state_.on(this, 'texture', () => this.eagerEncode_());
+    this.state_.on(this, 'shadowDirection', () => this.eagerEncode_());
+    this.state_.on(this, 'shadowIsFlat', () => this.eagerEncode_());
+    this.state_.on(this, 'is3d', () => this.eagerEncode_());
+
+    this.state_.on(this, 'panel', panel => {
+      if (panel !== 'encoded') {
+        this.clearPanel_();
+      }
+    });
+
+    this.eagerEncode_();
   }
 
-  onClick_() {
-    const framesPromise = fetchFrames(this.state_.get('texture'));
+  eagerEncode_() {
+    this.cancel_();
+    this.encodeDebounced_();
+  }
+
+  cancel_() {
+    this.promise_ = null;
+    this.state_.set(this, { encoding: false });
+    if (this.cancelHandler_ !== null) {
+      this.cancelHandler_();
+      this.cancelHandler_ = null;
+    }
+  }
+
+  encode_() {
+    if (this.promise_) {
+      return this.promise_;
+    }
+
+    const framesPromise = fetchFrames(this.win_, this.state_.get('texture'));
     const encodeAsGifPromise = this.modules_.get('encodeAsGif');
 
     const computedShadowStyle = getComputedStyle(
@@ -82,52 +121,73 @@ export default class EncodeButton {
     const font = this.state_.get('font');
     const hue = this.state_.get('hue');
 
-    this.state_.set(this, { encoding: true });
+    this.cancel_();
 
-    Promise.all([framesPromise, encodeAsGifPromise])
-      .then(([frames, encodeAsGif]) =>
-        encodeAsGif(this.win_, width, height, frames, {
-          text,
-          textShadow,
-          background,
-          margin,
-          hue,
-          font,
-          fontSize,
-        })
-      )
-      .then(url => this.openLightbox_(url, toFilename(text)))
-      .then(() => {
-        this.win_.setTimeout(() => {
-          this.state_.set(this, { encoding: false });
-        }, scssVar('lightboxAnimationDuration'));
+    this.promise_ = Promise.all([framesPromise, encodeAsGifPromise])
+      .then(([frames, encodeAsGif]) => {
+        const [promise, cancelHandler] = encodeAsGif(
+          this.win_,
+          width,
+          height,
+          frames,
+          {
+            text,
+            textShadow,
+            background,
+            margin,
+            hue,
+            font,
+            fontSize,
+          }
+        );
+        this.cancelHandler_ = cancelHandler;
+        return promise;
+      })
+      .then(url => {
+        this.cancelHandler_ = null;
+        return [url, text];
       });
+
+    return this.promise_;
   }
 
-  openLightbox_(url, filename) {
-    const doc = this.doc_;
-    const lightbox = doc.querySelector('.encoded-lightbox');
-
-    const downloadButton = lightbox.querySelector('.download-button');
-    downloadButton.href = url;
-    downloadButton.download = filename;
-
-    const imgContainer = lightbox.querySelector('.img-container');
-    const imgLoadPromise = loadImage(doc, url);
-    return imgLoadPromise.then(img => {
-      imgContainer.appendChild(img);
-      lightbox.removeAttribute('hidden');
-      this.attachLightboxEvents_(lightbox);
+  onClick_() {
+    this.state_.set(this, { encoding: true });
+    this.encode_().then(([url, text]) => {
+      this.openPanel_(url, toFilename(text));
+      this.state_.set(this, { encoding: false });
     });
   }
 
-  closeLightbox_(e) {
+  openPanel_(url, filename) {
+    const doc = this.doc_;
+    const panel = doc.querySelector('.panel.encoded');
+
+    const downloadButton = panel.querySelector('.download-button');
+    downloadButton.href = url;
+    downloadButton.download = filename;
+
+    const imgContainer = panel.querySelector('.img-container');
+    const imgLoadPromise = loadImage(doc, url);
+
+    return imgLoadPromise.then(img => {
+      this.state_.set(this, { panel: 'encoded' });
+      imgContainer.appendChild(img);
+      this.attachPanelEvents_(panel);
+    });
+  }
+
+  closePanel_(e) {
     e.preventDefault();
-    const lightbox = this.doc_.querySelector('.encoded-lightbox');
-    const imgContainer = lightbox.querySelector('.img-container');
+    this.clearPanel_();
+    this.state_.set(this, { panel: null });
+  }
+
+  clearPanel_() {
+    const panel = this.doc_.querySelector('.panel.encoded');
+    const imgContainer = panel.querySelector('.img-container');
     if (imgContainer.firstElementChild) {
       imgContainer.removeChild(imgContainer.firstElementChild);
     }
-    lightbox.setAttribute('hidden', 'hidden');
   }
 }

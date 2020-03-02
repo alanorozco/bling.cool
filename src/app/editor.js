@@ -170,11 +170,10 @@ export default class Editor {
     editable.addEventListener('paste', this.onInnerHtmlPaste_.bind(this));
 
     editable.addEventListener('focus', () => {
-      setTimeout(() => {
-        // lol i hate doing this
-        this.doc_.body.scrollTop = 0;
-        this.toggleFocusClass_(true);
-      }, 500);
+      // lol i hate doing this
+      this.doc_.body.scrollTop = 0;
+      this.toggleFocusClass_(true);
+      this.state_.set(this, { panel: null });
     });
     editable.addEventListener('blur', () => this.toggleFocusClass_(false));
   }

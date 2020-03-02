@@ -91,7 +91,7 @@ body {
   position: relative;
 
   @media #{$smallView} {
-    min-height: 95vh; // lol
+    // min-height: 95vh; // lol
     &.safari {
       // position: fixed;
     }
@@ -141,7 +141,7 @@ body {
 
   @media #{$smallView} {
     top: auto;
-    bottom: $marginUnit * 2;
+    bottom: $marginUnit;
   }
 
   &.active {
@@ -213,7 +213,7 @@ main {
   right: $bodyBorder;
   bottom: $bodyBorder;
   left: $bodyBorder;
-  // height: calc(100vh - #{2 * $bodyBorder});
+  height: calc(100vh - #{$bodyBorder});
   border-radius: 0.5 * $marginUnit;
 
   @media #{$smallView} {
@@ -223,6 +223,7 @@ main {
     left: 0;
 
     body.safari.focus & {
+      height: calc(100vh - #{$bodyBorder + $fuSafariOffset});
       // bottom: $marginUnit + $fuSafariOffset;
     }
   }
@@ -234,6 +235,7 @@ main {
   box-sizing: border-box;
   width: 100%;
   overflow: hidden;
+  padding: $marginUnit 0;
 
   @media #{$smallView} {
     // fu sfari
@@ -288,12 +290,12 @@ main {
   background-image: var(--texture-static);
 }
 
-$panelContentHeight: 90px;
+$panelContentHeight: 60px;
 
 .texture-option {
   width: $panelContentHeight;
   height: $panelContentHeight;
-  margin: 0 $marginUnit / 2;
+  margin: 0 $marginUnit / 4;
   display: block;
   cursor: pointer;
   transition: transform 0.3s, opacity 0.3s;
@@ -565,27 +567,21 @@ $toolbarLineHeight: 32px;
   }
 }
 
-.encoded-lightbox {
+.encoded {
   position: absolute;
+  top: $bodyBorder + $marginUnit + $toolbarHeight - 2px;
+  left: 0;
+  right: 0;
   left: $bodyBorder;
-  top: $bodyBorder;
   right: $bodyBorder;
-  bottom: $bodyBorder;
   z-index: 10000 + 1;
-  box-sizing: border-box;
-  padding: $marginUnit * 2;
+  padding: $marginUnit 0;
   background: white;
+  text-align: center;
 
   @media #{$smallView} {
     left: 0;
     right: 0;
-  }
-
-  &:not([hidden]) {
-    opacity: 0;
-    transform: scale(0);
-    animation: $lightboxAnimationDuration whoa ease-out;
-    animation-fill-mode: both;
   }
 
   a {
@@ -631,31 +627,40 @@ $toolbarLineHeight: 32px;
 }
 
 .fun {
-  position: relative;
+  position: absolute;
   color: $blue; // hued
   font-size: inherit;
+  left: 0;
+  right: 0;
+  top: -2 * $marginUnit;
+  pointer-events: none;
+
+  :not([hidden]) & {
+    animation: hidefun 0.8s;
+    animation-fill-mode: both;
+  }
 
   > svg {
-    top: -60px;
-    position: absolute;
+    top: 0;
     width: 100px;
-    fill: $blue; // hued
+    fill: $verylightBlue; // hued
+    position: absolute;
 
     &:first-child {
-      left: -90px;
       transform: scale(-1, 1);
+      right: 60%;
     }
 
     &:last-child {
-      right: -90px;
+      left: 60%;
     }
   }
 }
 
-@keyframes whoa {
-  to {
-    opacity: 1;
-    transform: scale(1);
+@keyframes hidefun {
+  100% {
+    opacity: 0;
+    transform: translate(0, -200px) scale(3);
   }
 }
 

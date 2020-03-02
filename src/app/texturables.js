@@ -21,7 +21,7 @@
  */
 
 import { composeTextShadow } from '../css-util/css-util';
-import { textureFirstFrameUrl, textureUrl } from '../../lib/textures';
+import { fetchFrames, textureUrl } from '../../lib/textures';
 
 const definedOr = (value, fallback) => (value === undefined ? fallback : value);
 
@@ -30,6 +30,7 @@ const cssUrl = url => `url(${url})`;
 export default class Texturables {
   constructor(win, state) {
     const doc = win.document;
+    this.win_ = win;
     this.doc_ = doc;
 
     this.state_ = state;
@@ -48,13 +49,18 @@ export default class Texturables {
     );
     state.on(this, 'shadowIsFlat', isFlat => this.setTextShadow_({ isFlat }));
     state.on(this, 'is3d', is3d => this.setTextShadow_({ is3d }));
+
+    this.cache_ = {};
   }
 
   setTexture_(index) {
     if (isNaN(index)) throw new Error();
     const { style } = this.doc_.body;
-    style.setProperty('--texture-animated', cssUrl(textureUrl(index)));
-    style.setProperty('--texture-static', cssUrl(textureFirstFrameUrl(index)));
+    fetchFrames(this.win_, index).then(([firstFrame]) => {
+      const [_, firstFrameData] = firstFrame;
+      style.setProperty('--texture-animated', cssUrl(textureUrl(index)));
+      style.setProperty('--texture-static', cssUrl(firstFrameData));
+    });
   }
 
   setHueRotate_(turns) {
