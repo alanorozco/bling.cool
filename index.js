@@ -100,16 +100,11 @@ async function css() {
     mergeMediaQueries(),
     cssnano(),
     cssDeclarationSorter({ order: 'smacss' }),
-    //
-  ]).process(
-    // sass({ file: from }).css,
-    fs.readFileSync(from).toString(),
-    {
-      parser: postcssScss,
-      to,
-      from,
-    }
-  );
+  ]).process(fs.readFileSync(from).toString(), {
+    parser: postcssScss,
+    to,
+    from,
+  });
 
   await fs.writeFile(to, css);
 }
