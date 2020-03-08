@@ -26,7 +26,6 @@ import { dirs, uglify as uglifyConfig } from './config';
 import { minify as htmlminify } from 'html-minifier';
 import { minify } from 'terser';
 import { rollup } from 'rollup';
-import { renderSync as sass } from 'sass';
 import { textures } from './builder/textures';
 import babel from 'rollup-plugin-babel';
 import bundleHtml from './builder/bundle-html';
