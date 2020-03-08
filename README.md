@@ -22,31 +22,19 @@ This project uses a variety of [3rd party resources](./3p/README.md) to bling it
 
 ## Building
 
-[`yarn`](https://yarnpkg.com) is used for package management.
-[Install `yarn`,](https://yarnpkg.com/en/docs/install#mac-stable) then install
-this project's dependencies through:
+1. `npm install`
+2. `npm run start dist`
 
-```sh
-yarn
-```
+This will output a `dist/` directory to be served from a static server's root.
 
-Then you can build with:
-
-```sh
-yarn start dist
-```
-
-This will output a `dist/index.html` entry file and a `dist/textures/`
-directory. Both of these can be served from a static server's root.
-
-Additionally, a `dist/.workspace/` directory contains intermediate build artifacts that are _not_ necessary for deployment.
+(Its `dist/.workspace/` directory contains intermediate build artifacts that are _not_ necessary for deployment.)
 
 ### Active development
 
 To build, watch and serve on port `:8000`, run:
 
 ```sh
-yarn start
+npm run start
 ```
 
 ## Tools
@@ -65,7 +53,7 @@ brew install gifsicle exiftool
 Once installed, textures can be rebuilt via:
 
 ```sh
-yarn start textures
+npm run start textures
 ```
 
 ### Documentation generator
@@ -73,7 +61,7 @@ yarn start textures
 A documentation generator is bundled as part of the build system, runnable via:
 
 ```sh
-yarn start docs
+npm run start docs
 ```
 
 This generates the attributions on [`3p/README.md`](./3p/README.md) and an
