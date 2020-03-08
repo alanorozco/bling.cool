@@ -19,45 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@import '../3p/style-range-inputs/style-range-inputs.scss';
 
-// defaults
+// defaults, others in ./index.scss.vars.js
 $lineHeight: 1.5;
 $toolbarHeight: 48px;
 $bodyBorder: 24px;
-$marginUnit: 18px;
-$smallView: '(max-width: 700px)';
-
-// colors
-$blue: rgb(0, 68, 214);
-$lightBlue: lighten($blue, 20%);
-$verylightBlue: lighten($blue, 40%);
-
-$grayish: rgb(180, 186, 194);
-$lightGrayish: lighten($grayish, 15%);
-$darkGrayish: darken($grayish, 20%);
-
-$purple: adjust-hue(
-  $color: $blue,
-  $degrees: 60,
-);
-$orange: adjust-hue(
-  $color: $blue,
-  $degrees: 160,
-);
-$yellow: saturate(
-  adjust-hue(
-    $color: $blue,
-    $degrees: 190,
-  ),
-  20%
-);
-$pink: lighten(
-  adjust-hue(
-    $color: $blue,
-    $degrees: 70,
-  ),
-  20%
-);
+$smallView: 700px;
 
 // text shadow
 $shadowX: 6px;
@@ -65,18 +33,8 @@ $shadowY: 6px;
 $shadowBlur: 12px;
 $shadowOpacity: 0.48;
 
-// lightbox
-$lightboxAnimationDuration: 300ms;
-
-// overrides: 3p/style-range-inputs/style-range-inputs
-$track-color: $lightGrayish;
-$thumb-color: $grayish;
-$thumb-height: 24px;
-
-@import '../3p/style-range-inputs/style-range-inputs';
-
 [type='range'] {
-  margin: $thumb-height / 2 $thumb-height / 4;
+  margin: calc($thumb-height / 2) calc($thumb-height / 4);
 }
 
 body {
@@ -88,20 +46,20 @@ body {
   overflow: hidden;
   min-height: 100vh;
 
-  @media #{$smallView} {
+  @media (max-width: $smallView) {
     font-size: 16px;
   }
 }
 
 body {
-  @media #{$smallView} {
+  @media (max-width: $smallView) {
     padding-left: 0;
     padding-right: 0;
   }
 }
 
 .hide-on-small {
-  @media #{$smallView} {
+  @media (max-width: $smallView) {
     display: none;
   }
 }
@@ -130,13 +88,13 @@ body {
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  top: 4 * $marginUnit + $toolbarHeight;
+  top: calc(4 * $marginUnit + $toolbarHeight);
   height: $toolbarHeight;
   left: $bodyBorder;
   right: $bodyBorder;
   z-index: 2;
 
-  @media #{$smallView} {
+  @media (max-width: $smallView) {
     // no borders on left/right
     left: 0;
     right: 0;
@@ -189,24 +147,24 @@ footer {
     color: $darkGrayish;
   }
 
-  @media #{$smallView} {
+  @media (max-width: $smallView) {
     font-size: 100%;
     padding: 0 $marginUnit;
   }
 }
 
 p {
-  margin: ($marginUnit / 2) 0;
+  margin: calc($marginUnit / 2) 0;
 }
 
 main {
   background: white;
   box-sizing: border-box;
-  width: calc(100vw - #{2 * $bodyBorder});
-  height: calc(100vh - #{2 * $bodyBorder});
-  border-radius: 0.5 * $marginUnit;
+  width: calc(100vw - 2 * $bodyBorder);
+  height: calc(100vh - 2 * $bodyBorder);
+  border-radius: calc(0.5 * $marginUnit);
 
-  @media #{$smallView} {
+  @media (max-width: $smallView) {
     border-radius: 0;
     width: 100vw;
   }
@@ -228,7 +186,7 @@ main {
     -webkit-background-clip: text;
     position: relative;
 
-    max-width: calc(100vw - #{$marginUnit * 2});
+    max-width: calc(100vw - $marginUnit * 2);
 
     // It would be nice to use `color: transparent`, but chrome "optimizes"
     // it so it's clipped.
@@ -271,9 +229,9 @@ main {
 $panelContentHeight: 90px;
 
 .texture-option {
-  width: $panelContentHeight;
-  height: $panelContentHeight;
-  margin: 0 $marginUnit / 2;
+  width: calc($panelContentHeight);
+  height: calc($panelContentHeight);
+  margin: 0 calc($marginUnit / 2);
   display: block;
   cursor: pointer;
   transition: transform 0.3s, opacity 0.3s;
@@ -296,7 +254,7 @@ $panelContentHeight: 90px;
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(lighten($blue, 50%), 0.5);
+      background: $transparentBlue;
     }
   }
 }
@@ -320,11 +278,11 @@ $panelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 * $marginUnit;
   padding: $marginUnit;
   margin: -$marginUnit 0 0;
   box-sizing: border-box;
-  height: $panelHeight;
+  height: calc($panelHeight);
 
   &.sliding {
     overflow: hidden;
-    height: $panelHeight;
+    height: calc($panelHeight);
     padding: 0;
 
     &:after,
@@ -333,8 +291,8 @@ $panelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 * $marginUnit;
       display: block;
       position: absolute;
       top: 0;
-      width: $panelGradientWidth;
-      height: $panelHeight;
+      width: calc($panelGradientWidth);
+      height: calc($panelHeight);
       pointer-events: none;
       z-index: 10000;
     }
@@ -353,10 +311,12 @@ $panelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 * $marginUnit;
       overflow-x: scroll;
       -webkit-overflow-scrolling: touch;
       white-space: nowrap;
-      height: $panelHeight + $marginUnit * 2 + $panelMarginForScrollbarUgh;
+      height: calc(
+        $panelHeight + $marginUnit * 2 + $panelMarginForScrollbarUgh
+      );
       box-sizing: border-box;
-      padding: $marginUnit ($marginUnit / 2 + $panelGradientWidth)
-        ($marginUnit + $panelMarginForScrollbarUgh);
+      padding: $marginUnit calc($marginUnit / 2 + $panelGradientWidth)
+        calc($marginUnit + $panelMarginForScrollbarUgh);
       position: relative;
 
       > div {
@@ -406,10 +366,10 @@ $buttonRadius: 64px;
 $toolbarLineHeight: 32px;
 
 .toolbar {
-  margin: $marginUnit * 1.5 0;
+  margin: calc($marginUnit * 1.5) 0;
   font-size: 16px;
   color: $darkGrayish;
-  height: $toolbarLineHeight + $marginUnit;
+  height: calc($toolbarLineHeight + $marginUnit);
   line-height: $toolbarLineHeight;
   position: relative;
 
@@ -431,7 +391,7 @@ $toolbarLineHeight: 32px;
     text-align-last: center;
     line-height: $toolbarLineHeight;
     padding: 2px $marginUnit;
-    margin: 0 ($marginUnit / 4);
+    margin: 0 calc($marginUnit / 4);
 
     > svg {
       height: 24px;
@@ -443,16 +403,16 @@ $toolbarLineHeight: 32px;
     }
 
     > label {
-      margin-left: $marginUnit / 2;
+      margin-left: calc($marginUnit / 2);
     }
 
-    @media #{$smallView} {
+    @media (max-width: $smallView) {
       border-radius: 0;
       margin: 0 0 0 -2px; // negative same as border width
     }
 
     &:first-child {
-      @media #{$smallView} {
+      @media (max-width: $smallView) {
         margin-left: 0;
         border-top-left-radius: $buttonRadius;
         border-bottom-left-radius: $buttonRadius;
@@ -460,7 +420,7 @@ $toolbarLineHeight: 32px;
     }
 
     &:last-child {
-      @media #{$smallView} {
+      @media (max-width: $smallView) {
         border-top-right-radius: $buttonRadius;
         border-bottom-right-radius: $buttonRadius;
       }
@@ -469,21 +429,21 @@ $toolbarLineHeight: 32px;
 }
 
 .panel-font.sliding {
-  height: $panelHeight;
+  height: calc($panelHeight);
 
   &:before,
   &:after {
-    height: $panelHeight;
+    height: calc($panelHeight);
   }
 
   > .panel-slider {
-    height: $panelHeight + $panelMarginForScrollbarUgh;
+    height: calc($panelHeight + $panelMarginForScrollbarUgh);
   }
 }
 
 .selected-font {
-  width: $fontOptionWidth - $marginUnit * 2;
-  margin: 0 0.5 * $marginUnit;
+  width: calc($fontOptionWidth - $marginUnit * 2);
+  margin: 0 calc($marginUnit / 2);
   text-align: center;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -492,15 +452,15 @@ $toolbarLineHeight: 32px;
 
 .font-option {
   width: $fontOptionWidth;
-  height: $fontOptionHeight + 2 * $fontOptionMargin;
-  padding: $fontOptionMargin;
+  height: calc($fontOptionHeight + 2 * $fontOptionMargin);
+  padding: calc($fontOptionMargin);
   box-sizing: border-box;
-  margin-right: $fontOptionMargin;
+  margin-right: calc($fontOptionMargin);
   cursor: pointer;
   border-radius: 4px;
 
   &.selected {
-    background: lighten($blue, 10%);
+    background: $lightBlue;
   }
 
   &.selected,
@@ -510,8 +470,8 @@ $toolbarLineHeight: 32px;
 
   &:nth-child(even) {
     position: absolute;
-    margin: ($fontOptionHeight + 3 * $fontOptionMargin) $fontOptionMargin 0
-      (-$fontOptionWidth - $fontOptionMargin);
+    margin: calc($fontOptionHeight + 3 * $fontOptionMargin)
+      calc($fontOptionMargin) 0 calc(-$fontOptionWidth - $fontOptionMargin);
   }
 }
 
@@ -561,9 +521,9 @@ $toolbarLineHeight: 32px;
   top: $bodyBorder;
   right: $bodyBorder;
   bottom: $bodyBorder;
-  z-index: 10000 + 1;
+  z-index: calc(10000 + 1);
   box-sizing: border-box;
-  padding: $marginUnit * 2;
+  padding: calc($marginUnit * 2);
   background: white;
 
   &:not([hidden]) {
@@ -574,11 +534,11 @@ $toolbarLineHeight: 32px;
   }
 
   a {
-    padding: $marginUnit / 2;
+    padding: calc($marginUnit / 2);
 
     > svg {
       height: 24px;
-      margin: 0 0.5 * $marginUnit 0 0;
+      margin: 0 calc($marginUnit / 2) 0 0;
     }
 
     &.close-button {
@@ -658,7 +618,7 @@ option {
 
 .label-range,
 .label-toggle {
-  margin: 0 $marginUnit / 2 $marginUnit;
+  margin: 0 calc($marginUnit / 2) $marginUnit;
   display: flex;
   align-items: flex-end;
   > span {
@@ -668,7 +628,7 @@ option {
 
 .label-toggle {
   > span {
-    margin: -2px $marginUnit / 2;
+    margin: -2px calc($marginUnit / 2);
   }
 }
 
@@ -682,7 +642,7 @@ option {
     font-weight: bold;
     text-align: right;
     width: 64px; // hardcode for now
-    margin: 2px $marginUnit / 2;
+    margin: 2px calc($marginUnit / 2);
   }
 }
 
