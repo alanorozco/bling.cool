@@ -19,28 +19,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-import { getVars } from '../../lib/scss';
-import once from 'lodash.once';
-
-const getVarsOnce = once(getVars);
+import { vars } from '../../src/index.scss.vars';
 
 function inlineLiteral(t, name) {
-  const vars = getVarsOnce();
   if (!name in vars) {
     throw new Error(`Unknown SCSS var "${name}".`);
   }
-  const { type, value } = vars.global[`$${name}`];
-  if (type == 'SassNumber') {
-    return t.numericLiteral(value);
+  const value = vars[name];
+  if (Array.isArray(value)) {
+    return t.arrayExpression(value.map(c => t.numericLiteral(c)));
   }
-  if (type == 'SassColor') {
-    return t.arrayExpression([
-      t.numericLiteral(value.r),
-      t.numericLiteral(value.g),
-      t.numericLiteral(value.b),
-      t.numericLiteral(value.a),
-    ]);
+  if (/^[0-9]/.test(value)) {
+    return t.numericLiteral(parseInt(value, 10));
   }
   return t.stringLiteral(value);
 }

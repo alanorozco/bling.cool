@@ -25,10 +25,8 @@ exports.dirs = {
     gif: 'textures/gif',
     frames: 'textures/frames',
   },
-  dist: {
-    root: 'dist',
-    workspace: 'dist/.workspace',
-  },
+  dist: 'dist',
+  workspace: 'dist/.workspace',
 };
 
 exports.uglify = {

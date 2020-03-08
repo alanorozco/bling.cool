@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Alan Orozco <alan@orozco.xyz>
+ * Copyright 2020 Alan Orozco <alan@orozco.xyz>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to
@@ -20,8 +20,22 @@
  * SOFTWARE.
  */
 
-import { sassExtract } from 'not-esm/sass-extract';
+import postcss from 'postcss';
 
-const file = 'src/index.scss';
-
-export const getVars = () => sassExtract.renderSync({ file }).vars;
+export default postcss.plugin('bling-merge-media-queries', () => {
+  return root => {
+    const atDecls = {};
+    root.walkAtRules(decl => {
+      const { params, nodes } = decl;
+      if (!(params in atDecls)) {
+        atDecls[params] = decl;
+      } else {
+        atDecls[params].nodes = atDecls[params].nodes.concat(nodes);
+        root.removeChild(decl);
+      }
+    });
+    for (const decl of Object.values(atDecls)) {
+      root.append(decl);
+    }
+  };
+});

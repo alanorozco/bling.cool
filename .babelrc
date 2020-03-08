@@ -6,6 +6,7 @@
     ["@babel/plugin-transform-template-literals", { "loose": true }]
   ],
   "presets": [
+    ["@babel/preset-react"],
     [
       "@babel/preset-env",
       {
