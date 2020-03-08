@@ -29,7 +29,7 @@ import { renderSync as sass } from 'sass';
 import { textures } from './builder/textures';
 import babel from 'rollup-plugin-babel';
 import bundleHtml from './builder/bundle-html';
-import commonjs from 'rollup-plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs';
 import cssDeclarationSorter from 'css-declaration-sorter';
 import cssnano from 'cssnano';
 import del from 'del';
@@ -39,10 +39,10 @@ import fonts from './artifacts/fonts';
 import fs from 'fs-extra';
 import glob from 'fast-glob';
 import log from 'fancy-log';
+import mergeMediaQueries from './builder/postcss/merge-media-queries';
 import path from 'path';
 import postcss from 'postcss';
-import postCssMergeMediaQueries from 'postcss-bling-merge-media-queries';
-import rollupResolve from 'rollup-plugin-node-resolve';
+import rollupResolve from '@rollup/plugin-node-resolve';
 import test from './builder/test';
 
 async function copyOne(file) {
@@ -82,7 +82,7 @@ async function css() {
   const { css } = await postcss([
     cssnano(),
     cssDeclarationSorter({ order: 'smacss' }),
-    postCssMergeMediaQueries(),
+    mergeMediaQueries(),
   ]).process(sass({ file: from }).css, { to, from });
 
   await fs.writeFile(to, css);
