@@ -21,11 +21,11 @@
  */
 
 import { blue, cyan, magenta, red } from 'colors';
+import { css as cssVars } from './src/index.scss.vars';
 import { dirs, uglify as uglifyConfig } from './config';
 import { minify as htmlminify } from 'html-minifier';
 import { minify } from 'terser';
 import { rollup } from 'rollup';
-import { renderSync as sass } from 'sass';
 import { textures } from './builder/textures';
 import babel from 'rollup-plugin-babel';
 import bundleHtml from './builder/bundle-html';
@@ -42,6 +42,12 @@ import log from 'fancy-log';
 import mergeMediaQueries from './builder/postcss/merge-media-queries';
 import path from 'path';
 import postcss from 'postcss';
+import postcssCalc from 'postcss-calc';
+import postcssDefineProperty from 'postcss-define-property';
+import postcssImport from 'postcss-import';
+import postcssNested from 'postcss-nested';
+import postcssScss from 'postcss-scss';
+import postcssSimpleVars from 'postcss-simple-vars';
 import rollupResolve from '@rollup/plugin-node-resolve';
 import test from './builder/test';
 
@@ -80,10 +86,30 @@ async function css() {
   await fs.mkdirp(dirs.dist.workspace);
 
   const { css } = await postcss([
+    postcssImport(),
+    postcssDefineProperty({
+      syntax: {
+        atrule: true,
+        parameter: '',
+        separator: '',
+      },
+    }),
+    postcssSimpleVars({ variables: cssVars }),
+    postcssNested(),
+    postcssCalc(),
+    mergeMediaQueries(),
     cssnano(),
     cssDeclarationSorter({ order: 'smacss' }),
-    mergeMediaQueries(),
-  ]).process(sass({ file: from }).css, { to, from });
+    //
+  ]).process(
+    // sass({ file: from }).css,
+    fs.readFileSync(from).toString(),
+    {
+      parser: postcssScss,
+      to,
+      from,
+    }
+  );
 
   await fs.writeFile(to, css);
 }
