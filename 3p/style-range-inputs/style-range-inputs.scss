@@ -23,30 +23,25 @@ $track-color: $lightGrayish;
 $thumb-color: $grayish;
 $thumb-height: 24px;
 
-@property track track-width track-height {
+@define-mixin track $track-width $track-height {
   cursor: default;
-  height: $track-height;
-  width: $track-width;
+  height: $(track-height);
 }
 
-/* $adjustment: 0; */
-
-@property thumb adjustment {
+@define-mixin thumb $adjustment: 0 {
   background: $thumb-color;
   border: none;
   border-radius: calc($thumb-radius);
   cursor: default;
-  height: calc($thumb-height + $adjustment);
-  width: calc($thumb-width + $adjustment);
+  height: calc($thumb-height + $(adjustment));
+  width: calc($thumb-width + $(adjustment));
 }
 
 [type='range'] {
   -webkit-appearance: none;
   background: transparent;
-  margin: calc($thumb-height / 2) 0;
-  width: $track-width;
-  width: 60%;
-  min-width: 250px;
+  margin: calc($thumb-height) / 2 0;
+  min-width: 200px;
 
   &::-moz-focus-outer {
     border: 0;
@@ -66,20 +61,20 @@ $thumb-height: 24px;
   }
 
   &::-webkit-slider-runnable-track {
-    track: $track-width $track-height;
+    @mixin track $track-width $track-height;
     background: $track-color;
     border: none;
     border-radius: 0;
   }
 
   &::-webkit-slider-thumb {
-    thumb: 0;
+    @mixin thumb;
     -webkit-appearance: none;
     margin-top: calc($track-height / 2 - $thumb-height / 2);
   }
 
   &::-moz-range-track {
-    track: $track-width $track-height;
+    @mixin track $track-width $track-height;
     background: $track-color;
     border: none;
     border-radius: 0;
@@ -87,11 +82,11 @@ $thumb-height: 24px;
   }
 
   &::-moz-range-thumb {
-    thumb: -4px;
+    @mixin thumb -4px;
   }
 
   &::-ms-track {
-    track: $track-width $track-height;
+    @mixin track $track-width $track-height;
     background: transparent;
     border: none;
     color: transparent;
@@ -110,7 +105,7 @@ $thumb-height: 24px;
   }
 
   &::-ms-thumb {
-    thumb: -4px;
+    @mixin thumb -4px;
     margin-top: calc($track-height / 4);
   }
 

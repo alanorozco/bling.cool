@@ -49,13 +49,13 @@ class FontLoader {
       return this.loadPromises_[id];
     }
     const [name, weight] = expandFontId(id);
-    const stylesheetLoaded = loadFontStylesheet(this.doc_, id);
+    // const stylesheetLoaded = loadFontStylesheet(this.doc_, id);
     let observer = new FontFaceObserver(name, { weight });
-    const promise = stylesheetLoaded
-      .then(() => observer.load())
-      .then(() => {
-        observer = null; // gc
-      });
+    // const promise = stylesheetLoaded
+    // .then(() => observer.load())
+    const promise = observer.load().then(() => {
+      observer = null; // gc
+    });
     return (this.loadPromises_[id] = promise);
   }
 }

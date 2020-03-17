@@ -39,6 +39,7 @@ const blue = [0, 68, 214, 1];
 const lightBlue = lighten(blue, 0.2);
 const verylightBlue = lighten(blue, 0.4);
 const transparentBlue = alpha(lighten(blue, 0.5), 0.5);
+const caretBlue = alpha(blue, 0.8);
 
 const grayish = [180, 186, 194, 1];
 const lightGrayish = lighten(grayish, 0.15);
@@ -51,6 +52,7 @@ export const vars = {
   lightBlue,
   verylightBlue,
   transparentBlue,
+  caretBlue,
   grayish,
   lightGrayish,
   darkGrayish,
