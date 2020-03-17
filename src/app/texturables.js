@@ -21,7 +21,7 @@
  */
 
 import { composeTextShadow } from '../css-util/css-util';
-import { fetchFrames, textureUrl } from '../../lib/textures';
+import { initialFrames, textureUrl } from '../../lib/textures';
 
 const definedOr = (value, fallback) => (value === undefined ? fallback : value);
 
@@ -47,17 +47,16 @@ export default class Texturables {
     state.on(this, 'shadowDirection', direction =>
       this.setTextShadow_({ direction })
     );
-    state.on(this, 'shadowIsFlat', isFlat => this.setTextShadow_({ isFlat }));
+    state.on(this, 'shadowIs3d', isFlat => this.setTextShadow_({ isFlat }));
     state.on(this, 'is3d', is3d => this.setTextShadow_({ is3d }));
 
     this.cache_ = {};
   }
 
   setTexture_(index) {
-    if (isNaN(index)) throw new Error();
     const { style } = this.doc_.body;
-    fetchFrames(this.win_, index).then(([firstFrame]) => {
-      const [_, firstFrameData] = firstFrame;
+    initialFrames(this.win_).then(frames => {
+      const firstFrameData = frames[index];
       style.setProperty('--texture-animated', cssUrl(textureUrl(index)));
       style.setProperty('--texture-static', cssUrl(firstFrameData));
     });
@@ -72,12 +71,10 @@ export default class Texturables {
   }
 
   setTextShadow_({ direction, isFlat, is3d }) {
-    const state = this.state_;
-
     this.shaded_.style.textShadow = composeTextShadow(
-      definedOr(direction, state.get('shadowDirection')),
-      definedOr(isFlat, state.get('shadowIsFlat')),
-      definedOr(is3d, state.get('is3d'))
+      definedOr(direction, this.state_.shadowDirection),
+      definedOr(isFlat, this.state_.shadowIs3d),
+      definedOr(is3d, this.state_.is3d)
     );
   }
 }

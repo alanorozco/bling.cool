@@ -14,11 +14,13 @@
           "@babel/plugin-transform-arrow-functions",
           "@babel/plugin-transform-classes",
           "@babel/plugin-transform-destructuring",
-          "@babel/plugin-transform-template-literals"
+          "@babel/plugin-transform-template-literals",
+          "@babel/plugin-transform-regenerator"
         ],
+        "loose": true,
         "forceAllTransforms": true,
         "targets": {
-          "browsers": "last 2 years and > 1%"
+          "browsers": "last 2 years and > 2%"
         }
       }
     ]

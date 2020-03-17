@@ -21,10 +21,7 @@
  */
 
 exports.dirs = {
-  textures: {
-    gif: 'textures/gif',
-    frames: 'textures/frames',
-  },
+  textures: 'textures',
   dist: 'dist',
   workspace: 'dist/.workspace',
 };

@@ -27,9 +27,9 @@ import { existsSync, lstatSync, readdir, readFile, writeFile } from 'fs';
 import { promisify } from 'util';
 import fonts from '../artifacts/fonts';
 import glob from 'fast-glob';
-import log from 'fancy-log';
 import path from 'path';
 
+const { log } = console;
 const execAsync = promisify(exec);
 const readdirAsync = promisify(readdir);
 const readFileAsync = promisify(readFile);

@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import { getLengthNumeral } from '../../lib/css';
 import { vars } from '../../src/index.scss.vars';
 
 function inlineLiteral(t, name) {
@@ -30,7 +31,7 @@ function inlineLiteral(t, name) {
     return t.arrayExpression(value.map(c => t.numericLiteral(c)));
   }
   if (/^[0-9]/.test(value)) {
-    return t.numericLiteral(parseInt(value, 10));
+    return t.numericLiteral(getLengthNumeral(value));
   }
   return t.stringLiteral(value);
 }

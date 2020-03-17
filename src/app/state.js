@@ -22,6 +22,8 @@
 
 import { info } from '../log/log';
 
+const execObserverSignal = ({ listener }) => listener;
+
 export default class State {
   constructor() {
     this.state_ = {};
@@ -30,16 +32,19 @@ export default class State {
   }
 
   set(dispatcher, state) {
-    const to = Array.from(
-      new Set(
-        Object.keys(state)
-          .map(signal =>
-            this.observersForSignal_(signal).map(({ listener }) => listener)
-          )
-          .flat()
-          .filter(v => !!v && v !== dispatcher)
-      )
-    ).sort();
+    const to = Object.keys(state)
+      .map(signal => {
+        if (!(signal in this)) {
+          Object.defineProperty(this, signal, {
+            configurable: false,
+            get: () => this.get(signal),
+          });
+        }
+        return this.observersForSignal_(signal).map(execObserverSignal);
+      })
+      .flat()
+      .filter(v => !!v && v !== dispatcher);
+
     info('dispatch', state, 'into', this.state_, 'from', dispatcher, 'to', to);
     this.state_ = Object.assign(this.state_, state);
     return this.fire_(dispatcher, state);

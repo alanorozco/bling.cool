@@ -27,11 +27,37 @@ import renderOnCanvas from './canvas-renderer/renderer';
 
 function playback(win, width, height, frames, rendererOptions, onFrame) {
   const { promise, resolve } = new Deferred();
-  playFrame(win, width, height, frames, rendererOptions, onFrame, resolve);
-  return promise;
+  const cancelled = { cancelled: false };
+  const cancel = () => {
+    cancelled.cancelled = true;
+  };
+  playFrame(
+    win,
+    width,
+    height,
+    frames,
+    rendererOptions,
+    onFrame,
+    resolve,
+    cancelled
+  );
+  return { promise, cancel };
 }
 
-function playFrame(win, width, height, frames, rendererOptions, onFrame, done) {
+function playFrame(
+  win,
+  width,
+  height,
+  frames,
+  rendererOptions,
+  onFrame,
+  done,
+  cancelled
+) {
+  if (cancelled.cancelled) {
+    return;
+  }
+
   const [delay, texture] = frames.shift();
   const cookedRendererOptions = Object.assign({ texture }, rendererOptions);
 
@@ -44,7 +70,16 @@ function playFrame(win, width, height, frames, rendererOptions, onFrame, done) {
       }
 
       win.requestAnimationFrame(() => {
-        playFrame(win, width, height, frames, rendererOptions, onFrame, done);
+        playFrame(
+          win,
+          width,
+          height,
+          frames,
+          rendererOptions,
+          onFrame,
+          done,
+          cancelled
+        );
       });
     });
 }
@@ -52,7 +87,7 @@ function playFrame(win, width, height, frames, rendererOptions, onFrame, done) {
 function encodeAsGif(win, width, height, frames, rendererOptions) {
   const { promise, resolve } = new Deferred();
 
-  const gif = new GIF({
+  let gif = new GIF({
     workers: 2,
     quality: 10,
   });
@@ -64,13 +99,122 @@ function encodeAsGif(win, width, height, frames, rendererOptions) {
   // Copy to modify
   frames = [].concat(frames);
 
-  playback(win, width, height, frames, rendererOptions, (delay, canvas) => {
-    gif.addFrame(canvas, { delay });
-  }).then(() => {
+  const { promise: playbackPromise, cancel: cancelPlayback } = playback(
+    win,
+    width,
+    height,
+    frames,
+    rendererOptions,
+    (delay, canvas) => {
+      gif.addFrame(canvas, { delay });
+    }
+  );
+
+  playbackPromise.then(() => {
     gif.render();
   });
 
-  return [promise, () => gif.abort()];
+  return [
+    promise,
+    () => {
+      gif.abort();
+      cancelPlayback();
+      gif = null;
+    },
+  ];
 }
 
-pushAsync(self, { encodeAsGif });
+function encodeAsMp4(win, width, height, frames, rendererOptions) {
+  const { promise, resolve } = new Deferred();
+
+  // Copy to modify
+  frames = [].concat(frames);
+
+  const outputFrames = [];
+
+  let i = 0;
+  const { promise: playbackPromise, cancel: cancelPlayback } = playback(
+    win,
+    width,
+    height,
+    frames,
+    rendererOptions,
+    (delay, canvas) => {
+      // TODO: delay
+      canvas.toBlob(blob => {
+        blob.arrayBuffer().then(data => {
+          outputFrames.push({ name: `${i++}.jpg`, data });
+        });
+      }, 'image/jpeg');
+    }
+  );
+
+  let worker;
+
+  const format = 'mp4';
+
+  const ffmpegArguments = [
+    '-loglevel',
+    'debug',
+    // '-framerate',
+    // '1',
+    '-i',
+    '%d.jpg',
+    // '-c:v',
+    // 'libvpx',
+    // '-pix_fmt',
+    // 'yuv420p',
+    // Dimensions have to be divisible by two for some reason
+    '-s',
+    `${width - (width % 2)}x${height - (height % 2)}`,
+    `out.${format}`,
+  ];
+
+  let stderr = '';
+  playbackPromise.then(() => {
+    worker = new Worker(`/ffmpeg-worker-${format}.js`);
+
+    worker.onmessage = e => {
+      const { type, data } = e.data;
+      console.log(type);
+      switch (type) {
+        case 'ready':
+          worker.postMessage({
+            type: 'run',
+            MEMFS: [].concat(outputFrames),
+            arguments: ffmpegArguments,
+          });
+          break;
+        case 'stderr':
+          stderr += data + '\n';
+          break;
+        case 'done':
+          console.log('done', data);
+          break;
+        case 'exit':
+          console.log('Process exited with code', data);
+          if (data > 0) {
+            console.error(stderr);
+          }
+          worker.terminate();
+          worker = null;
+          stderr = null;
+          break;
+      }
+    };
+  });
+
+  return [
+    promise,
+    () => {
+      if (worker) {
+        worker.terminate();
+        worker = null;
+        stderr = null;
+      }
+      cancelPlayback();
+    },
+  ];
+}
+
+pushAsync(self, { encodeAsGif, encodeAsMp4 });

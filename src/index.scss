@@ -23,7 +23,7 @@
 
 // defaults, others in ./index.scss.vars.js
 $lineHeight: 1.5;
-$toolbarHeight: 48px;
+$toolbarHeight: 50px;
 $bodyBorder: 24px;
 $smallView: 700px;
 
@@ -37,11 +37,11 @@ $shadowOpacity: 0.48;
   margin: calc($thumb-height / 2) calc($thumb-height / 4);
 }
 
-$fuSafariOffset: 320px;
+$fuSafariOffset: 400px;
 
 body {
   margin: 0;
-  font-family: 'Chalkboard', 'Comic Sans MS', sans-serif;
+  font-family: 'Chalkboard SE', 'Chalkboard', 'Comic Sans MS', sans-serif;
   font-size: 16px;
   line-height: $lineHeight;
   overflow: hidden;
@@ -49,10 +49,6 @@ body {
   position: relative;
 
   @media (max-width: $smallView) {
-    // min-height: 95vh; // lol
-    &.safari {
-      // position: fixed;
-    }
     &.safari.focus {
       min-height: calc(100vh - $fuSafariOffset);
       max-height: calc(100vh - $fuSafariOffset);
@@ -85,22 +81,21 @@ body {
   right: 0;
 }
 
+button {
+  cursor: pointer;
+}
+
 .loader {
   background: white url(/assets/cat.gif) no-repeat center center;
   background-size: 604px 32px;
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  top: calc(4 * $marginUnit + $toolbarHeight);
-  height: $toolbarHeight;
+  height: 42px;
   left: $bodyBorder;
   right: $bodyBorder;
-  z-index: 2;
-
-  @media (max-width: $smallView) {
-    top: auto;
-    bottom: $marginUnit;
-  }
+  bottom: $marginUnit;
+  z-index: 1000;
 
   &.active {
     opacity: 1;
@@ -110,7 +105,7 @@ body {
 }
 
 footer {
-  margin: $marginUnit 0;
+  margin: calc(2 * $marginUnit) 0;
   text-align: center;
   text-transform: lowercase;
 
@@ -171,7 +166,7 @@ main {
   right: $bodyBorder;
   bottom: $bodyBorder;
   left: $bodyBorder;
-  height: calc(100vh - $bodyBorder);
+  height: calc(100vh - 2 * $bodyBorder);
   border-radius: calc(0.5 * $marginUnit);
 
   @media (max-width: $smallView) {
@@ -179,21 +174,25 @@ main {
     right: 0;
     bottom: 0;
     left: 0;
+    height: calc(100vh - $bodyBorder);
 
     body.safari.focus & {
       height: calc(100vh - $bodyBorder + $fuSafariOffset);
-      // bottom: $marginUnit + $fuSafariOffset;
+      bottom: calc($marginUnit + $fuSafariOffset);
     }
   }
 }
+
+$editablePadding: 2 * $marginUnit;
 
 .editable-wrap {
   flex: 1;
   cursor: text;
   box-sizing: border-box;
   width: 100%;
+  max-width: 800px;
+  margin: calc(-2 * $marginUnit) 0 0;
   overflow: hidden;
-  padding: $marginUnit 0;
 
   @media (max-width: $smallView) {
     // fu sfari
@@ -208,22 +207,20 @@ main {
     -webkit-background-clip: text;
     position: relative;
 
-    max-width: calc(100vw - $marginUnit * 2);
-
     // It would be nice to use `color: transparent`, but chrome "optimizes"
     // it so it's clipped.
     color: white;
     -webkit-text-fill-color: transparent;
 
     // Some padding is needed so text is not clipped.
-    padding: 0 $marginUnit * 2;
+    padding: calc($editablePadding);
 
     // And for dynamic resizing:
     box-sizing: border-box;
 
     // TODO: Maybe this can be analyzed on build time based on font, as some
     // leave very large line gaps. Nice to have.
-    line-height: 1.3;
+    line-height: 1.2;
   }
 
   > .editable-sentinel {
@@ -253,59 +250,56 @@ $panelContentHeight: 60px;
 .texture-option {
   width: calc($panelContentHeight);
   height: calc($panelContentHeight);
-  margin: 0 calc($marginUnit / 4);
+  margin: 0 calc($marginUnit / 3);
   display: block;
   cursor: pointer;
-  transition: transform 0.3s, opacity 0.3s;
-  opacity: 0.9;
+  transition: transform ease-out 0.2s, opacity ease-out 0.2s;
+  opacity: 0.7;
   position: relative;
+  border-radius: calc($panelContentHeight);
+  overflow: hidden;
+  transform: scale(0.9);
 
   &:hover,
   &.selected {
-    transform: scale(1.1);
     opacity: 1;
   }
-
   &.selected {
-    outline: 2px solid $blue;
-
-    &:after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: $transparentBlue;
-    }
+    transform: scale(1.3);
   }
 }
 
 $panelMarginForScrollbarUgh: 18px;
 $panelGradientWidth: 60px;
 
-$fontPreviewHeight: 32px;
+$fontPreviewHeight: 28px;
 $fontPreviewSize: 20px;
 
-$fontOptionWidth: 160px;
-$fontOptionHeight: $fontPreviewHeight + 20px;
+$fontOptionWidth: 140px;
+$fontOptionHeight: $fontPreviewHeight + $marginUnit;
 
-$fontOptionMargin: 0.5 * $marginUnit;
+$fontOptionMargin: 4px;
 
 $panelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 * $marginUnit;
 
 .panel {
   width: 100%;
   position: relative;
+  margin: $marginUnit 0;
   padding: $marginUnit;
-  margin: -$marginUnit 0 0;
+  z-index: 2;
   box-sizing: border-box;
   height: calc($panelHeight);
 
   &.sliding {
+    padding: 0;
+  }
+
+  > .panel-slider-container {
     overflow: hidden;
     height: calc($panelHeight);
-    padding: 0;
+    width: 100%;
+    position: relative;
 
     &:after,
     &:before {
@@ -314,7 +308,7 @@ $panelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 * $marginUnit;
       position: absolute;
       top: 0;
       width: calc($panelGradientWidth);
-      height: calc($panelHeight);
+      height: 100%;
       pointer-events: none;
       z-index: 10000;
     }
@@ -329,20 +323,22 @@ $panelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 * $marginUnit;
     }
 
     > .panel-slider {
-      overflow-y: hidden;
-      overflow-x: scroll;
-      -webkit-overflow-scrolling: touch;
-      white-space: nowrap;
-      height: calc(
-        $panelHeight + $marginUnit * 2 + $panelMarginForScrollbarUgh
-      );
-      box-sizing: border-box;
-      padding: $marginUnit calc($marginUnit / 2 + $panelGradientWidth)
-        calc($marginUnit + $panelMarginForScrollbarUgh);
-      position: relative;
-
+      width: 100%;
+      height: 100%;
       > div {
-        display: inline-block;
+        overflow-y: hidden;
+        overflow-x: scroll;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        height: calc(100% + $marginUnit * 2 + $panelMarginForScrollbarUgh);
+        box-sizing: border-box;
+        padding: $marginUnit calc($marginUnit / 2 + $panelGradientWidth)
+          calc($marginUnit + $panelMarginForScrollbarUgh);
+        position: relative;
+
+        > div {
+          display: inline-block;
+        }
       }
     }
   }
@@ -356,7 +352,7 @@ $panelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 * $marginUnit;
 }
 
 #editable {
-  caret-color: rgba($blue, 0.8);
+  caret-color: $caretBlue;
   color: transparent;
   position: absolute;
 
@@ -364,14 +360,6 @@ $panelHeight: 2 * ($fontOptionHeight + 2 * $fontOptionMargin) + 2 * $marginUnit;
   // hack to make chrome show the editor caret when the area is empty.
   min-width: 10px;
   text-align: center;
-
-  &:is(textarea) {
-    -webkit-text-fill-color: auto;
-    background-clip: border-box;
-    background: transparent;
-    border: none;
-    resize: none;
-  }
 }
 
 a {
@@ -390,12 +378,16 @@ $toolbarLineHeight: 32px;
 .toolbar {
   margin: calc($marginUnit * 1.5) 0;
   color: $darkGrayish;
+  margin-top: calc(2 * $marginUnit);
+  color: $lightBlue;
   height: calc($toolbarLineHeight + $marginUnit);
   line-height: $toolbarLineHeight;
   position: relative;
+  z-index: 3; // over panel
+  font-weight: bold;
 
   @media (max-width: $smallView) {
-    margin: $marginUnit 0;
+    margin-top: $marginUnit;
   }
 
   input,
@@ -407,50 +399,80 @@ $toolbarLineHeight: 32px;
 
   button,
   select {
-    height: 100%;
-    outline: none;
-    background: transparent;
-    border: 2px solid $lightGrayish;
-    border-radius: $buttonRadius;
-    text-align: center;
-    text-align-last: center;
-    line-height: $toolbarLineHeight;
-    padding: 2px $marginUnit;
-    margin: 0 calc($marginUnit / 4);
+    overflow: hidden;
+
+    @media (max-width: $smallView) {
+      border-width: 0;
+      margin: 0;
+    }
 
     > svg {
-      height: 24px;
+      height: 26px;
     }
     > svg,
     > svg > g,
     > svg > path {
-      fill: $blue;
+      fill: $lightBlue;
     }
 
     > label {
       margin-left: calc($marginUnit / 2);
     }
 
-    @media (max-width: $smallView) {
-      border-radius: 0;
-      margin: 0 0 0 -2px; // negative same as border width
-    }
+    &.selected,
+    &:active {
+      color: white;
+      z-index: 2;
 
-    &:first-child {
-      @media (max-width: $smallView) {
-        margin-left: 0;
-        border-top-left-radius: $buttonRadius;
-        border-bottom-left-radius: $buttonRadius;
+      > svg,
+      > svg > g,
+      > svg > path {
+        fill: white;
       }
     }
 
-    &:last-child {
-      @media (max-width: $smallView) {
-        border-top-right-radius: $buttonRadius;
-        border-bottom-right-radius: $buttonRadius;
+    &:active {
+      background: $verylightBlue;
+      border-color: $verylightBlue;
+    }
+
+    &.selected {
+      background: $lightBlue;
+      background-image: var(--texture-static);
+      border-color: $lightBlue;
+      position: relative;
+      border-color: transparent;
+
+      &::after {
+        content: '';
+        z-index: -1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: $lightBlue;
+        opacity: 0.6;
       }
     }
   }
+}
+
+.label-toggle,
+.toolbar button,
+.toolbar select {
+  height: 100%;
+  outline: none;
+  background: transparent;
+  border: 2px solid $lightGrayish;
+  border-radius: $buttonRadius;
+  text-align: center;
+  text-align-last: center;
+  line-height: $toolbarLineHeight;
+  padding: 2px $marginUnit;
+  margin: 0 calc($marginUnit / 4);
+  font-weight: bold;
+  box-sizing: border-box;
 }
 
 .selected-font {
@@ -465,11 +487,11 @@ $toolbarLineHeight: 32px;
 .font-option {
   width: $fontOptionWidth;
   height: calc($fontOptionHeight + 2 * $fontOptionMargin);
-  padding: calc($fontOptionMargin);
+  padding: 0;
   box-sizing: border-box;
   margin-right: calc($fontOptionMargin);
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 8px;
 
   &.selected {
     background: $lightBlue;
@@ -488,60 +510,55 @@ $toolbarLineHeight: 32px;
 }
 
 .font-preview {
-  height: $fontPreviewHeight;
   line-height: $fontPreviewHeight;
   font-size: $fontPreviewSize;
+  height: $fontPreviewHeight;
+  margin-bottom: calc(-2 * $fontOptionMargin);
+  padding: $fontOptionMargin calc(2 * $fontOptionMargin);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
 .font-name {
+  padding: 0 calc(2 * $fontOptionMargin);
   color: $grayish;
   font-size: 80%;
 }
 
-.panel-toggle {
-  position: relative;
-
-  &.selected,
-  &:active {
-    color: white;
-    z-index: 2;
-
-    > svg,
-    > svg > g,
-    > svg > path {
-      fill: white;
-    }
-  }
-
-  &:active {
-    background: $verylightBlue;
-    border-color: $verylightBlue;
-  }
-
-  &.selected {
-    background: $lightBlue;
-    border-color: $lightBlue;
-  }
-}
+$encodedButtonHeight: 3 * $marginUnit;
 
 .encoded {
   position: absolute;
-  top: $bodyBorder + $marginUnit + $toolbarHeight - 2px;
+  top: $toolbarHeight;
   left: 0;
   right: 0;
-  left: $bodyBorder;
-  right: $bodyBorder;
-  z-index: calc(10000 + 1);
-  padding: $marginUnit 0;
+  bottom: calc(5 * $marginUnit);
+  height: auto;
+  padding: 0;
   background: white;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: calc($encodedButtonHeight + 6 * $marginUnit);
 
   @media (max-width: $smallView) {
-    left: 0;
-    right: 0;
+    margin-top: calc($marginUnit + 2px);
+    bottom: auto;
+    justify-content: start;
+  }
+
+  .image-container {
+    @media (max-width: $smallView) {
+      margin-bottom: calc(-$marginUnit);
+    }
+  }
+
+  > p {
+    height: calc($encodedButtonHeight);
+    margin: 0;
   }
 
   a {
@@ -592,11 +609,15 @@ $toolbarLineHeight: 32px;
   font-size: inherit;
   left: 0;
   right: 0;
-  top: -2 * $marginUnit;
+  top: calc(30% - 2 * $marginUnit);
   pointer-events: none;
 
+  @media (max-width: $smallView) {
+    top: calc(-2 * $marginUnit);
+  }
+
   :not([hidden]) & {
-    animation: hidefun 0.8s;
+    animation: hidefun 2s;
     animation-fill-mode: both;
   }
 
@@ -636,34 +657,77 @@ option {
   display: none;
 }
 
-.label-range,
-.label-toggle {
+.label-range {
   margin: 0 calc($marginUnit / 2) $marginUnit;
   display: flex;
   align-items: flex-end;
-  > span {
-    display: block;
+  flex-wrap: wrap;
+  > div {
+    min-width: 100%;
   }
 }
 
 .label-toggle {
-  > span {
-    margin: -2px calc($marginUnit / 2);
+  margin: 0 calc($marginUnit / 4) 0;
+  display: flex;
+  align-items: center;
+  padding: 0 12px 0 0;
+  border: none;
+  position: relative;
+  color: $grayish;
+
+  // > span {
+  //   margin: -2px $marginUnit / 8;
+  // }
+
+  > [type='checkbox'] {
+    margin-right: 4px;
+
+    &:focus {
+      background-color: transparent;
+    }
+
+    &::after {
+      content: ' ';
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      border-radius: 100px;
+      border: 2px solid $lightGrayish;
+    }
+    &:checked::after {
+      border-color: $grayish;
+    }
+    &:focus::after {
+      // border-color: $lightBlue;
+    }
+
+    &:checked + span {
+      color: $darkGrayish;
+    }
   }
 }
 
 .label-range {
-  padding: 0 $marginUnit;
-  > [type='range'] {
-    width: auto;
-    flex: 1;
+  text-align: center;
+
+  svg {
+    height: 24px;
   }
-  > span {
-    font-weight: bold;
-    text-align: right;
-    width: 64px; // hardcode for now
-    margin: 2px calc($marginUnit / 2);
-  }
+}
+
+.left-label {
+  font-weight: bold;
+  text-align: right;
+  width: 64px; // hardcode for now
+  margin: 2px $marginUnit / 2;
+}
+
+.hued svg {
+  fill: $blue;
 }
 
 .hued [type='range'] {
@@ -680,5 +744,26 @@ option {
   }
   &::-moz-range-track {
     background: $verylightBlue;
+  }
+}
+
+[type='checkbox'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 30px;
+  height: 30px;
+  outline: none;
+  border-radius: 100px;
+  border: none;
+
+  &:focus {
+    background: $lightGrayish;
+  }
+
+  &:checked {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="slategray" viewBox="0 0 100 100"><path d="M32.4 79.6c1.9 1.9 4.4 2.9 7.1 2.9s5.2-1.1 7.1-2.9l43.1-43.1a10 10 0 10-14.1-14.1l-36.2 36-14.9-14.9a10 10 0 10-14.1 14.1l22 22z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 16px;
   }
 }

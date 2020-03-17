@@ -25,10 +25,9 @@
 import { getLengthNumeral } from '../../lib/css';
 
 const shadowAxisMax = 12;
-const shadowBlurMax = 20;
+const shadowBlurMax = 18;
 const shadow3dSteps = 6;
-const shadow3dStepDarknessIncrease = 0.04;
-const shadowFlatOpacity = 0.2;
+const shadow3dStepDarknessIncrease = 0.03;
 
 const percentage255 = amount => 255 * amount;
 const darkenChanel = (channel, amount) =>
@@ -45,18 +44,13 @@ const pxInt = n => `${parseInt(n, 10)}px`;
 const textShadow = (x, y, blur, color) =>
   [`rgba(${color.join(',')})`, pxInt(x), pxInt(y), pxInt(blur)].join(' ');
 
-const blurredTextShadow = (axis, blur, color) =>
-  textShadow(axis, axis, blur, color);
-
-const flatTextShadow = (axis, color) => textShadow(axis, axis, 0, color);
-
 const fx3dShadow = baseColor =>
   Array(shadow3dSteps)
     .fill(null)
     .map((_, y) =>
       textShadow(
         0,
-        y,
+        y + 1,
         0,
         darken(
           baseColor,
@@ -65,17 +59,22 @@ const fx3dShadow = baseColor =>
       )
     );
 
-export function composeTextShadow(direction, isFlat, is3d) {
+export function composeTextShadow(direction, shadowIs3d, is3d) {
   const blue = scssVar('blue').slice(0, 3);
+  const lightBlue = scssVar('lightBlue').slice(0, 3);
   const axis = shadowAxisMax * direction;
+  const x = axis;
+  const y = axis + (axis > 0 && is3d ? shadow3dSteps : 0);
   const fx3d = is3d ? fx3dShadow(blue) : [];
-  const fxShadow = isFlat
-    ? flatTextShadow(axis, blue.concat([shadowFlatOpacity]))
-    : blurredTextShadow(
-        axis,
-        shadowBlurMax * Math.abs(direction),
-        blue.concat([0.48])
-      );
+  const maxShadowOpacity = shadowIs3d ? 0.4 : 0.8;
+  const fxShadow = textShadow(
+    x,
+    y,
+    shadowIs3d ? shadowBlurMax * Math.abs(direction) : 0,
+    lightBlue.concat([
+      maxShadowOpacity - 0.5 * maxShadowOpacity * Math.abs(direction),
+    ])
+  );
   return fx3d.concat([fxShadow]).join(',');
 }
 

@@ -19,6 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import * as rollup from 'rollup';
 import { blue, cyan, gray, magenta, red } from 'colors';
 import { css as cssVars } from '../src/index.scss.vars';
 import { dirs, uglify as uglifyConfig } from '../config';
@@ -26,10 +27,10 @@ import { minify as htmlminify } from 'html-minifier';
 import { JSDOM } from 'jsdom';
 import { minify as jsminify } from 'terser';
 import { readFileSync } from 'fs-extra';
-import { rollup } from 'rollup';
 import { Script } from 'vm';
 import { textures } from './textures';
 import babel from 'rollup-plugin-babel';
+import chokidar from 'chokidar';
 import commonjs from '@rollup/plugin-commonjs';
 import cssDeclarationSorter from 'css-declaration-sorter';
 import cssnano from 'cssnano';
@@ -45,8 +46,8 @@ import mergeMediaQueries from './postcss/merge-media-queries';
 import path from 'path';
 import postcss from 'postcss';
 import postcssCalc from 'postcss-calc';
-import postcssDefineProperty from 'postcss-define-property';
 import postcssImport from 'postcss-import';
+import postcssMixins from 'postcss-mixins';
 import postcssNested from 'postcss-nested';
 import postcssScss from 'postcss-scss';
 import postcssSimpleVars from 'postcss-simple-vars';
@@ -71,19 +72,21 @@ async function copydir(from) {
   }
 }
 
+const plugins = opts => [
+  rollupResolve(),
+  commonjs(),
+  babel(opts.babel || {}),
+  inject({
+    include: '**/*.jsx',
+    exclude: 'node_modules/**',
+    modules: { React: path.resolve('src/jsx/jsx.js') },
+  }),
+];
+
 async function jsrollup(input, opts = {}) {
-  const bundle = await rollup({
+  const bundle = await rollup.rollup({
     input,
-    plugins: [
-      rollupResolve(),
-      commonjs(),
-      babel(opts.babel || {}),
-      inject({
-        include: '**/*.jsx',
-        exclude: 'node_modules/**',
-        modules: { React: path.resolve('src/jsx/jsx.js') },
-      }),
-    ],
+    plugins: plugins(opts),
   });
   const { dir = dirs.dist } = opts;
   await bundle.write({
@@ -95,21 +98,27 @@ async function jsrollup(input, opts = {}) {
 }
 
 async function jsrollupentry(entry, method, ...args) {
+  const filename = getEntry(entry, method);
+  return verbose(jsrollup, filename, ...args);
+}
+
+function getEntry(entry, method) {
   const { workspace } = dirs;
-  const filename = `${workspace}/${path.basename(entry)}`;
+  const filename = `${workspace}/${path.basename(entry, '.jsx')}.${method}.jsx`;
   const importpath = path.relative(workspace, entry);
+  fs.mkdirpSync(workspace);
   fs.writeFileSync(
     filename,
     `import { ${method} } from './${importpath}'; ${method}(self);`
   );
-  return verbose(jsrollup, filename, ...args);
+  return filename;
 }
 
 function js() {
   return Promise.all([
     verbose(copy, '3p/gif.js/gif.worker.js', /* flat */ true),
     // TODO: These are render steps
-    verbose(jsrollup, 'src/encoder.js'),
+    // verbose(jsrollup, 'src/encoder.js'),
   ]);
 }
 
@@ -117,24 +126,20 @@ async function css() {
   const from = 'src/index.scss';
   const to = path.join(dirs.workspace, 'index.css');
 
+  const input = fs.readFileSync(from).toString();
+
   await fs.mkdirp(dirs.workspace);
 
   const { css } = await postcss([
     postcssImport(),
-    postcssDefineProperty({
-      syntax: {
-        atrule: true,
-        parameter: '',
-        separator: '',
-      },
-    }),
+    postcssMixins(),
     postcssSimpleVars({ variables: cssVars }),
     postcssNested(),
     postcssCalc(),
     mergeMediaQueries(),
     cssnano(),
     cssDeclarationSorter({ order: 'smacss' }),
-  ]).process(fs.readFileSync(from).toString(), {
+  ]).process(input, {
     parser: postcssScss,
     to,
     from,
@@ -155,20 +160,27 @@ function serve() {
   log(cyan(`http://localhost:8000`));
 }
 
-async function render(input) {
-  const { workspace, dist } = dirs;
-
-  const uppercased = path
+function entryFunctions(input) {
+  const html = path
     .basename(input, '.jsx')
     .replace(/^[a-z]/, l => l.toUpperCase());
 
-  const run = await verbose(jsrollupentry, input, `${uppercased}Component`);
-  const render = await verbose(jsrollupentry, input, uppercased, {
-    dir: workspace,
-  });
+  const component = `${html}Component`;
+  return { html, component };
+}
 
+async function render(input) {
+  const rollupOpts = { dir: dirs.workspace };
+  const { html, component } = entryFunctions(input);
+  const run = await verbose(jsrollupentry, input, component, rollupOpts);
+  const render = await verbose(jsrollupentry, input, html, rollupOpts);
+  return writeRender(input, run, render);
+}
+
+async function writeRender(input, run, render) {
+  const { workspace, dist } = dirs;
   const basename = path.basename(input, '.jsx');
-  const renderer = readFileSync(render).toString();
+  const renderer = readFileSync(render.replace(/\.jsx$/, '.js')).toString();
 
   const dom = new JSDOM('', { runScripts: 'outside-only' });
   const vmContext = dom.getInternalVMContext();
@@ -176,14 +188,16 @@ async function render(input) {
 
   vmContext._INIT = {
     fonts,
-    js: fs.readFileSync(run).toString(),
+    js: fs.readFileSync(run.replace(/\.jsx$/, '.js')).toString(),
     css: fs.readFileSync(`${workspace}/${basename}.css`).toString(),
     pkg: JSON.parse(fs.readFileSync('package.json').toString()),
   };
 
   script.runInContext(vmContext);
 
-  return fs.writeFile(`${dist}/${basename}.html`, dom.serialize());
+  await fs.writeFile(`${dist}/${basename}.html`, dom.serialize());
+
+  return `${dist}/${basename}.html`;
 }
 
 async function html() {
@@ -262,6 +276,105 @@ function build() {
   return Promise.all([task(bare), task(assets)]);
 }
 
+async function watch() {
+  const entries = (await glob('src/*.jsx')).map(entry => {
+    const { html, component } = entryFunctions(entry);
+    const run = getEntry(entry, component);
+    const render = getEntry(entry, html);
+    return { entry, run, render };
+  });
+
+  await verbose(copy, '3p/gif.js/gif.worker.js', /* flat */ true);
+  await verbose(
+    copy,
+    'node_modules/ffmpeg.js/ffmpeg-worker-webm.js',
+    /* flat */ true
+  );
+  await verbose(
+    copy,
+    'node_modules/ffmpeg.js/ffmpeg-worker-mp4.js',
+    /* flat */ true
+  );
+  // await verbose(jsrollup, 'src/encoder.js');
+  await task(assets);
+
+  const rollupConfig = [
+    // TODO: This is a render step?
+    {
+      input: 'src/encoder.js',
+      plugins: plugins({}),
+      output: [
+        {
+          file: `${dirs.dist}/encoder.js`,
+          format: 'iife',
+          name: 'encoder',
+        },
+      ],
+    },
+    ...entries
+      .map(({ run, render }) =>
+        [run, render].map(input => ({
+          input,
+          plugins: plugins({}),
+          output: [
+            {
+              file: `${dirs.workspace}/${path.basename(input, '.jsx')}.js`,
+              format: 'iife',
+              name: path
+                .basename(input, '.jsx')
+                .split('.')
+                .pop(),
+            },
+          ],
+        }))
+      )
+      .flat(),
+  ];
+
+  const rollupWatcher = rollup.watch(rollupConfig);
+
+  let cssPromise;
+  let serving = false;
+  let builtOnce = false;
+
+  const writeRenderAll = () =>
+    Promise.all(
+      entries.map(({ entry, run, render }) =>
+        task(writeRender, entry, run, render)
+      )
+    );
+
+  rollupWatcher.on('event', async event => {
+    switch (event.code) {
+      case 'ERROR':
+        log(red('error'), event.code);
+        break;
+      case 'START':
+        log(magenta('js'), '...');
+        cssPromise = task(css); // this should be per bundle
+        break;
+      case 'END':
+        log(blue('js'), '✓');
+        await cssPromise;
+        await writeRenderAll();
+        if (!builtOnce) {
+          chokidar
+            .watch(['src/*.css', 'src/*.scss', 'src/*.scss.vars.js'])
+            .on('change', async () => {
+              await task(css);
+              await writeRenderAll();
+            });
+          builtOnce = true;
+        }
+        if (!serving) {
+          serving = true;
+          task(serve);
+        }
+        break;
+    }
+  });
+}
+
 export async function task(fn, ...args) {
   return _run(fn, true, ...args);
 }
@@ -306,6 +419,7 @@ export const tasks = {
   serve,
   test,
   textures,
+  watch,
 };
 
 export function runTask(name, default_ = build) {

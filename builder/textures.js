@@ -34,8 +34,8 @@ import memoize from 'lodash.memoize';
 const execAsync = promisify(exec);
 const writeFileAsync = promisify(writeFile);
 
-const gifGlobDir = pathJoin(dirs.textures.gif, 't*.gif');
-const validNameRe = /^.+\/t([0-9]+)\.gif$/;
+const gifGlobDir = pathJoin(dirs.textures, '*.gif');
+const validNameRe = /\/([0-9]+)\.gif$/;
 
 const b64mime = 'data:image/gif;base64,';
 
@@ -52,8 +52,8 @@ const writeJson = (path, content) =>
   writeFileAsync(path, JSON.stringify(content));
 
 const unoptimize = memoize(async path => {
-  const output = `${dirs.dist.workspace}/${basename(path)}.u`;
-  const expandColors = `${dirs.dist.workspace}/${basename(path)}.e`;
+  const output = `${dirs.workspace}/${basename(path)}.u`;
+  const expandColors = `${dirs.workspace}/${basename(path)}.e`;
   await execAsync(`gifsicle --colors=255 ${path} > ${expandColors}`);
   await execAsync(`gifsicle -U ${expandColors} > ${output}`);
   return output;
@@ -116,14 +116,11 @@ async function textures() {
       const initialFrame = await extractFrame(path, 0);
       firstFrameMap[i] = frameTob64(initialFrame);
       await writeFileAsync(
-        pathJoin(dirs.textures.gif, `i${i}.gif`),
+        pathJoin(dirs.textures, `${i}_i.gif`),
         initialFrame,
         { encoding: 'binary' }
       );
-      await extractFramesJson(
-        path,
-        pathJoin(dirs.textures.frames, `f${i}.json`)
-      );
+      await extractFramesJson(path, pathJoin(dirs.textures, `${i}.json`));
     })
   );
 
@@ -131,10 +128,7 @@ async function textures() {
     .sort((a, b) => parseInt(a, 10) - parseInt(b, 10))
     .map(k => firstFrameMap[k]);
 
-  await writeJson(
-    pathJoin(dirs.textures.frames, 'initial.json'),
-    firstFrameSet
-  );
+  await writeJson(pathJoin(dirs.textures, 'initial.json'), firstFrameSet);
 }
 
 export { all, textures };

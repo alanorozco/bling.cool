@@ -33,27 +33,17 @@ export default function({ types: t }) {
         if (!t.isMemberExpression(node.object)) {
           return;
         }
-        if (!t.isIdentifier(node.object.object)) {
-          return;
-        }
         if (!t.isIdentifier(node.property)) {
           return;
         }
-        if (!t.isIdentifier(node.object.property)) {
+        if (node.object.name != 'dirs') {
           return;
         }
-        if (node.object.object.name != 'dirs') {
-          return;
-        }
-        const dirType = node.object.property.name;
         const dirProp = node.property.name;
-        if (!dirType in dirs) {
+        if (!dirProp in dirs) {
           return;
         }
-        if (!dirProp in dirs[dirType]) {
-          return;
-        }
-        path.replaceWith(t.stringLiteral(dirs[dirType][dirProp]));
+        path.replaceWith(t.stringLiteral(dirs[dirProp]));
       },
     },
   };
