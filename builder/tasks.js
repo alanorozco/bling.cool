@@ -118,7 +118,7 @@ function js() {
   return Promise.all([
     verbose(copy, '3p/gif.js/gif.worker.js', /* flat */ true),
     // TODO: These are render steps
-    // verbose(jsrollup, 'src/encoder.js'),
+    verbose(jsrollup, 'src/encoder.js'),
   ]);
 }
 
