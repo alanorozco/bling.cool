@@ -47,7 +47,7 @@
     "lodash.memoize": "4.1.2",
     "lodash.once": "4.1.1",
     "mocha": "7.1.0",
-    "node-fetch": "2.6.0",
+    "node-fetch": "2.6.1",
     "node-sass": "4.13.1",
     "not-esm": "file:./lib/not-esm",
     "postcss": "7.0.27",
