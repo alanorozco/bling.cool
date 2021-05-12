@@ -50,7 +50,7 @@
     "node-fetch": "2.6.0",
     "node-sass": "4.13.1",
     "not-esm": "file:./lib/not-esm",
-    "postcss": "7.0.27",
+    "postcss": "8.2.10",
     "postcss-calc": "7.0.2",
     "postcss-import": "12.0.1",
     "postcss-nested": "4.2.1",
