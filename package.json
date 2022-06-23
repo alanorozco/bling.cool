@@ -42,7 +42,7 @@
     "fontfaceobserver": "2.1.0",
     "fs-extra": "8.1.0",
     "html-minifier": "4.0.0",
-    "jsdom": "16.2.0",
+    "jsdom": "16.5.0",
     "lodash.debounce": "4.0.8",
     "lodash.memoize": "4.1.2",
     "lodash.once": "4.1.1",
